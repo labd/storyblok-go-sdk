@@ -92,6 +92,69 @@ paths:
               schema:
                 $ref: '#/components/schemas/ComponentGroup'
 
+  /spaces/{space_id}/webhooks:
+    get:
+      summary: List Webhooks
+      description: Retrieve a list of webhooks in a space.
+      parameters:
+        - name: space_id
+          in: path
+          description: The ID of the space
+          required: true
+          schema:
+            type: string
+        - name: token
+          in: query
+          description: The API access token
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  webhooks:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Webhook'
+                  total:
+                    type: integer
+
+  /spaces/{space_id}/webhooks/{webhook_id}:
+    get:
+      summary: Get Webhook
+      description: Retrieve a specific webhook by ID.
+      parameters:
+        - name: space_id
+          in: path
+          description: The ID of the space
+          required: true
+          schema:
+            type: string
+        - name: webhook_id
+          in: path
+          description: The ID of the webhook
+          required: true
+          schema:
+            type: string
+        - name: token
+          in: query
+          description: The API access token
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Webhook'
+
 components:
   parameters:
     spaceIdParam:
@@ -284,3 +347,23 @@ components:
           type: object
           description: The owner of the space
           additionalProperties: {}
+
+    Webhook:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        url:
+          type: string
+        events:
+          type: array
+          items:
+            type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
