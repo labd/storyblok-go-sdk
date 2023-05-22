@@ -1,0 +1,286 @@
+openapi: 3.0.0
+info:
+  title: Storyblok Managmenet OpenAPI Specs
+  description: Unofficial Storyblok Managmenet OpenAPI Specs
+  version: 0.0.1
+
+paths:
+
+  /v1/spaces/{space_id}/:
+    parameters:
+      - $ref: '#/components/parameters/spaceIdParam'
+
+    get:
+      summary: Get a space
+      description: Get a space
+      operationId: getSpace
+      tags:
+        - spaces
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Space'
+
+  /v1/spaces/{space_id}/components/{id}:
+    parameters:
+      - $ref: '#/components/parameters/spaceIdParam'
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+        description: The ID of the component
+
+    get:
+      summary: Get a component
+      description: Get a component
+      operationId: getComponent
+      tags:
+        - components
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Component'
+    put:
+      summary: Update a component
+      description: Update a component
+      operationId: updateComponent
+      tags:
+        - components
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Component'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Component'
+
+  /spaces/{space_id}/component-groups/{group_id}:
+    get:
+      tags:
+        - components
+      summary: Get Component Group by ID
+      parameters:
+        - in: path
+          name: space_id
+          schema:
+            type: integer
+          required: true
+          description: The ID of the space
+        - in: path
+          name: group_id
+          schema:
+            type: integer
+          required: true
+          description: The ID of the component group to retrieve
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ComponentGroup'
+
+components:
+  parameters:
+    spaceIdParam:
+      in: path
+      name: spaceId
+      required: true
+      schema:
+        type: integer
+      description: The ID of the space
+
+  schemas:
+    Component:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The ID of the component
+        name:
+          type: string
+          description: The name of the component
+        display_name:
+          type: string
+          description: The display name of the component
+        created_at:
+          type: string
+          format: date-time
+          description: The creation timestamp of the component
+        schema:
+          type: object
+          description: The definition of fields (schema) for this component
+          additionalProperties:
+            $ref: '#/components/schemas/Field'
+        image:
+          type: string
+          description: The image associated with the component (null if not set)
+        preview_field:
+          type: string
+          description: The preview field of the component (null if not set)
+        is_root:
+          type: boolean
+          description: Indicates whether the component is a root component
+        is_nestable:
+          type: boolean
+          description: Indicates whether the component is nestable
+        all_presets:
+          type: array
+          items: {}
+          description: An array of presets associated with the component
+        preset_id:
+          type: string
+          description: The ID of the preset associated with the component (null if not set)
+        real_name:
+          type: string
+          description: The real name of the component
+        component_group_uuid:
+          type: string
+          description: The UUID of the component group
+
+    Field:
+      type: object
+      properties:
+        type:
+          type: string
+          description: The type of the field
+        pos:
+          type: integer
+          description: The position of the field
+
+    ComponentGroup:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The ID of the component group
+        name:
+          type: string
+          description: The name of the component group
+        uuid:
+          type: string
+          description: The UUID of the component group
+
+    Space:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The ID of the space
+        name:
+          type: string
+          description: The name of the space
+        domain:
+          type: string
+          description: The domain of the space
+        uniq_domain:
+          type: string
+          description: The unique domain of the space (null if not set)
+        plan:
+          type: string
+          description: The plan of the space
+        plan_level:
+          type: integer
+          description: The plan level of the space
+        limits:
+          type: object
+          description: The limits of the space
+          additionalProperties: {}
+        created_at:
+          type: string
+          format: date-time
+          description: The creation timestamp of the space
+        role:
+          type: string
+          description: The role of the user in the space
+        owner_id:
+          type: integer
+          description: The ID of the owner of the space
+        story_published_hook:
+          type: string
+          description: The story published hook of the space (null if not set)
+        environments:
+          type: string
+          description: The environments of the space (null if not set)
+        stories_count:
+          type: integer
+          description: The count of stories in the space
+        parent_id:
+          type: string
+          description: The ID of the parent space (null if not set)
+        assets_count:
+          type: integer
+          description: The count of assets in the space
+        searchblok_id:
+          type: string
+          description: The Searchblok ID of the space (null if not set)
+        duplicatable:
+          type: string
+          description: Indicates whether the space is duplicatable (null if not set)
+        request_count_today:
+          type: integer
+          description: The count of requests made today
+        api_requests:
+          type: integer
+          description: The total number of API requests allowed
+        exceeded_requests:
+          type: integer
+          description: The count of exceeded API requests
+        billing_address:
+          type: object
+          description: The billing address of the space
+          additionalProperties: {}
+        routes:
+          type: array
+          items: {}
+          description: An array of routes
+        euid:
+          type: string
+          description: The EUID of the space (null if not set)
+        trial:
+          type: boolean
+          description: Indicates whether the space is in trial mode
+        default_root:
+          type: string
+          description: The default root of the space
+        has_slack_webhook:
+          type: boolean
+          description: Indicates whether the space has a Slack webhook
+        api_logs_per_month:
+          type: array
+          items: {}
+          description: An array of API logs per month
+        first_token:
+          type: string
+          description: The first token of the space
+        has_pending_tasks:
+          type: boolean
+          description: Indicates whether the space has pending tasks
+        options:
+          type: object
+          description: The options of the space
+          additionalProperties: {}
+        collaborators:
+          type: array
+          items: {}
+          description: An array of collaborators
+        settings:
+          type: array
+          items: {}
+          description: An array of settings
+        owner:
+          type: object
+          description: The owner of the space
+          additionalProperties: {}
