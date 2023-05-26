@@ -258,6 +258,12 @@ components:
           description: The definition of fields (schema) for this component
           additionalProperties:
             $ref: "#/components/schemas/FieldInput"
+          # Hack; storyblok is not using the pos field but the order of the
+          # fields in the schema.
+          x-go-type: orderedmap.OrderedMap[string,FieldInput]
+          x-go-type-import:
+            name: orderedmap
+            path: "github.com/wk8/go-ordered-map/v2"
       required:
         - name
 

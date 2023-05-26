@@ -15,6 +15,7 @@ import (
 	"time"
 
 	"github.com/deepmap/oapi-codegen/pkg/runtime"
+	orderedmap "github.com/wk8/go-ordered-map/v2"
 )
 
 const (
@@ -60,7 +61,7 @@ type Component struct {
 	RealName *string `json:"real_name,omitempty"`
 
 	// Schema The definition of fields (schema) for this component
-	Schema *map[string]FieldInput `json:"schema,omitempty"`
+	Schema *orderedmap.OrderedMap[string, FieldInput] `json:"schema,omitempty"`
 }
 
 // ComponentGroup defines model for ComponentGroup.
@@ -99,7 +100,7 @@ type ComponentInput struct {
 	Preview *string `json:"preview,omitempty"`
 
 	// Schema The definition of fields (schema) for this component
-	Schema *map[string]FieldInput `json:"schema,omitempty"`
+	Schema *orderedmap.OrderedMap[string, FieldInput] `json:"schema,omitempty"`
 }
 
 // Field defines model for Field.
