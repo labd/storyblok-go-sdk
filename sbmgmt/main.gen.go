@@ -21,46 +21,46 @@ const (
 	BearerAuthScopes = "BearerAuth.Scopes"
 )
 
-// Component Component
+// Component defines model for Component.
 type Component struct {
 	// AllPresets An array of presets associated with the component
 	AllPresets *[]interface{} `json:"all_presets,omitempty"`
 
-	// ComponentGroupUuid The UUID of the component group
+	// ComponentGroupUuid The component group uuid of the component
 	ComponentGroupUuid *string `json:"component_group_uuid,omitempty"`
 
 	// CreatedAt The creation timestamp of the component
-	CreatedAt *time.Time `json:"created_at,omitempty"`
+	CreatedAt time.Time `json:"created_at"`
 
 	// DisplayName The display name of the component
 	DisplayName *string `json:"display_name,omitempty"`
 
 	// Id The ID of the component
-	Id *int `json:"id,omitempty"`
+	Id int64 `json:"id"`
 
-	// Image The image associated with the component (null if not set)
+	// Image URL to the preview image, if uploaded
 	Image *string `json:"image,omitempty"`
 
-	// IsNestable Indicates whether the component is nestable
+	// IsNestable Component should be insertable in blocks field type fields
 	IsNestable *bool `json:"is_nestable,omitempty"`
 
-	// IsRoot Indicates whether the component is a root component
+	// IsRoot Component should be usable as a Content Type
 	IsRoot *bool `json:"is_root,omitempty"`
 
-	// Name The name of the component
-	Name *string `json:"name,omitempty"`
+	// Name Technical name used for component property in entries
+	Name string `json:"name"`
 
 	// PresetId The ID of the preset associated with the component (null if not set)
 	PresetId *string `json:"preset_id,omitempty"`
 
-	// PreviewField The preview field of the component (null if not set)
-	PreviewField *string `json:"preview_field,omitempty"`
+	// Preview Define the field that should be used for preview in the interface
+	Preview *string `json:"preview,omitempty"`
 
 	// RealName The real name of the component
 	RealName *string `json:"real_name,omitempty"`
 
 	// Schema The definition of fields (schema) for this component
-	Schema *map[string]Field `json:"schema,omitempty"`
+	Schema *map[string]FieldInput `json:"schema,omitempty"`
 }
 
 // ComponentGroup defines model for ComponentGroup.
@@ -141,7 +141,7 @@ type Field struct {
 	FolderSlug *string `json:"folder_slug,omitempty"`
 
 	// Id Numeric Unique ID
-	Id *int `json:"id,omitempty"`
+	Id *int64 `json:"id,omitempty"`
 
 	// ImageCrop Activate force crop for images: (true/false)
 	ImageCrop *bool `json:"image_crop,omitempty"`
@@ -174,7 +174,7 @@ type Field struct {
 	} `json:"options,omitempty"`
 
 	// Pos The position of the field
-	Pos int `json:"pos"`
+	Pos int64 `json:"pos"`
 
 	// PreviewField Is used as instance preview field below component name in bloks types
 	PreviewField *bool `json:"preview_field,omitempty"`
@@ -279,7 +279,7 @@ type FieldInput struct {
 	} `json:"options,omitempty"`
 
 	// Pos The position of the field
-	Pos int `json:"pos"`
+	Pos int64 `json:"pos"`
 
 	// PreviewField Is used as instance preview field below component name in bloks types
 	PreviewField *bool `json:"preview_field,omitempty"`
@@ -363,7 +363,7 @@ type Space struct {
 	HasSlackWebhook *bool `json:"has_slack_webhook,omitempty"`
 
 	// Id The ID of the space
-	Id *int `json:"id,omitempty"`
+	Id *int64 `json:"id,omitempty"`
 
 	// Limits The limits of the space
 	Limits *map[string]interface{} `json:"limits,omitempty"`
@@ -428,7 +428,7 @@ type Webhook struct {
 }
 
 // SpaceIdParam defines model for spaceIdParam.
-type SpaceIdParam = int
+type SpaceIdParam = int64
 
 // GetSpacesSpaceIdWebhooksParams defines parameters for GetSpacesSpaceIdWebhooks.
 type GetSpacesSpaceIdWebhooksParams struct {
@@ -538,13 +538,16 @@ type ClientInterface interface {
 
 	CreateComponent(ctx context.Context, spaceId SpaceIdParam, body CreateComponentJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// DeleteComponent request
+	DeleteComponent(ctx context.Context, spaceId SpaceIdParam, id int64, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetComponent request
-	GetComponent(ctx context.Context, spaceId SpaceIdParam, id int, reqEditors ...RequestEditorFn) (*http.Response, error)
+	GetComponent(ctx context.Context, spaceId SpaceIdParam, id int64, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// UpdateComponent request with any body
-	UpdateComponentWithBody(ctx context.Context, spaceId SpaceIdParam, id int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	UpdateComponentWithBody(ctx context.Context, spaceId SpaceIdParam, id int64, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	UpdateComponent(ctx context.Context, spaceId SpaceIdParam, id int, body UpdateComponentJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	UpdateComponent(ctx context.Context, spaceId SpaceIdParam, id int64, body UpdateComponentJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
 func (c *Client) GetSpacesSpaceIdComponentGroupsGroupId(ctx context.Context, spaceId int, groupId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -619,7 +622,19 @@ func (c *Client) CreateComponent(ctx context.Context, spaceId SpaceIdParam, body
 	return c.Client.Do(req)
 }
 
-func (c *Client) GetComponent(ctx context.Context, spaceId SpaceIdParam, id int, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) DeleteComponent(ctx context.Context, spaceId SpaceIdParam, id int64, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteComponentRequest(c.Server, spaceId, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetComponent(ctx context.Context, spaceId SpaceIdParam, id int64, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetComponentRequest(c.Server, spaceId, id)
 	if err != nil {
 		return nil, err
@@ -631,7 +646,7 @@ func (c *Client) GetComponent(ctx context.Context, spaceId SpaceIdParam, id int,
 	return c.Client.Do(req)
 }
 
-func (c *Client) UpdateComponentWithBody(ctx context.Context, spaceId SpaceIdParam, id int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) UpdateComponentWithBody(ctx context.Context, spaceId SpaceIdParam, id int64, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewUpdateComponentRequestWithBody(c.Server, spaceId, id, contentType, body)
 	if err != nil {
 		return nil, err
@@ -643,7 +658,7 @@ func (c *Client) UpdateComponentWithBody(ctx context.Context, spaceId SpaceIdPar
 	return c.Client.Do(req)
 }
 
-func (c *Client) UpdateComponent(ctx context.Context, spaceId SpaceIdParam, id int, body UpdateComponentJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) UpdateComponent(ctx context.Context, spaceId SpaceIdParam, id int64, body UpdateComponentJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewUpdateComponentRequest(c.Server, spaceId, id, body)
 	if err != nil {
 		return nil, err
@@ -884,8 +899,49 @@ func NewCreateComponentRequestWithBody(server string, spaceId SpaceIdParam, cont
 	return req, nil
 }
 
+// NewDeleteComponentRequest generates requests for DeleteComponent
+func NewDeleteComponentRequest(server string, spaceId SpaceIdParam, id int64) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "space_id", runtime.ParamLocationPath, spaceId)
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v1/spaces/%s/components/%s", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewGetComponentRequest generates requests for GetComponent
-func NewGetComponentRequest(server string, spaceId SpaceIdParam, id int) (*http.Request, error) {
+func NewGetComponentRequest(server string, spaceId SpaceIdParam, id int64) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -926,7 +982,7 @@ func NewGetComponentRequest(server string, spaceId SpaceIdParam, id int) (*http.
 }
 
 // NewUpdateComponentRequest calls the generic UpdateComponent builder with application/json body
-func NewUpdateComponentRequest(server string, spaceId SpaceIdParam, id int, body UpdateComponentJSONRequestBody) (*http.Request, error) {
+func NewUpdateComponentRequest(server string, spaceId SpaceIdParam, id int64, body UpdateComponentJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
@@ -937,7 +993,7 @@ func NewUpdateComponentRequest(server string, spaceId SpaceIdParam, id int, body
 }
 
 // NewUpdateComponentRequestWithBody generates requests for UpdateComponent with any type of body
-func NewUpdateComponentRequestWithBody(server string, spaceId SpaceIdParam, id int, contentType string, body io.Reader) (*http.Request, error) {
+func NewUpdateComponentRequestWithBody(server string, spaceId SpaceIdParam, id int64, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -1039,13 +1095,16 @@ type ClientWithResponsesInterface interface {
 
 	CreateComponentWithResponse(ctx context.Context, spaceId SpaceIdParam, body CreateComponentJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateComponentResponse, error)
 
+	// DeleteComponent request
+	DeleteComponentWithResponse(ctx context.Context, spaceId SpaceIdParam, id int64, reqEditors ...RequestEditorFn) (*DeleteComponentResponse, error)
+
 	// GetComponent request
-	GetComponentWithResponse(ctx context.Context, spaceId SpaceIdParam, id int, reqEditors ...RequestEditorFn) (*GetComponentResponse, error)
+	GetComponentWithResponse(ctx context.Context, spaceId SpaceIdParam, id int64, reqEditors ...RequestEditorFn) (*GetComponentResponse, error)
 
 	// UpdateComponent request with any body
-	UpdateComponentWithBodyWithResponse(ctx context.Context, spaceId SpaceIdParam, id int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateComponentResponse, error)
+	UpdateComponentWithBodyWithResponse(ctx context.Context, spaceId SpaceIdParam, id int64, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateComponentResponse, error)
 
-	UpdateComponentWithResponse(ctx context.Context, spaceId SpaceIdParam, id int, body UpdateComponentJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateComponentResponse, error)
+	UpdateComponentWithResponse(ctx context.Context, spaceId SpaceIdParam, id int64, body UpdateComponentJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateComponentResponse, error)
 }
 
 type GetSpacesSpaceIdComponentGroupsGroupIdResponse struct {
@@ -1144,7 +1203,10 @@ func (r GetSpaceResponse) StatusCode() int {
 type CreateComponentResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *Component
+	JSON201      *struct {
+		// Component Component
+		Component *Component `json:"component,omitempty"`
+	}
 }
 
 // Status returns HTTPResponse.Status
@@ -1163,10 +1225,38 @@ func (r CreateComponentResponse) StatusCode() int {
 	return 0
 }
 
+type DeleteComponentResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *struct {
+		// Component Component
+		Component *Component `json:"component,omitempty"`
+	}
+}
+
+// Status returns HTTPResponse.Status
+func (r DeleteComponentResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DeleteComponentResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
 type GetComponentResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *Component
+	JSON200      *struct {
+		// Component Component
+		Component *Component `json:"component,omitempty"`
+	}
 }
 
 // Status returns HTTPResponse.Status
@@ -1188,7 +1278,10 @@ func (r GetComponentResponse) StatusCode() int {
 type UpdateComponentResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *Component
+	JSON200      *struct {
+		// Component Component
+		Component *Component `json:"component,omitempty"`
+	}
 }
 
 // Status returns HTTPResponse.Status
@@ -1260,8 +1353,17 @@ func (c *ClientWithResponses) CreateComponentWithResponse(ctx context.Context, s
 	return ParseCreateComponentResponse(rsp)
 }
 
+// DeleteComponentWithResponse request returning *DeleteComponentResponse
+func (c *ClientWithResponses) DeleteComponentWithResponse(ctx context.Context, spaceId SpaceIdParam, id int64, reqEditors ...RequestEditorFn) (*DeleteComponentResponse, error) {
+	rsp, err := c.DeleteComponent(ctx, spaceId, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDeleteComponentResponse(rsp)
+}
+
 // GetComponentWithResponse request returning *GetComponentResponse
-func (c *ClientWithResponses) GetComponentWithResponse(ctx context.Context, spaceId SpaceIdParam, id int, reqEditors ...RequestEditorFn) (*GetComponentResponse, error) {
+func (c *ClientWithResponses) GetComponentWithResponse(ctx context.Context, spaceId SpaceIdParam, id int64, reqEditors ...RequestEditorFn) (*GetComponentResponse, error) {
 	rsp, err := c.GetComponent(ctx, spaceId, id, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1270,7 +1372,7 @@ func (c *ClientWithResponses) GetComponentWithResponse(ctx context.Context, spac
 }
 
 // UpdateComponentWithBodyWithResponse request with arbitrary body returning *UpdateComponentResponse
-func (c *ClientWithResponses) UpdateComponentWithBodyWithResponse(ctx context.Context, spaceId SpaceIdParam, id int, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateComponentResponse, error) {
+func (c *ClientWithResponses) UpdateComponentWithBodyWithResponse(ctx context.Context, spaceId SpaceIdParam, id int64, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateComponentResponse, error) {
 	rsp, err := c.UpdateComponentWithBody(ctx, spaceId, id, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1278,7 +1380,7 @@ func (c *ClientWithResponses) UpdateComponentWithBodyWithResponse(ctx context.Co
 	return ParseUpdateComponentResponse(rsp)
 }
 
-func (c *ClientWithResponses) UpdateComponentWithResponse(ctx context.Context, spaceId SpaceIdParam, id int, body UpdateComponentJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateComponentResponse, error) {
+func (c *ClientWithResponses) UpdateComponentWithResponse(ctx context.Context, spaceId SpaceIdParam, id int64, body UpdateComponentJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateComponentResponse, error) {
 	rsp, err := c.UpdateComponent(ctx, spaceId, id, body, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1409,8 +1511,40 @@ func ParseCreateComponentResponse(rsp *http.Response) (*CreateComponentResponse,
 	}
 
 	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest struct {
+			// Component Component
+			Component *Component `json:"component,omitempty"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseDeleteComponentResponse parses an HTTP response from a DeleteComponentWithResponse call
+func ParseDeleteComponentResponse(rsp *http.Response) (*DeleteComponentResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DeleteComponentResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest Component
+		var dest struct {
+			// Component Component
+			Component *Component `json:"component,omitempty"`
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -1436,7 +1570,10 @@ func ParseGetComponentResponse(rsp *http.Response) (*GetComponentResponse, error
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest Component
+		var dest struct {
+			// Component Component
+			Component *Component `json:"component,omitempty"`
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -1462,7 +1599,10 @@ func ParseUpdateComponentResponse(rsp *http.Response) (*UpdateComponentResponse,
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest Component
+		var dest struct {
+			// Component Component
+			Component *Component `json:"component,omitempty"`
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
