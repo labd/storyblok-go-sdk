@@ -15,6 +15,7 @@ import (
 	"time"
 
 	"github.com/deepmap/oapi-codegen/pkg/runtime"
+	"github.com/gofrs/uuid"
 	orderedmap "github.com/wk8/go-ordered-map/v2"
 )
 
@@ -66,14 +67,21 @@ type Component struct {
 
 // ComponentGroup defines model for ComponentGroup.
 type ComponentGroup struct {
-	// Id The ID of the component group
-	Id *int `json:"id,omitempty"`
+	CreatedAt time.Time `json:"created_at"`
+	Id        int64     `json:"id"`
 
 	// Name The name of the component group
-	Name *string `json:"name,omitempty"`
+	Name      string    `json:"name"`
+	UpdatedAt time.Time `json:"updated_at"`
 
 	// Uuid The UUID of the component group
-	Uuid *string `json:"uuid,omitempty"`
+	Uuid uuid.UUID `json:"uuid"`
+}
+
+// ComponentGroupInput defines model for ComponentGroupInput.
+type ComponentGroupInput struct {
+	// Name The name of the component group
+	Name string `json:"name"`
 }
 
 // ComponentInput ComponentInput
@@ -428,6 +436,9 @@ type Webhook struct {
 	Url       *string    `json:"url,omitempty"`
 }
 
+// GroupIdParam defines model for groupIdParam.
+type GroupIdParam = int64
+
 // SpaceIdParam defines model for spaceIdParam.
 type SpaceIdParam = int64
 
@@ -442,6 +453,12 @@ type GetSpacesSpaceIdWebhooksWebhookIdParams struct {
 	// Token The API access token
 	Token string `form:"token" json:"token"`
 }
+
+// CreateComponentGroupJSONRequestBody defines body for CreateComponentGroup for application/json ContentType.
+type CreateComponentGroupJSONRequestBody = ComponentGroupInput
+
+// UpdateComponentGroupJSONRequestBody defines body for UpdateComponentGroup for application/json ContentType.
+type UpdateComponentGroupJSONRequestBody = ComponentGroupInput
 
 // CreateComponentJSONRequestBody defines body for CreateComponent for application/json ContentType.
 type CreateComponentJSONRequestBody = ComponentInput
@@ -522,17 +539,30 @@ func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
 
 // The interface specification for the client above.
 type ClientInterface interface {
-	// GetSpacesSpaceIdComponentGroupsGroupId request
-	GetSpacesSpaceIdComponentGroupsGroupId(ctx context.Context, spaceId int, groupId int, reqEditors ...RequestEditorFn) (*http.Response, error)
-
 	// GetSpacesSpaceIdWebhooks request
-	GetSpacesSpaceIdWebhooks(ctx context.Context, spaceId string, params *GetSpacesSpaceIdWebhooksParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	GetSpacesSpaceIdWebhooks(ctx context.Context, spaceId SpaceIdParam, params *GetSpacesSpaceIdWebhooksParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetSpacesSpaceIdWebhooksWebhookId request
-	GetSpacesSpaceIdWebhooksWebhookId(ctx context.Context, spaceId string, webhookId string, params *GetSpacesSpaceIdWebhooksWebhookIdParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+	GetSpacesSpaceIdWebhooksWebhookId(ctx context.Context, spaceId SpaceIdParam, webhookId string, params *GetSpacesSpaceIdWebhooksWebhookIdParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetSpace request
 	GetSpace(ctx context.Context, spaceId SpaceIdParam, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateComponentGroup request with any body
+	CreateComponentGroupWithBody(ctx context.Context, spaceId SpaceIdParam, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	CreateComponentGroup(ctx context.Context, spaceId SpaceIdParam, body CreateComponentGroupJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// DeleteComponentGroup request
+	DeleteComponentGroup(ctx context.Context, spaceId SpaceIdParam, groupId GroupIdParam, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetComponentGroup request
+	GetComponentGroup(ctx context.Context, spaceId SpaceIdParam, groupId GroupIdParam, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UpdateComponentGroup request with any body
+	UpdateComponentGroupWithBody(ctx context.Context, spaceId SpaceIdParam, groupId GroupIdParam, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	UpdateComponentGroup(ctx context.Context, spaceId SpaceIdParam, groupId GroupIdParam, body UpdateComponentGroupJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// CreateComponent request with any body
 	CreateComponentWithBody(ctx context.Context, spaceId SpaceIdParam, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -551,19 +581,7 @@ type ClientInterface interface {
 	UpdateComponent(ctx context.Context, spaceId SpaceIdParam, id int64, body UpdateComponentJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
-func (c *Client) GetSpacesSpaceIdComponentGroupsGroupId(ctx context.Context, spaceId int, groupId int, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetSpacesSpaceIdComponentGroupsGroupIdRequest(c.Server, spaceId, groupId)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) GetSpacesSpaceIdWebhooks(ctx context.Context, spaceId string, params *GetSpacesSpaceIdWebhooksParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) GetSpacesSpaceIdWebhooks(ctx context.Context, spaceId SpaceIdParam, params *GetSpacesSpaceIdWebhooksParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetSpacesSpaceIdWebhooksRequest(c.Server, spaceId, params)
 	if err != nil {
 		return nil, err
@@ -575,7 +593,7 @@ func (c *Client) GetSpacesSpaceIdWebhooks(ctx context.Context, spaceId string, p
 	return c.Client.Do(req)
 }
 
-func (c *Client) GetSpacesSpaceIdWebhooksWebhookId(ctx context.Context, spaceId string, webhookId string, params *GetSpacesSpaceIdWebhooksWebhookIdParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+func (c *Client) GetSpacesSpaceIdWebhooksWebhookId(ctx context.Context, spaceId SpaceIdParam, webhookId string, params *GetSpacesSpaceIdWebhooksWebhookIdParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetSpacesSpaceIdWebhooksWebhookIdRequest(c.Server, spaceId, webhookId, params)
 	if err != nil {
 		return nil, err
@@ -589,6 +607,78 @@ func (c *Client) GetSpacesSpaceIdWebhooksWebhookId(ctx context.Context, spaceId 
 
 func (c *Client) GetSpace(ctx context.Context, spaceId SpaceIdParam, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetSpaceRequest(c.Server, spaceId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateComponentGroupWithBody(ctx context.Context, spaceId SpaceIdParam, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateComponentGroupRequestWithBody(c.Server, spaceId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateComponentGroup(ctx context.Context, spaceId SpaceIdParam, body CreateComponentGroupJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateComponentGroupRequest(c.Server, spaceId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) DeleteComponentGroup(ctx context.Context, spaceId SpaceIdParam, groupId GroupIdParam, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteComponentGroupRequest(c.Server, spaceId, groupId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetComponentGroup(ctx context.Context, spaceId SpaceIdParam, groupId GroupIdParam, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetComponentGroupRequest(c.Server, spaceId, groupId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateComponentGroupWithBody(ctx context.Context, spaceId SpaceIdParam, groupId GroupIdParam, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateComponentGroupRequestWithBody(c.Server, spaceId, groupId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateComponentGroup(ctx context.Context, spaceId SpaceIdParam, groupId GroupIdParam, body UpdateComponentGroupJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateComponentGroupRequest(c.Server, spaceId, groupId, body)
 	if err != nil {
 		return nil, err
 	}
@@ -671,49 +761,8 @@ func (c *Client) UpdateComponent(ctx context.Context, spaceId SpaceIdParam, id i
 	return c.Client.Do(req)
 }
 
-// NewGetSpacesSpaceIdComponentGroupsGroupIdRequest generates requests for GetSpacesSpaceIdComponentGroupsGroupId
-func NewGetSpacesSpaceIdComponentGroupsGroupIdRequest(server string, spaceId int, groupId int) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "space_id", runtime.ParamLocationPath, spaceId)
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "group_id", runtime.ParamLocationPath, groupId)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/spaces/%s/component-groups/%s", pathParam0, pathParam1)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
 // NewGetSpacesSpaceIdWebhooksRequest generates requests for GetSpacesSpaceIdWebhooks
-func NewGetSpacesSpaceIdWebhooksRequest(server string, spaceId string, params *GetSpacesSpaceIdWebhooksParams) (*http.Request, error) {
+func NewGetSpacesSpaceIdWebhooksRequest(server string, spaceId SpaceIdParam, params *GetSpacesSpaceIdWebhooksParams) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -763,7 +812,7 @@ func NewGetSpacesSpaceIdWebhooksRequest(server string, spaceId string, params *G
 }
 
 // NewGetSpacesSpaceIdWebhooksWebhookIdRequest generates requests for GetSpacesSpaceIdWebhooksWebhookId
-func NewGetSpacesSpaceIdWebhooksWebhookIdRequest(server string, spaceId string, webhookId string, params *GetSpacesSpaceIdWebhooksWebhookIdParams) (*http.Request, error) {
+func NewGetSpacesSpaceIdWebhooksWebhookIdRequest(server string, spaceId SpaceIdParam, webhookId string, params *GetSpacesSpaceIdWebhooksWebhookIdParams) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -849,6 +898,189 @@ func NewGetSpaceRequest(server string, spaceId SpaceIdParam) (*http.Request, err
 	if err != nil {
 		return nil, err
 	}
+
+	return req, nil
+}
+
+// NewCreateComponentGroupRequest calls the generic CreateComponentGroup builder with application/json body
+func NewCreateComponentGroupRequest(server string, spaceId SpaceIdParam, body CreateComponentGroupJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateComponentGroupRequestWithBody(server, spaceId, "application/json", bodyReader)
+}
+
+// NewCreateComponentGroupRequestWithBody generates requests for CreateComponentGroup with any type of body
+func NewCreateComponentGroupRequestWithBody(server string, spaceId SpaceIdParam, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "space_id", runtime.ParamLocationPath, spaceId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v1/spaces/%s/component_groups/", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewDeleteComponentGroupRequest generates requests for DeleteComponentGroup
+func NewDeleteComponentGroupRequest(server string, spaceId SpaceIdParam, groupId GroupIdParam) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "space_id", runtime.ParamLocationPath, spaceId)
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "group_id", runtime.ParamLocationPath, groupId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v1/spaces/%s/component_groups/%s", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetComponentGroupRequest generates requests for GetComponentGroup
+func NewGetComponentGroupRequest(server string, spaceId SpaceIdParam, groupId GroupIdParam) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "space_id", runtime.ParamLocationPath, spaceId)
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "group_id", runtime.ParamLocationPath, groupId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v1/spaces/%s/component_groups/%s", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewUpdateComponentGroupRequest calls the generic UpdateComponentGroup builder with application/json body
+func NewUpdateComponentGroupRequest(server string, spaceId SpaceIdParam, groupId GroupIdParam, body UpdateComponentGroupJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUpdateComponentGroupRequestWithBody(server, spaceId, groupId, "application/json", bodyReader)
+}
+
+// NewUpdateComponentGroupRequestWithBody generates requests for UpdateComponentGroup with any type of body
+func NewUpdateComponentGroupRequestWithBody(server string, spaceId SpaceIdParam, groupId GroupIdParam, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "space_id", runtime.ParamLocationPath, spaceId)
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "group_id", runtime.ParamLocationPath, groupId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v1/spaces/%s/component_groups/%s", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("PUT", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
 
 	return req, nil
 }
@@ -1079,17 +1311,30 @@ func WithBaseURL(baseURL string) ClientOption {
 
 // ClientWithResponsesInterface is the interface specification for the client with responses above.
 type ClientWithResponsesInterface interface {
-	// GetSpacesSpaceIdComponentGroupsGroupId request
-	GetSpacesSpaceIdComponentGroupsGroupIdWithResponse(ctx context.Context, spaceId int, groupId int, reqEditors ...RequestEditorFn) (*GetSpacesSpaceIdComponentGroupsGroupIdResponse, error)
-
 	// GetSpacesSpaceIdWebhooks request
-	GetSpacesSpaceIdWebhooksWithResponse(ctx context.Context, spaceId string, params *GetSpacesSpaceIdWebhooksParams, reqEditors ...RequestEditorFn) (*GetSpacesSpaceIdWebhooksResponse, error)
+	GetSpacesSpaceIdWebhooksWithResponse(ctx context.Context, spaceId SpaceIdParam, params *GetSpacesSpaceIdWebhooksParams, reqEditors ...RequestEditorFn) (*GetSpacesSpaceIdWebhooksResponse, error)
 
 	// GetSpacesSpaceIdWebhooksWebhookId request
-	GetSpacesSpaceIdWebhooksWebhookIdWithResponse(ctx context.Context, spaceId string, webhookId string, params *GetSpacesSpaceIdWebhooksWebhookIdParams, reqEditors ...RequestEditorFn) (*GetSpacesSpaceIdWebhooksWebhookIdResponse, error)
+	GetSpacesSpaceIdWebhooksWebhookIdWithResponse(ctx context.Context, spaceId SpaceIdParam, webhookId string, params *GetSpacesSpaceIdWebhooksWebhookIdParams, reqEditors ...RequestEditorFn) (*GetSpacesSpaceIdWebhooksWebhookIdResponse, error)
 
 	// GetSpace request
 	GetSpaceWithResponse(ctx context.Context, spaceId SpaceIdParam, reqEditors ...RequestEditorFn) (*GetSpaceResponse, error)
+
+	// CreateComponentGroup request with any body
+	CreateComponentGroupWithBodyWithResponse(ctx context.Context, spaceId SpaceIdParam, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateComponentGroupResponse, error)
+
+	CreateComponentGroupWithResponse(ctx context.Context, spaceId SpaceIdParam, body CreateComponentGroupJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateComponentGroupResponse, error)
+
+	// DeleteComponentGroup request
+	DeleteComponentGroupWithResponse(ctx context.Context, spaceId SpaceIdParam, groupId GroupIdParam, reqEditors ...RequestEditorFn) (*DeleteComponentGroupResponse, error)
+
+	// GetComponentGroup request
+	GetComponentGroupWithResponse(ctx context.Context, spaceId SpaceIdParam, groupId GroupIdParam, reqEditors ...RequestEditorFn) (*GetComponentGroupResponse, error)
+
+	// UpdateComponentGroup request with any body
+	UpdateComponentGroupWithBodyWithResponse(ctx context.Context, spaceId SpaceIdParam, groupId GroupIdParam, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateComponentGroupResponse, error)
+
+	UpdateComponentGroupWithResponse(ctx context.Context, spaceId SpaceIdParam, groupId GroupIdParam, body UpdateComponentGroupJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateComponentGroupResponse, error)
 
 	// CreateComponent request with any body
 	CreateComponentWithBodyWithResponse(ctx context.Context, spaceId SpaceIdParam, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateComponentResponse, error)
@@ -1106,28 +1351,6 @@ type ClientWithResponsesInterface interface {
 	UpdateComponentWithBodyWithResponse(ctx context.Context, spaceId SpaceIdParam, id int64, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateComponentResponse, error)
 
 	UpdateComponentWithResponse(ctx context.Context, spaceId SpaceIdParam, id int64, body UpdateComponentJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateComponentResponse, error)
-}
-
-type GetSpacesSpaceIdComponentGroupsGroupIdResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *ComponentGroup
-}
-
-// Status returns HTTPResponse.Status
-func (r GetSpacesSpaceIdComponentGroupsGroupIdResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetSpacesSpaceIdComponentGroupsGroupIdResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
 }
 
 type GetSpacesSpaceIdWebhooksResponse struct {
@@ -1195,6 +1418,102 @@ func (r GetSpaceResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r GetSpaceResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type CreateComponentGroupResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON201      *struct {
+		ComponentGroup *ComponentGroup `json:"component_group,omitempty"`
+	}
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateComponentGroupResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateComponentGroupResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type DeleteComponentGroupResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *struct {
+		ComponentGroup *ComponentGroup `json:"component_group,omitempty"`
+	}
+}
+
+// Status returns HTTPResponse.Status
+func (r DeleteComponentGroupResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DeleteComponentGroupResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetComponentGroupResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *struct {
+		ComponentGroup *ComponentGroup `json:"component_group,omitempty"`
+	}
+}
+
+// Status returns HTTPResponse.Status
+func (r GetComponentGroupResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetComponentGroupResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type UpdateComponentGroupResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *struct {
+		ComponentGroup *ComponentGroup `json:"component_group,omitempty"`
+	}
+}
+
+// Status returns HTTPResponse.Status
+func (r UpdateComponentGroupResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UpdateComponentGroupResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -1301,17 +1620,8 @@ func (r UpdateComponentResponse) StatusCode() int {
 	return 0
 }
 
-// GetSpacesSpaceIdComponentGroupsGroupIdWithResponse request returning *GetSpacesSpaceIdComponentGroupsGroupIdResponse
-func (c *ClientWithResponses) GetSpacesSpaceIdComponentGroupsGroupIdWithResponse(ctx context.Context, spaceId int, groupId int, reqEditors ...RequestEditorFn) (*GetSpacesSpaceIdComponentGroupsGroupIdResponse, error) {
-	rsp, err := c.GetSpacesSpaceIdComponentGroupsGroupId(ctx, spaceId, groupId, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseGetSpacesSpaceIdComponentGroupsGroupIdResponse(rsp)
-}
-
 // GetSpacesSpaceIdWebhooksWithResponse request returning *GetSpacesSpaceIdWebhooksResponse
-func (c *ClientWithResponses) GetSpacesSpaceIdWebhooksWithResponse(ctx context.Context, spaceId string, params *GetSpacesSpaceIdWebhooksParams, reqEditors ...RequestEditorFn) (*GetSpacesSpaceIdWebhooksResponse, error) {
+func (c *ClientWithResponses) GetSpacesSpaceIdWebhooksWithResponse(ctx context.Context, spaceId SpaceIdParam, params *GetSpacesSpaceIdWebhooksParams, reqEditors ...RequestEditorFn) (*GetSpacesSpaceIdWebhooksResponse, error) {
 	rsp, err := c.GetSpacesSpaceIdWebhooks(ctx, spaceId, params, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1320,7 +1630,7 @@ func (c *ClientWithResponses) GetSpacesSpaceIdWebhooksWithResponse(ctx context.C
 }
 
 // GetSpacesSpaceIdWebhooksWebhookIdWithResponse request returning *GetSpacesSpaceIdWebhooksWebhookIdResponse
-func (c *ClientWithResponses) GetSpacesSpaceIdWebhooksWebhookIdWithResponse(ctx context.Context, spaceId string, webhookId string, params *GetSpacesSpaceIdWebhooksWebhookIdParams, reqEditors ...RequestEditorFn) (*GetSpacesSpaceIdWebhooksWebhookIdResponse, error) {
+func (c *ClientWithResponses) GetSpacesSpaceIdWebhooksWebhookIdWithResponse(ctx context.Context, spaceId SpaceIdParam, webhookId string, params *GetSpacesSpaceIdWebhooksWebhookIdParams, reqEditors ...RequestEditorFn) (*GetSpacesSpaceIdWebhooksWebhookIdResponse, error) {
 	rsp, err := c.GetSpacesSpaceIdWebhooksWebhookId(ctx, spaceId, webhookId, params, reqEditors...)
 	if err != nil {
 		return nil, err
@@ -1335,6 +1645,58 @@ func (c *ClientWithResponses) GetSpaceWithResponse(ctx context.Context, spaceId 
 		return nil, err
 	}
 	return ParseGetSpaceResponse(rsp)
+}
+
+// CreateComponentGroupWithBodyWithResponse request with arbitrary body returning *CreateComponentGroupResponse
+func (c *ClientWithResponses) CreateComponentGroupWithBodyWithResponse(ctx context.Context, spaceId SpaceIdParam, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateComponentGroupResponse, error) {
+	rsp, err := c.CreateComponentGroupWithBody(ctx, spaceId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateComponentGroupResponse(rsp)
+}
+
+func (c *ClientWithResponses) CreateComponentGroupWithResponse(ctx context.Context, spaceId SpaceIdParam, body CreateComponentGroupJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateComponentGroupResponse, error) {
+	rsp, err := c.CreateComponentGroup(ctx, spaceId, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateComponentGroupResponse(rsp)
+}
+
+// DeleteComponentGroupWithResponse request returning *DeleteComponentGroupResponse
+func (c *ClientWithResponses) DeleteComponentGroupWithResponse(ctx context.Context, spaceId SpaceIdParam, groupId GroupIdParam, reqEditors ...RequestEditorFn) (*DeleteComponentGroupResponse, error) {
+	rsp, err := c.DeleteComponentGroup(ctx, spaceId, groupId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDeleteComponentGroupResponse(rsp)
+}
+
+// GetComponentGroupWithResponse request returning *GetComponentGroupResponse
+func (c *ClientWithResponses) GetComponentGroupWithResponse(ctx context.Context, spaceId SpaceIdParam, groupId GroupIdParam, reqEditors ...RequestEditorFn) (*GetComponentGroupResponse, error) {
+	rsp, err := c.GetComponentGroup(ctx, spaceId, groupId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetComponentGroupResponse(rsp)
+}
+
+// UpdateComponentGroupWithBodyWithResponse request with arbitrary body returning *UpdateComponentGroupResponse
+func (c *ClientWithResponses) UpdateComponentGroupWithBodyWithResponse(ctx context.Context, spaceId SpaceIdParam, groupId GroupIdParam, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateComponentGroupResponse, error) {
+	rsp, err := c.UpdateComponentGroupWithBody(ctx, spaceId, groupId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateComponentGroupResponse(rsp)
+}
+
+func (c *ClientWithResponses) UpdateComponentGroupWithResponse(ctx context.Context, spaceId SpaceIdParam, groupId GroupIdParam, body UpdateComponentGroupJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateComponentGroupResponse, error) {
+	rsp, err := c.UpdateComponentGroup(ctx, spaceId, groupId, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateComponentGroupResponse(rsp)
 }
 
 // CreateComponentWithBodyWithResponse request with arbitrary body returning *CreateComponentResponse
@@ -1387,32 +1749,6 @@ func (c *ClientWithResponses) UpdateComponentWithResponse(ctx context.Context, s
 		return nil, err
 	}
 	return ParseUpdateComponentResponse(rsp)
-}
-
-// ParseGetSpacesSpaceIdComponentGroupsGroupIdResponse parses an HTTP response from a GetSpacesSpaceIdComponentGroupsGroupIdWithResponse call
-func ParseGetSpacesSpaceIdComponentGroupsGroupIdResponse(rsp *http.Response) (*GetSpacesSpaceIdComponentGroupsGroupIdResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &GetSpacesSpaceIdComponentGroupsGroupIdResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest ComponentGroup
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	}
-
-	return response, nil
 }
 
 // ParseGetSpacesSpaceIdWebhooksResponse parses an HTTP response from a GetSpacesSpaceIdWebhooksWithResponse call
@@ -1487,6 +1823,118 @@ func ParseGetSpaceResponse(rsp *http.Response) (*GetSpaceResponse, error) {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
 			Space *Space `json:"space,omitempty"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseCreateComponentGroupResponse parses an HTTP response from a CreateComponentGroupWithResponse call
+func ParseCreateComponentGroupResponse(rsp *http.Response) (*CreateComponentGroupResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateComponentGroupResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest struct {
+			ComponentGroup *ComponentGroup `json:"component_group,omitempty"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseDeleteComponentGroupResponse parses an HTTP response from a DeleteComponentGroupWithResponse call
+func ParseDeleteComponentGroupResponse(rsp *http.Response) (*DeleteComponentGroupResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DeleteComponentGroupResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			ComponentGroup *ComponentGroup `json:"component_group,omitempty"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetComponentGroupResponse parses an HTTP response from a GetComponentGroupWithResponse call
+func ParseGetComponentGroupResponse(rsp *http.Response) (*GetComponentGroupResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetComponentGroupResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			ComponentGroup *ComponentGroup `json:"component_group,omitempty"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseUpdateComponentGroupResponse parses an HTTP response from a UpdateComponentGroupWithResponse call
+func ParseUpdateComponentGroupResponse(rsp *http.Response) (*UpdateComponentGroupResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &UpdateComponentGroupResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			ComponentGroup *ComponentGroup `json:"component_group,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err

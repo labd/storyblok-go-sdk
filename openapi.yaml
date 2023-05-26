@@ -122,43 +122,99 @@ paths:
                   component:
                     $ref: "#/components/schemas/Component"
 
-  /spaces/{space_id}/component-groups/{group_id}:
+  /v1/spaces/{space_id}/component_groups/:
+    post:
+      tags:
+        - components
+      summary: Create Component Group
+      operationId: createComponentGroup
+      parameters:
+        - $ref: "#/components/parameters/spaceIdParam"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ComponentGroupInput"
+      responses:
+        "201":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  component_group:
+                    $ref: "#/components/schemas/ComponentGroup"
+
+  /v1/spaces/{space_id}/component_groups/{group_id}:
     get:
       tags:
         - components
       summary: Get Component Group by ID
+      operationId: getComponentGroup
       parameters:
-        - in: path
-          name: space_id
-          schema:
-            type: integer
-          required: true
-          description: The ID of the space
-        - in: path
-          name: group_id
-          schema:
-            type: integer
-          required: true
-          description: The ID of the component group to retrieve
+        - $ref: "#/components/parameters/spaceIdParam"
+        - $ref: "#/components/parameters/groupIdParam"
       responses:
         "200":
           description: OK
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ComponentGroup"
+                type: object
+                properties:
+                  component_group:
+                    $ref: "#/components/schemas/ComponentGroup"
+    put:
+      tags:
+        - components
+      summary: Update Component Group by ID
+      operationId: updateComponentGroup
+      parameters:
+        - $ref: "#/components/parameters/spaceIdParam"
+        - $ref: "#/components/parameters/groupIdParam"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ComponentGroupInput"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  component_group:
+                    $ref: "#/components/schemas/ComponentGroup"
+    delete:
+      tags:
+        - components
+      summary: Delete Component Group by ID
+      operationId: deleteComponentGroup
+      parameters:
+        - $ref: "#/components/parameters/spaceIdParam"
+        - $ref: "#/components/parameters/groupIdParam"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  component_group:
+                    $ref: "#/components/schemas/ComponentGroup"
+
+
 
   /spaces/{space_id}/webhooks:
     get:
       summary: List Webhooks
       description: Retrieve a list of webhooks in a space.
       parameters:
-        - name: space_id
-          in: path
-          description: The ID of the space
-          required: true
-          schema:
-            type: string
+        - $ref: "#/components/parameters/spaceIdParam"
         - name: token
           in: query
           description: The API access token
@@ -185,12 +241,7 @@ paths:
       summary: Get Webhook
       description: Retrieve a specific webhook by ID.
       parameters:
-        - name: space_id
-          in: path
-          description: The ID of the space
-          required: true
-          schema:
-            type: string
+        - $ref: "#/components/parameters/spaceIdParam"
         - name: webhook_id
           in: path
           description: The ID of the webhook
@@ -226,6 +277,15 @@ components:
         type: integer
         format: int64
       description: The ID of the space
+
+    groupIdParam:
+      in: path
+      name: group_id
+      schema:
+        type: integer
+        format: int64
+      required: true
+      description: The ID of the component group to retrieve
 
   schemas:
     ComponentInput:
@@ -433,18 +493,43 @@ components:
               format: int64
               description: Numeric Unique ID
 
-    ComponentGroup:
+    ComponentGroupInput:
       type: object
       properties:
-        id:
-          type: integer
-          description: The ID of the component group
         name:
           type: string
           description: The name of the component group
-        uuid:
-          type: string
-          description: The UUID of the component group
+      required:
+        - name
+
+    ComponentGroup:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/ComponentGroupInput"
+        - type: object
+          properties:
+            id:
+              type: integer
+              format: int64
+            uuid:
+              type: string
+              format: uuid
+              description: The UUID of the component group
+              x-go-type: uuid.UUID
+              x-go-type-import:
+                name: uuid
+                path: "github.com/gofrs/uuid"
+            created_at:
+              type: string
+              format: date-time
+            updated_at:
+              type: string
+              format: date-time
+          required:
+            - id
+            - uuid
+            - created_at
+            - updated_at
 
     Space:
       type: object
