@@ -1,14 +1,18 @@
 openapi: 3.0.0
 info:
   title: Storyblok Managmenet OpenAPI Specs
-  description: Unofficial Storyblok Managmenet OpenAPI Specs
+  description: |
+    Unofficial Storyblok Management OpenAPI Specs. Generated from
+    https://www.storyblok.com/docs/api/management/v1 by mostly ChatGPT ;-)
   version: 0.0.1
 
-paths:
+security:
+  - BearerAuth: []
 
+paths:
   /v1/spaces/{space_id}/:
     parameters:
-      - $ref: '#/components/parameters/spaceIdParam'
+      - $ref: "#/components/parameters/spaceIdParam"
 
     get:
       summary: Get a space
@@ -17,16 +21,41 @@ paths:
       tags:
         - spaces
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Space'
+                type: object
+                properties:
+                  space:
+                    $ref: "#/components/schemas/Space"
+
+  /v1/spaces/{space_id}/components/:
+    parameters:
+      - $ref: "#/components/parameters/spaceIdParam"
+    post:
+      summary: Create a component
+      description: Create a component
+      operationId: createComponent
+      tags:
+        - components
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ComponentInput"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Component"
 
   /v1/spaces/{space_id}/components/{id}:
     parameters:
-      - $ref: '#/components/parameters/spaceIdParam'
+      - $ref: "#/components/parameters/spaceIdParam"
       - in: path
         name: id
         required: true
@@ -41,12 +70,12 @@ paths:
       tags:
         - components
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Component'
+                $ref: "#/components/schemas/Component"
     put:
       summary: Update a component
       description: Update a component
@@ -57,14 +86,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Component'
+              $ref: "#/components/schemas/ComponentInput"
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Component'
+                $ref: "#/components/schemas/Component"
 
   /spaces/{space_id}/component-groups/{group_id}:
     get:
@@ -85,12 +114,12 @@ paths:
           required: true
           description: The ID of the component group to retrieve
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ComponentGroup'
+                $ref: "#/components/schemas/ComponentGroup"
 
   /spaces/{space_id}/webhooks:
     get:
@@ -110,7 +139,7 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
             application/json:
@@ -120,7 +149,7 @@ paths:
                   webhooks:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Webhook'
+                      $ref: "#/components/schemas/Webhook"
                   total:
                     type: integer
 
@@ -148,18 +177,23 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Webhook'
+                $ref: "#/components/schemas/Webhook"
 
 components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+
   parameters:
     spaceIdParam:
       in: path
-      name: spaceId
+      name: space_id
       required: true
       schema:
         type: integer
@@ -168,6 +202,7 @@ components:
   schemas:
     Component:
       type: object
+      description: Component
       properties:
         id:
           type: integer
@@ -186,7 +221,7 @@ components:
           type: object
           description: The definition of fields (schema) for this component
           additionalProperties:
-            $ref: '#/components/schemas/Field'
+            $ref: "#/components/schemas/Field"
         image:
           type: string
           description: The image associated with the component (null if not set)
@@ -213,7 +248,40 @@ components:
           type: string
           description: The UUID of the component group
 
-    Field:
+    ComponentInput:
+      type: object
+      description: ComponentInput
+      properties:
+        name:
+          type: string
+          description: Technical name used for component property in entries
+        display_name:
+          type: string
+          description: The display name of the component
+        image:
+          type: string
+          description: URL to the preview image, if uploaded
+        preview:
+          type: string
+          description: Define the field that should be used for preview in the interface
+        is_root:
+          type: boolean
+          description: Component should be usable as a Content Type
+        is_nestable:
+          type: boolean
+          description: Component should be insertable in blocks field type fields
+        component_group_uuid:
+          type: string
+          description: The component group uuid of the component
+        schema:
+          type: object
+          description: The definition of fields (schema) for this component
+          additionalProperties:
+            $ref: "#/components/schemas/FieldInput"
+      required:
+        - name
+
+    FieldInput:
       type: object
       properties:
         type:
@@ -222,6 +290,131 @@ components:
         pos:
           type: integer
           description: The position of the field
+        translatable:
+          type: boolean
+          description: "Can field be translated; Default: false"
+          default: false
+        required:
+          type: boolean
+          description: "Is field required; Default: false"
+          default: false
+        regex:
+          type: string
+          description: Client Regex validation for the field
+        description:
+          type: string
+          description: Description shown in the editor interface
+        default_value:
+          type: string
+          description: Default value for the field; Can be an escaped JSON object
+        can_sync:
+          type: boolean
+          description: "Advanced usage to sync with field in preview; Default: false"
+          default: false
+        preview_field:
+          type: boolean
+          description: Is used as instance preview field below component name in bloks types
+        no_translate:
+          type: boolean
+          description: Should be excluded in translation export
+        rtl:
+          type: boolean
+          description: Enable global RTL for this field
+        rich_markdown:
+          type: boolean
+          description: Enable rich markdown view by default (true/false)
+        keys:
+          type: array
+          items:
+            type: string
+          description: Array of field keys to include in this section
+        field_type:
+          type: string
+          description: Name of the custom field type plugin
+        source:
+          type: string
+          description: "Possible values: undefined: Self; internal_stories: Stories; internal: Datasource; external: API Endpoint in Datasource Entries Array Format"
+        use_uuid:
+          type: boolean
+          description: "Default: true; available in option and source=internal_stories"
+        folder_slug:
+          type: string
+          description: 'Filter on selectable stories path; Effects editor only if source=internal_stories; In case you have a multi-language folder structure you can add the ''{0}'' placeholder and the path will be adapted dynamically. Examples: "{0}/categories/", {0}/{1}/categories/'
+        datasource_slug:
+          type: string
+          description: "Define selectable datasources string; Effects editor only if source=internal"
+        external_datasource:
+          type: string
+          description: "Define external datasource JSON Url; Effects editor only if source=external"
+        options:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              value:
+                type: string
+          description: 'Array of datasource entries [{name:"", value:""}]; Effects editor only if source=undefined'
+        image_crop:
+          type: boolean
+          description: "Activate force crop for images: (true/false)"
+        keep_image_size:
+          type: boolean
+          description: "Keep original size: (true/false)"
+        image_width:
+          type: string
+          description: Define width in px or width ratio if keep_image_size is enabled
+        image_height:
+          type: string
+          description: Define height in px or height ratio if keep_image_size is enabled
+        asset_folder_id:
+          type: integer
+          description: Default asset folder numeric id to store uploaded image of that field
+        add_https:
+          type: boolean
+          description: "Prepends https: to stop usage of relative protocol"
+        restrict_components:
+          type: boolean
+          description: "Activate restriction nestable component option; Default: false"
+          default: false
+        maximum:
+          type: integer
+          description: Maximum amount of added bloks in this blok field
+        restrict_content_types:
+          type: boolean
+          description: Activate restriction content type option
+        component_whitelist:
+          type: array
+          items:
+            type: string
+          description: 'Array of component/content type names: ["post","page","product"]'
+        disable_time:
+          type: boolean
+          description: "Disables time selection from date picker; Default: false"
+          default: false
+        max_length:
+          type: integer
+          description: Set the max length of the input string
+        filetypes:
+          type: array
+          items:
+            type: string
+          description: 'Array of file type names: ["images", "videos", "audios", "texts"]'
+
+      required:
+        - type
+        - pos
+
+    Field:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/FieldInput"
+        - type: object
+          properties:
+            id:
+              type: integer
+              description: Numeric Unique ID
 
     ComponentGroup:
       type: object

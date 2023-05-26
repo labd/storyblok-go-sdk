@@ -1,0 +1,7 @@
+package: sbmgmt
+generate:
+  models: true
+  client: true
+output: sbmgmt/main.gen.go
+output-options:
+  skip-prune: true
