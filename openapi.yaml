@@ -312,7 +312,12 @@ components:
           description: Component should be insertable in blocks field type fields
         component_group_uuid:
           type: string
+          format: uuid
           description: The component group uuid of the component
+          x-go-type: uuid.UUID
+          x-go-type-import:
+            name: uuid
+            path: "github.com/gofrs/uuid"
         schema:
           type: object
           description: The definition of fields (schema) for this component
@@ -366,117 +371,158 @@ components:
           type: integer
           format: int64
           description: The position of the field
-        translatable:
+
+        add_https:
           type: boolean
-          description: "Can field be translated; Default: false"
+          description: "Prepends https: to stop usage of relative protocol"
           default: false
-        required:
-          type: boolean
-          description: "Is field required; Default: false"
-          default: false
-        regex:
-          type: string
-          description: Client Regex validation for the field
-        description:
-          type: string
-          description: Description shown in the editor interface
-        default_value:
-          type: string
-          description: Default value for the field; Can be an escaped JSON object
+
+        asset_folder_id:
+          type: integer
+          format: int64
+          description: "Default asset folder numeric id to store uploaded image of that field"
+
         can_sync:
           type: boolean
           description: "Advanced usage to sync with field in preview; Default: false"
           default: false
-        preview_field:
-          type: boolean
-          description: Is used as instance preview field below component name in bloks types
-        no_translate:
-          type: boolean
-          description: Should be excluded in translation export
-        rtl:
-          type: boolean
-          description: Enable global RTL for this field
-        rich_markdown:
-          type: boolean
-          description: Enable rich markdown view by default (true/false)
-        keys:
-          type: array
-          items:
-            type: string
-          description: Array of field keys to include in this section
-        field_type:
-          type: string
-          description: Name of the custom field type plugin
-        source:
-          type: string
-          description: "Possible values: undefined: Self; internal_stories: Stories; internal: Datasource; external: API Endpoint in Datasource Entries Array Format"
-        use_uuid:
-          type: boolean
-          description: "Default: true; available in option and source=internal_stories"
-        folder_slug:
-          type: string
-          description: 'Filter on selectable stories path; Effects editor only if source=internal_stories; In case you have a multi-language folder structure you can add the ''{0}'' placeholder and the path will be adapted dynamically. Examples: "{0}/categories/", {0}/{1}/categories/'
-        datasource_slug:
-          type: string
-          description: "Define selectable datasources string; Effects editor only if source=internal"
-        external_datasource:
-          type: string
-          description: "Define external datasource JSON Url; Effects editor only if source=external"
-        options:
-          type: array
-          items:
-            type: object
-            properties:
-              name:
-                type: string
-              value:
-                type: string
-          description: 'Array of datasource entries [{name:"", value:""}]; Effects editor only if source=undefined'
-        image_crop:
-          type: boolean
-          description: "Activate force crop for images: (true/false)"
-        keep_image_size:
-          type: boolean
-          description: "Keep original size: (true/false)"
-        image_width:
-          type: string
-          description: Define width in px or width ratio if keep_image_size is enabled
-        image_height:
-          type: string
-          description: Define height in px or height ratio if keep_image_size is enabled
-        asset_folder_id:
-          type: integer
-          description: Default asset folder numeric id to store uploaded image of that field
-        add_https:
-          type: boolean
-          description: "Prepends https: to stop usage of relative protocol"
-        restrict_components:
-          type: boolean
-          description: "Activate restriction nestable component option; Default: false"
-          default: false
-        maximum:
-          type: integer
-          description: Maximum amount of added bloks in this blok field
-        restrict_content_types:
-          type: boolean
-          description: Activate restriction content type option
+
         component_whitelist:
           type: array
           items:
             type: string
-          description: 'Array of component/content type names: ["post","page","product"]'
+          description: "Array of component/content type names: [\"post\",\"page\",\"product\"]"
+
+        datasource_slug:
+          type: string
+          description: "Define selectable datasources string; Effects editor only if source=internal"
+
+        default_value:
+          type: string
+          description: "Default value for the field; Can be an escaped JSON object"
+
+        description:
+          type: string
+          description: "Description shown in the editor interface"
+
+        display_name:
+          type: string
+          description: "Name of the field for the editor interface"
+
         disable_time:
           type: boolean
           description: "Disables time selection from date picker; Default: false"
           default: false
-        max_length:
-          type: integer
-          description: Set the max length of the input string
+
+        external_datasource:
+          type: string
+          description: "Define external datasource JSON Url; Effects editor only if source=external"
+
+        field_type:
+          type: string
+          description: "Name of the custom field type plugin"
+
         filetypes:
           type: array
           items:
             type: string
-          description: 'Array of file type names: ["images", "videos", "audios", "texts"]'
+          description: "Array of file type names: [\"images\", \"videos\", \"audios\", \"texts\"]"
+
+        folder_slug:
+          type: string
+          description: "Filter on selectable stories path; Effects editor only if source=internal_stories; In case you have a multi-language folder structure you can add the '{0}' placeholder and the path will be adapted dynamically. Examples: \"{0}/categories/\", {0}/{1}/categories/"
+
+        image_crop:
+          type: boolean
+          description: "Activate force crop for images: (true/false)"
+
+        image_height:
+          type: string
+          description: "Define height in px or height ratio if keep_image_size is enabled"
+
+        image_width:
+          type: string
+          description: "Define width in px or width ratio if keep_image_size is enabled"
+
+        keep_image_size:
+          type: boolean
+          description: "Keep original size: (true/false)"
+
+        keys:
+          type: array
+          items:
+            type: string
+          description: "Array of field keys to include in this section"
+
+        max_length:
+          type: integer
+          format: int64
+          description: "Set the max length of the input string"
+
+        maximum:
+          type: integer
+          format: int64
+          description: "Maximum amount of added bloks in this blok field"
+
+        no_translate:
+          type: boolean
+          description: "Should be excluded in translation export"
+
+        options:
+          type: array
+          description: 'Array of datasource entries [{name:"", value:""}]; Effects editor only if source=undefined'
+          items:
+            $ref: "#/components/schemas/FieldOption"
+
+        tooltip:
+          type: boolean
+          description: "Show the description as a tooltip"
+          default: false
+
+        preview_field:
+          type: boolean
+          description: "Is used as instance preview field below component name in bloks types"
+
+        regex:
+          type: string
+          description: "Client Regex validation for the field"
+
+        required:
+          type: boolean
+          description: "Is field required; Default: false"
+          default: false
+
+        restrict_components:
+          type: boolean
+          description: "Activate restriction nestable component option; Default: false"
+          default: false
+
+        restrict_content_types:
+          type: boolean
+          description: "Activate restriction content type option"
+
+        rich_markdown:
+          type: boolean
+          description: "Enable rich markdown view by default (true/false)"
+
+        rtl:
+          type: boolean
+          description: "Enable global RTL for this field"
+
+        source:
+          type: string
+          description: "Possible values: undefined: Self; internal_stories: Stories; internal: Datasource; external: API Endpoint in Datasource Entries Array Format"
+
+        translatable:
+          type: boolean
+          description: "Can field be translated; Default: false"
+          default: false
+
+        use_uuid:
+          type: boolean
+          description: "Default: true; available in option and source=internal_stories"
+          default: true
+
 
       required:
         - type
@@ -492,6 +538,17 @@ components:
               type: integer
               format: int64
               description: Numeric Unique ID
+
+    FieldOption:
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: string
+      required:
+        - name
+        - value
 
     ComponentGroupInput:
       type: object
