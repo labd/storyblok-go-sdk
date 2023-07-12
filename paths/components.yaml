@@ -1,0 +1,105 @@
+create:
+  summary: Create a component
+  description: Create a component
+  operationId: createComponent
+  tags:
+    - components
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            component:
+              $ref: "../schemas/components.yaml#/ComponentCreateInput"
+  responses:
+    "201":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              component:
+                $ref: "../schemas/components.yaml#/Component"
+
+update:
+  summary: Update a component
+  description: Update a component
+  operationId: updateComponent
+  tags:
+    - components
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            component:
+              $ref: "../schemas/components.yaml#/ComponentUpdateInput"
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              component:
+                $ref: "../schemas/components.yaml#/Component"
+
+getOne:
+  summary: Get a component
+  description: Get a component
+  operationId: getComponent
+  tags:
+    - components
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              component:
+                $ref: "../schemas/components.yaml#/Component"
+
+getMultiple:
+  summary: List components
+  description: Retrieve a list of components
+  operationId: listComponents
+  tags:
+    - components
+  responses:
+    "200":
+      description: OK
+      headers:
+        schema:
+          $ref: "../schemas/pagination.yaml#/pagination"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              components:
+                type: array
+                items:
+                  $ref: "../schemas/components.yaml#/Component"
+
+delete:
+  summary: Delete a component
+  description: Delete a component
+  operationId: deleteComponent
+  tags:
+    - components
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              component:
+                $ref: "../schemas/components.yaml#/Component"

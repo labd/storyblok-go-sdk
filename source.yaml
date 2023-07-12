@@ -1,0 +1,443 @@
+openapi: 3.0.0
+info:
+  title: Storyblok Managmenet OpenAPI Specs
+  description: |
+    Unofficial Storyblok Management OpenAPI Specs. Generated from
+    https://www.storyblok.com/docs/api/management/v1 by mostly ChatGPT ;-)
+  version: 0.0.1
+
+security:
+  - BearerAuth: []
+
+paths:
+  # Spaces
+  /v1/spaces/:
+    post:
+      $ref: "paths/spaces.yaml#/create"
+    get:
+      $ref: "paths/spaces.yaml#/getMultiple"
+
+  /v1/spaces/{space_id}/:
+    parameters:
+      - $ref: "#/components/parameters/spaceIdParam"
+    get:
+      $ref: "paths/spaces.yaml#/getOne"
+    put:
+      $ref: "paths/spaces.yaml#/update"
+    delete:
+      $ref: "paths/spaces.yaml#/delete"
+    post:
+      $ref: "paths/spaces.yaml#/duplicate"
+
+  /v1/spaces/{space_id}/backups/:
+    parameters:
+      - $ref: "#/components/parameters/spaceIdParam"
+    post:
+      $ref: "paths/spaces.yaml#/backup"
+
+  # Components
+  /v1/spaces/{space_id}/components/:
+    parameters:
+      - $ref: "#/components/parameters/spaceIdParam"
+    post:
+      $ref: "paths/components.yaml#/create"
+    get:
+      $ref: "paths/components.yaml#/getMultiple"
+
+  /v1/spaces/{space_id}/components/{id}:
+    parameters:
+      - $ref: "#/components/parameters/spaceIdParam"
+      - $ref: "#/components/parameters/idParam"
+    get:
+      $ref: "paths/components.yaml#/getOne"
+    put:
+      $ref: "paths/components.yaml#/update"
+    delete:
+      $ref: "paths/components.yaml#/delete"
+
+  # Component Groups
+  /v1/spaces/{space_id}/component_groups/:
+    parameters:
+      - $ref: "#/components/parameters/spaceIdParam"
+    post:
+      $ref: "paths/component_groups.yaml#/create"
+    get:
+      $ref: "paths/component_groups.yaml#/getMultiple"
+
+  /v1/spaces/{space_id}/component_groups/{id}:
+    parameters:
+      - $ref: "#/components/parameters/spaceIdParam"
+      - $ref: "#/components/parameters/idParam"
+    get:
+      $ref: "paths/component_groups.yaml#/getOne"
+    put:
+      $ref: "paths/component_groups.yaml#/update"
+    delete:
+      $ref: "paths/component_groups.yaml#/delete"
+
+  # Asset Folders
+  /v1/spaces/{space_id}/asset_folders/:
+    parameters:
+      - $ref: "#/components/parameters/spaceIdParam"
+    post:
+      $ref: "paths/asset_folders.yaml#/create"
+    get:
+      $ref: "paths/asset_folders.yaml#/getMultiple"
+
+  /v1/spaces/{space_id}/asset_folders/{id}:
+    parameters:
+      - $ref: "#/components/parameters/spaceIdParam"
+      - $ref: "#/components/parameters/idParam"
+    get:
+      $ref: "paths/asset_folders.yaml#/getOne"
+    put:
+      $ref: "paths/asset_folders.yaml#/update"
+    delete:
+      $ref: "paths/asset_folders.yaml#/delete"
+
+  # Datasources
+  /v1/spaces/{space_id}/datasources/:
+    parameters:
+      - $ref: "#/components/parameters/spaceIdParam"
+    post:
+      $ref: "paths/datasources.yaml#/create"
+    get:
+      $ref: "paths/datasources.yaml#/getMultiple"
+
+  /v1/spaces/{space_id}/datasources/{id}:
+    parameters:
+      - $ref: "#/components/parameters/spaceIdParam"
+      - $ref: "#/components/parameters/idParam"
+    get:
+      $ref: "paths/datasources.yaml#/getOne"
+    put:
+      $ref: "paths/datasources.yaml#/update"
+    delete:
+      $ref: "paths/datasources.yaml#/delete"
+
+  # Datasource Entries
+  /v1/spaces/{space_id}/datasource_entries/:
+    parameters:
+      - $ref: "#/components/parameters/spaceIdParam"
+    post:
+      $ref: "paths/datasource_entries.yaml#/create"
+    get:
+      $ref: "paths/datasource_entries.yaml#/getMultiple"
+
+  /v1/spaces/{space_id}/datasource_entries/{id}:
+    parameters:
+      - $ref: "#/components/parameters/spaceIdParam"
+      - $ref: "#/components/parameters/idParam"
+    get:
+      $ref: "paths/datasource_entries.yaml#/getOne"
+    put:
+      $ref: "paths/datasource_entries.yaml#/update"
+    delete:
+      $ref: "paths/datasource_entries.yaml#/delete"
+
+  # Webhooks
+  /spaces/{space_id}/webhooks:
+    get:
+      summary: List Webhooks
+      description: Retrieve a list of webhooks in a space.
+      parameters:
+        - $ref: "#/components/parameters/spaceIdParam"
+        - name: token
+          in: query
+          description: The API access token
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  webhooks:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Webhook"
+                  total:
+                    type: integer
+
+  /spaces/{space_id}/webhooks/{webhook_id}:
+    get:
+      summary: Get Webhook
+      description: Retrieve a specific webhook by ID.
+      parameters:
+        - $ref: "#/components/parameters/spaceIdParam"
+        - name: webhook_id
+          in: path
+          description: The ID of the webhook
+          required: true
+          schema:
+            type: string
+        - name: token
+          in: query
+          description: The API access token
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Webhook"
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+
+  parameters:
+    spaceIdParam:
+      in: path
+      name: space_id
+      required: true
+      schema:
+        type: integer
+        format: int64
+      description: The ID of the space
+
+    idParam:
+      in: path
+      name: id
+      schema:
+        type: integer
+        format: int64
+      required: true
+      description: The ID of the component group to retrieve
+
+  # Webhooks
+
+  schemas:
+    # $ref: "./schemas/index.yaml"
+
+    # # Asset Folders
+    AssetFolderCreateInput:
+      $ref: "./schemas/asset_folders.yaml#/AssetFolderCreateInput"
+    AssetFolderUpdateInput:
+      $ref: "./schemas/asset_folders.yaml#/AssetFolderUpdateInput"
+    AssetFolder:
+      $ref: "./schemas/asset_folders.yaml#/AssetFolder"
+
+    # Component Groups
+    ComponentGroupCreateInput:
+      $ref: "./schemas/component_groups.yaml#/ComponentGroupCreateInput"
+    ComponentGroupUpdateInput:
+      $ref: "./schemas/component_groups.yaml#/ComponentGroupUpdateInput"
+    ComponentGroup:
+      $ref: "./schemas/component_groups.yaml#/ComponentGroup"
+
+    # Components
+    ComponentCreateInput:
+      $ref: "./schemas/components.yaml#/ComponentCreateInput"
+    ComponentUpdateInput:
+      $ref: "./schemas/components.yaml#/ComponentUpdateInput"
+    Component:
+      $ref: "./schemas/components.yaml#/Component"
+
+    # Datasource Entries
+    DatasourceEntryCreateInput:
+      $ref: "schemas/datasource_entries.yaml#/DatasourceEntryCreateInput"
+    DatasourceEntryUpdateInput:
+      $ref: "schemas/datasource_entries.yaml#/DatasourceEntryUpdateInput"
+    DatasourceEntry:
+      $ref: "schemas/datasource_entries.yaml#/DatasourceEntry"
+
+    # Datasources
+    DatasourceCreateInput:
+      $ref: "schemas/datasources.yaml#/DatasourceCreateInput"
+    DatasourceUpdateInput:
+      $ref: "schemas/datasources.yaml#/DatasourceUpdateInput"
+    Datasource:
+      $ref: "schemas/datasources.yaml#/Datasource"
+
+    # Spaces
+    SpaceCreateInput:
+      $ref: "schemas/spaces.yaml#/SpaceCreateInput"
+    SpaceUpdateInput:
+      $ref: "schemas/spaces.yaml#/SpaceUpdateInput"
+    Space:
+      $ref: "schemas/spaces.yaml#/Space"
+
+    # SpaceRole:
+    #   type: object
+    #   properties:
+    #     id:
+    #       type: integer
+    #       format: int64
+    #       description: The ID of the space role
+    #     name:
+    #       type: string
+    #       description: The name of the space role
+    #     description:
+    #       type: string
+    #       description: The description of the space role
+    #   required:
+    #     - id
+    #     - name
+    #     - description
+
+    # Task:
+    #   type: object
+    #   properties:
+    #     id:
+    #       type: integer
+    #       format: int64
+    #       description: The ID of the task
+    #     name:
+    #       type: string
+    #       description: The name of the task
+    #     status:
+    #       type: string
+    #       description: The status of the task
+    #     created_at:
+    #       type: string
+    #       format: date-time
+    #       description: The creation timestamp of the task
+    #     updated_at:
+    #       type: string
+    #       format: date-time
+    #       description: The update timestamp of the task
+    #     space_id:
+    #       type: integer
+    #       format: int64
+    #       description: The ID of the space containing the task
+    #   required:
+    #     - id
+    #     - name
+    #     - status
+    #     - created_at
+    #     - updated_at
+    #     - space_id
+
+    Webhook:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        url:
+          type: string
+        events:
+          type: array
+          items:
+            type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    # Asset:
+    #   type: object
+    #   properties:
+    #     id:
+    #       type: integer
+    #       format: int64
+    #       description: The ID of the asset
+    #     filename:
+    #       type: string
+    #       description: The filename of the asset
+    #     title:
+    #       type: string
+    #       description: The title of the asset
+    #     alt:
+    #       type: string
+    #       description: The alt text of the asset
+    #     fieldtype:
+    #       type: string
+    #       description: The fieldtype of the asset
+    #     filesize:
+    #       type: integer
+    #       description: The size of the asset in bytes
+    #     width:
+    #       type: integer
+    #       description: The width of the asset in pixels
+    #     height:
+    #       type: integer
+    #       description: The height of the asset in pixels
+    #     extension:
+    #       type: string
+    #       description: The file extension of the asset
+    #     is_dir:
+    #       type: boolean
+    #       description: Indicates whether the asset is a directory
+    #     is_image:
+    #       type: boolean
+    #       description: Indicates whether the asset is an image
+    #     is_audio:
+    #       type: boolean
+    #       description: Indicates whether the asset is an audio file
+    #     is_video:
+    #       type: boolean
+    #       description: Indicates whether the asset is a video file
+    #     folder_id:
+    #       type: integer
+    #       format: int64
+    #       description: The ID of the folder containing the asset
+    #     asset_folder_id:
+    #       type: integer
+    #       format: int64
+    #       description: The ID of the asset folder
+    #     created_at:
+    #       type: string
+    #       format: date-time
+    #       description: The creation timestamp of the asset
+    #     updated_at:
+    #       type: string
+    #       format: date-time
+    #       description: The update timestamp of the asset
+    #     space_id:
+    #       type: integer
+    #       format: int64
+    #       description: The ID of the space containing the asset
+    #   required:
+    #     - id
+    #     - filename
+    #     - title
+    #     - alt
+    #     - fieldtype
+    #     - filesize
+    #     - width
+    #     - height
+    #     - extension
+    #     - is_dir
+    #     - is_image
+    #     - is_audio
+    #     - is_video
+    #     - folder_id
+    #     - asset_folder_id
+    #     - created_at
+    #     - updated_at
+    #     - space_id
+
+    # AssetInput:
+    #   type: object
+    #   properties:
+    #     filename:
+    #       type: string
+    #       description: The filename of the asset
+    #     title:
+    #       type: string
+    #       description: The title of the asset
+    #     alt:
+    #       type: string
+    #       description: The alt text of the asset
+    #     folder_id:
+    #       type: integer
+    #       format: int64
+    #       description: The ID of the folder containing the asset
+    #   required:
+    #     - filename
+    #     - title
+    #     - folder_id

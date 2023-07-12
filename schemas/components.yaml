@@ -1,0 +1,272 @@
+ComponentCreateInput:
+  type: object
+  properties:
+    name:
+      type: string
+      description: Technical name used for component property in entries
+    display_name:
+      type: string
+      description: The display name of the component
+    image:
+      type: string
+      description: URL to the preview image, if uploaded
+    preview:
+      type: string
+      description: Define the field that should be used for preview in the interface
+    icon:
+      type: string
+      description: An optional icon for the component to identify this component type in the interface
+      enum:
+        - "block-@"
+        - "block-1-2block"
+        - "block-add"
+        - "block-arrow-pointer"
+        - "block-block"
+        - "block-buildin"
+        - "block-center-m"
+        - "block-comment"
+        - "block-doc"
+        - "block-dollar-sign"
+        - "block-email"
+        - "block-image"
+        - "block-keyboard"
+        - "block-locked"
+        - "block-map-pin"
+        - "block-mobile"
+        - "block-monitor"
+        - "block-paycard"
+        - "block-resize-fc"
+        - "block-cart"
+        - "block-share"
+        - "block-shield-2"
+        - "block-shield"
+        - "block-sticker"
+        - "block-suitcase"
+        - "block-table-2"
+        - "block-table"
+        - "block-tag"
+        - "block-text-c"
+        - "block-text-img-c"
+        - "block-text-img-l"
+        - "block-text-img-r-l"
+        - "block-text-img-r"
+        - "block-text-img-t-l"
+        - "block-text-img-t-r"
+        - "block-text-l"
+        - "block-text-r"
+        - "block-unlocked"
+        - "block-wallet"
+    color:
+      type: string
+      description: Css color used as background for the icon
+    is_root:
+      type: boolean
+      description: Component should be usable as a Content Type
+    is_nestable:
+      type: boolean
+      description: Component should be insertable in blocks field type fields
+    component_group_uuid:
+      type: string
+      format: uuid
+      description: The component group uuid of the component
+      x-go-type: uuid.UUID
+      x-go-type-import:
+        name: uuid
+        path: "github.com/gofrs/uuid"
+    schema:
+      type: object
+      description: The definition of fields (schema) for this component
+      additionalProperties:
+        $ref: "#/FieldInput"
+      # Hack; storyblok is not using the pos field but the order of the
+      # fields in the schema.
+      x-go-type: orderedmap.OrderedMap[string,FieldInput]
+      x-go-type-import:
+        name: orderedmap
+        path: "github.com/wk8/go-ordered-map/v2"
+  required:
+    - name
+
+ComponentUpdateInput:
+  type: object
+  allOf:
+    - $ref: "#/ComponentCreateInput"
+
+Component:
+  type: object
+  description: A component is a standalone entity that is meaningful in its own right. While components (or bloks) can be nested in each other, semantically they remain equal. Each component is a small piece of your data structure which can be filled with content or nested by your content editor. One component can consist of as many field types as required.
+  allOf:
+    - $ref: "#/ComponentUpdateInput"
+    - type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: The ID of the component
+        created_at:
+          type: string
+          format: date-time
+          description: The creation timestamp of the component
+        preset_id:
+          type: string
+          description: The ID of the preset associated with the component (null if not set)
+        real_name:
+          type: string
+          description: The real name of the component
+      required:
+        - id
+        - created_at
+
+FieldInput:
+  type: object
+  properties:
+    type:
+      type: string
+      description: The type of the field
+    pos:
+      type: integer
+      format: int64
+      description: The position of the field
+    add_https:
+      type: boolean
+      description: "Prepends https: to stop usage of relative protocol"
+      default: false
+    asset_folder_id:
+      type: integer
+      format: int64
+      description: "Default asset folder numeric id to store uploaded image of that field"
+    can_sync:
+      type: boolean
+      description: "Advanced usage to sync with field in preview; Default: false"
+      default: false
+    component_whitelist:
+      type: array
+      items:
+        type: string
+      description: 'Array of component/content type names: ["post","page","product"]'
+    datasource_slug:
+      type: string
+      description: "Define selectable datasources string; Effects editor only if source=internal"
+    default_value:
+      type: string
+      description: "Default value for the field; Can be an escaped JSON object"
+    description:
+      type: string
+      description: "Description shown in the editor interface"
+    display_name:
+      type: string
+      description: "Name of the field for the editor interface"
+    disable_time:
+      type: boolean
+      description: "Disables time selection from date picker; Default: false"
+      default: false
+    external_datasource:
+      type: string
+      description: "Define external datasource JSON Url; Effects editor only if source=external"
+    field_type:
+      type: string
+      description: "Name of the custom field type plugin"
+    filetypes:
+      type: array
+      items:
+        type: string
+      description: 'Array of file type names: ["images", "videos", "audios", "texts"]'
+    folder_slug:
+      type: string
+      description: 'Filter on selectable stories path; Effects editor only if source=internal_stories; In case you have a multi-language folder structure you can add the ''{0}'' placeholder and the path will be adapted dynamically. Examples: "{0}/categories/", {0}/{1}/categories/'
+    image_crop:
+      type: boolean
+      description: "Activate force crop for images: (true/false)"
+    image_height:
+      type: string
+      description: "Define height in px or height ratio if keep_image_size is enabled"
+    image_width:
+      type: string
+      description: "Define width in px or width ratio if keep_image_size is enabled"
+    keep_image_size:
+      type: boolean
+      description: "Keep original size: (true/false)"
+    keys:
+      type: array
+      items:
+        type: string
+      description: "Array of field keys to include in this section"
+    max_length:
+      type: integer
+      format: int64
+      description: "Set the max length of the input string"
+    maximum:
+      type: integer
+      format: int64
+      description: "Maximum amount of added bloks in this blok field"
+    no_translate:
+      type: boolean
+      description: "Should be excluded in translation export"
+    options:
+      type: array
+      description: 'Array of datasource entries [{name:"", value:""}]; Effects editor only if source=undefined'
+      items:
+        $ref: "#/FieldOption"
+    tooltip:
+      type: boolean
+      description: "Show the description as a tooltip"
+      default: false
+    preview_field:
+      type: boolean
+      description: "Is used as instance preview field below component name in bloks types"
+    regex:
+      type: string
+      description: "Client Regex validation for the field"
+    required:
+      type: boolean
+      description: "Is field required; Default: false"
+      default: false
+    restrict_components:
+      type: boolean
+      description: "Activate restriction nestable component option; Default: false"
+      default: false
+    restrict_content_types:
+      type: boolean
+      description: "Activate restriction content type option"
+    rich_markdown:
+      type: boolean
+      description: "Enable rich markdown view by default (true/false)"
+    rtl:
+      type: boolean
+      description: "Enable global RTL for this field"
+    source:
+      type: string
+      description: "Possible values: undefined: Self; internal_stories: Stories; internal: Datasource; external: API Endpoint in Datasource Entries Array Format"
+    translatable:
+      type: boolean
+      description: "Can field be translated; Default: false"
+      default: false
+    use_uuid:
+      type: boolean
+      description: "Default: true; available in option and source=internal_stories"
+      default: true
+  required:
+    - type
+    - pos
+
+Field:
+  type: object
+  allOf:
+    - $ref: "#/FieldInput"
+    - type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Numeric Unique ID
+
+FieldOption:
+  type: object
+  properties:
+    name:
+      type: string
+    value:
+      type: string
+  required:
+    - name
+    - value

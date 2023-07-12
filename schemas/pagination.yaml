@@ -1,0 +1,9 @@
+pagination:
+  type: object
+  properties:
+    total:
+      type: integer
+      description: The total number of items
+    per-page:
+      type: integer
+      description: The number of items per page

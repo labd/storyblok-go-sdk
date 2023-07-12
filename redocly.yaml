@@ -1,0 +1,5 @@
+apis:
+  storyblok@latest:
+    root: "source.yaml"
+extends:
+  - recommended

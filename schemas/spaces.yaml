@@ -1,0 +1,157 @@
+SpaceCreateInput:
+  type: object
+  properties:
+    name:
+      type: string
+      description: The name of the space
+    domain:
+      type: string
+      description: The domain of the space
+    story_published_hook:
+      type: string
+      description: The story published hook of the space (null if not set)
+    searchblok_id:
+      type: string
+      description: The Searchblok ID of the space (null if not set)
+    environments:
+      type: string
+      description: The environments of the space (null if not set)
+  required:
+    - name
+
+SpaceUpdateInput:
+  type: object
+  allOf:
+    - $ref: "#/SpaceCreateInput"
+    - type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: The ID of the space
+        uniq_domain:
+          type: string
+          description: The unique domain of the space (null if not set)
+        owner_id:
+          type: integer
+          description: The ID of the owner of the space
+        parent_id:
+          type: string
+          description: The ID of the parent space (null if not set)
+        duplicatable:
+          type: string
+          description: Indicates whether the space is duplicatable (null if not set)
+        default_root:
+          type: string
+          description: The default root of the space
+        options:
+          type: object
+          description: The options of the space
+          additionalProperties: {}
+        routes:
+          type: array
+          items: {}
+          description: An array of routes
+        billing_address:
+          type: object
+          description: The billing address of the space
+          additionalProperties: {}
+
+Space:
+  type: object
+  allOf:
+    - $ref: "#/SpaceUpdateInput"
+    - type: object
+      properties:
+        plan:
+          type: string
+          description: The plan of the space
+        plan_level:
+          type: integer
+          description: The plan level of the space
+        limits:
+          type: object
+          description: The limits of the space
+          additionalProperties: {}
+        created_at:
+          type: string
+          format: date-time
+          description: The creation timestamp of the space
+        role:
+          type: string
+          description: The role of the user in the space
+        stories_count:
+          type: integer
+          description: The count of stories in the space
+        assets_count:
+          type: integer
+          description: The count of assets in the space
+        request_count_today:
+          type: integer
+          description: The count of requests made today
+        api_requests:
+          type: integer
+          description: The total number of API requests allowed
+        exceeded_requests:
+          type: integer
+          description: The count of exceeded API requests
+        euid:
+          type: string
+          description: The EUID of the space (null if not set)
+        trial:
+          type: boolean
+          description: Indicates whether the space is in trial mode
+        has_slack_webhook:
+          type: boolean
+          description: Indicates whether the space has a Slack webhook
+        api_logs_per_month:
+          type: array
+          items: {}
+          description: An array of API logs per month
+        first_token:
+          type: string
+          description: The first token of the space
+        has_pending_tasks:
+          type: boolean
+          description: Indicates whether the space has pending tasks
+        options:
+          type: object
+          description: The options of the space
+          additionalProperties: {}
+        collaborators:
+          type: array
+          items: {}
+          description: An array of collaborators
+        settings:
+          type: array
+          items: {}
+          description: An array of settings
+        owner:
+          type: object
+          description: The owner of the space
+          additionalProperties: {}
+      required:
+        - name
+        - domain
+        - plan
+        - plan_level
+        - created_at
+        - id
+        - role
+        - owner_id
+        - stories_count
+        - assets_count
+        - request_count_today
+        - api_requests
+        - exceeded_requests
+        - trial
+        - routes
+        - default_root
+        - has_slack_webhook
+        - api_logs_per_month
+        - first_token
+        - has_pending_tasks
+        - options
+        - collaborators
+        - settings
+        - owner

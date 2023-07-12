@@ -1,0 +1,2556 @@
+Skip to main content
+curlJavaScriptRubyPHPJavaC#SwiftPython
+TOPICS
+Introduction
+Use Cases
+Authentication
+Errors
+Rate Limit
+Pagination
+Organization
+CORE RESOURCES
+Stories
+The Story Object
+Retrieve one Story
+Retrieve multiple Stories
+Create a Story
+Update a Story
+Delete a Story
+Internationalization for Stories
+Publish a Story
+Unpublish a Story
+Compare a Story Version
+Get Story Versions
+Collaborators
+Components
+Component Groups
+Assets
+Asset Folders
+Datasources
+Datasource Entries
+Spaces
+Space Roles
+Tasks
+Approvals
+Activities
+Presets
+Field types
+Workflow Stage
+Workflow Stage Changes
+Releases
+Branch deployments
+Management API Reference
+The Storyblok Management API is organized around REST. Our API has predictable, resource-oriented URLs, and uses HTTP response codes to indicate API errors. We use built-in HTTP features, like HTTP query parameters and HTTP verbs, which are understood by off-the-shelf HTTP clients. We support cross-origin resource sharing, allowing you to interact securely with our API from a client-side web application (though you should never expose your secret API key in any public website's client-side code). JSON is returned by all API responses, including errors, although our API libraries convert responses to appropriate language-specific objects.
+
+The requests in the right sidebar are designed to work as is. The sample requests can be performed using your own API Authentication Token that you can obtain from your profile in the Storyblok application.
+
+Edit this section on GitHub
+API Libraries
+Official libraries for the Storyblok Management API are available in several languages. Community-supported libraries are also available for additional languages.
+
+Base URL:
+
+https://mapi.storyblok.com
+For spaces whose server location is in the United States, please use this URL:
+
+https://api-us.storyblok.com
+For spaces whose server location is in China, please use this URL:
+
+https://app.storyblokchina.cn
+Use Cases
+The Management API should not be used to consume your information as it does not utilize our global CDN for your requests and can result in higher latencies. Please make sure to use the Content Delivery API instead.
+
+Edit this section on GitHub
+Use Case
+Migration from your current data storage / CMS
+Integration with 3rd party applications
+Import and Export automation
+Automatic translation workflows
+Component versioning
+Whitelabel integrations
+Authentication
+Authenticate your account by including your personal access token in API requests. The easiest way to get started is to create an OAuth2 token using the Storyblok app. Go to the My Account section at app.storyblok.com and click on “Generate new token”.
+
+Your personal access token will grant anyone who obtains it with access to all associated spaces for your account, so make sure to never expose it on the client side or commit it in your source code. Use strategies like environment variables to secure your personal access token. If you have exposed your personal access token, make sure to delete it immediately from the My Account section.
+
+Using an OAuth2 token, a username and password doesn’t need to be permanently stored and you can revoke access at any time.
+
+Authorization for Apps
+In order to Authenticate your Apps, make sure to add Bearer in front of your OAuth2 token.
+
+Examples
+
+curl -H "Authorization: Bearer YOUR_OAUTH_TOKEN" https://mapi.storyblok.com/
+// npm install storyblok-js-client
+const StoryblokClient = require('storyblok-js-client')
+
+// Initialize the client with the oauth token
+const Storyblok = new StoryblokClient({
+  oauthToken: 'Bearer YOUR_OAUTH_TOKEN'
+})
+Edit this section on GitHub
+Example Request
+
+curl -H "Authorization: YOUR_OAUTH_TOKEN" https://mapi.storyblok.com/
+Errors
+Storyblok uses conventional HTTP response codes to indicate the success or failure of an API request. In general: Codes in the 2xx range indicate success. Codes in the 4xx range indicate an error that failed given the information provided (e.g., a required parameter was omitted, a charge failed, content entry was not published but version requested was set to published, etc.). Codes in the 5xx range indicate an error with Storyblok's servers (these are rare).
+
+Some 4xx errors that could be handled programmatically (e.g., content entry was not found) include an error code that briefly explains the error reported.
+
+Edit this section on GitHub
+Http Status Code Summary
+
+Code	Description
+200 - OK	Everything worked as expected.
+400 - Bad Request	Wrong format was sent (eg. XML instead of JSON).
+401 - Unauthorized	No valid API key provided.
+403 - Forbidden	Insufficient permissions.
+404 - Not Found	The requested resource doesn't exist (perhaps due to not yet published content entries).
+422 - Unprocessable Entity	The request was unacceptable, often due to missing a required parameter.
+429 - Too Many Requests	Too many requests hit the API too quickly. We recommend an exponential backoff of your requests.
+500, 502, 503, 504 - Server Errors	Something went wrong on Storyblok's end. (These are rare.)
+Rate Limit
+The management api is rate limited to 3 requests per second for users on the free plan and 6 requests per second for other users.
+
+Edit this section on GitHub
+Plan	Rate Limit
+Community	3 per second
+Entry	6 per second
+Teams	6 per second
+Enterprise	Custom
+Enterprise +	Custom
+Pagination
+All top-level API resources have support for bulk fetches via "list" API methods. For instance, you can list stories and datasource_entries. These list API methods share a common structure, taking these two parameters: page, per_page.
+
+The default per_page is set to 25 entries per page. You can increase this number to receive up to 100 entries per page. To go through different pages you can utilize the page parameter. The page parameter is a numeric value and uses 1 as default.
+
+To allow a calculation of how many pages are available you can access the Total response header that you will receive after you made your first request. Access it and divide it with your per_page parameter to receive the highest possible page, otherwise you will receive an empty array as result.
+
+Query Parameter	Description
+page	Default: 1. Increase this to receive the next page of content entries
+per_page	Default: 25, Max for Stories: 100, Max for Datasource Entries: 1000 . Defines the number of content entries you will receive per page
+Edit this section on GitHub
+Example Request
+
+https://api.storyblok.com/v1/spaces/(:space_id)/stories/?per_page=2&page=1
+Example Response
+
+{
+  "stories": [
+    { ... },
+    { ... }
+  ]
+}
+Example Response Headers
+
+status: 200
+per-page: 2
+total: 3
+...
+Organization
+The Organization endpoint is helpful for obtaining comprehensive statistics on your Storyblok spaces. It provides valuable information, such as the number of users within your organization, as well as details like last_sign_in_at or last_sign_in_ip.
+
+On the right hand site you can see an example response.
+
+Edit this section on GitHub
+Example Request
+
+curl -H "Authorization: YOUR_OAUTH_TOKEN" https://mapi.storyblok.com/v1/orgs/me
+Example Response
+
+{
+  "org": {
+    "name": "ORG Name",
+    "users": [
+      {
+        "userid": "exampleemail@storyblok.com",
+        "email": "exampleemail@storyblok.com",
+        "username": null,
+        "real_email": "exampleemail@storyblok.com",
+        "avatar": null,
+        "id": 106362,
+        "organization": null,
+        "sign_in_count": 0,
+        "created_at": "2022-01-12T12:56:56.806Z",
+        "firstname": "Dipankar",
+        "lastname": "Maikap",
+        "org_role": "member",
+        "last_sign_in_at": null,
+        "last_sign_in_ip": "168.121.178.3",
+        "disabled": false,
+        "partner_role": null,
+        "friendly_name": "Dipankar Maikap",
+        "on_spaces": [
+          1,
+          2
+        ],
+        "roles_on_spaces": {
+          "1": [
+            "admin"
+          ],
+          "2": [
+            "admin"
+          ]
+        }
+      }
+    ],
+    "track_statistics": true,
+    "invitations": [
+      {
+        "id": 105845,
+        "email": "exampleemail@storyblok.com",
+        "org_id": 34,
+        "user_id": 17,
+        "expires_at": "2023-06-13T12:28:44.527Z",
+        "org_role": "admin",
+        "inviter_id": 1,
+        "registered": false
+      }
+    ]
+  }
+}
+Stories
+The stories endpoint will let you manage all content entries of your Storyblok space. You can use it to import, export or modify content.
+
+Edit this section on GitHub
+Endpoint
+
+GET /v1/spaces/:space_id/stories/:story_id
+The Story Object
+This is an object representing your content entry. One Story object can be of a specific type, so called content types and is able to contain components. You define the fields and nestability of your content types to achieve your content structure. You can use this object to build up your entities when migrating or importing content.
+
+Property	Description
+id	Numeric id
+uuid	Generated uuid string
+name	The name you give this story
+slug	The slug / path you give this story
+full_slug	Combined parent folder and current slug
+path	Given real path, used in the preview editor
+content	Your defined custom content object
+release_id	Id of your content stage (default: null)
+published	Is story published (true/false)
+unpublished_changes	Story has unpublished changes; saved but not published (true/false)
+position	Position in folder
+is_startpage	Is startpage of current folder (true/false)
+is_folder	Is story a folder (true/false)
+default_root	Component name which will be used as default content type for this folders entries
+disble_fe_editor	Is side by side editor disabled for all entries in folder (true/false)
+parent_id	Parent story/folder numeric id
+parent	Essential parent information as object (resolved from parent_id)
+group_id	Alternates group id (uuid string)
+alternates	Array of resolved subset of link objects
+tag_list	Array of Tags (string only)
+breadcrumbs	Array of resolved subset of link objects (one per path segment / parent)
+sort_by_date	Legacy: Additional sorting date field (Format: YYYY-mm-dd)
+meta_data	JSON to add meta data that is not setting the story status to unpublished changes. Example: User ratings.
+pinned	To pin the story in the toolbar
+preview_token[token]	Token passed to the editor as preview parameter to allow editmode verification
+preview_token[timestamp]	Timestamp passed to the editor as preview parameter to allow editmode verification
+last_author[id]	Last author user object numeric id
+last_author[userid]	Last author userid/username
+created_at	Creation date (Format: YYYY-mm-dd HH:MM)
+updated_at	Latest update date (Format: YYYY-mm-dd HH:MM)
+published_at	Latest publishing date (Format: YYYY-mm-dd HH:MM)
+first_published_at	First publishing date (Format: YYYY-mm-dd HH:MM)
+imported_at	Latest import date (Format: YYYY-mm-dd HH:MM)
+Edit this section on GitHub
+Example Object
+
+{
+  "story": {
+    "id": 369689,
+    "uuid": "039508c6-e9fa-42b5-b952-c7d96ab6099d",
+    "name": "My third post",
+    "slug": "my-third-post",
+    "created_at": "2018-10-29T10:27:52.802Z",
+    "updated_at": "2018-10-30T12:24:07.499Z",
+    "published_at": "2018-08-07T09:40:13.802Z",
+    "first_published_at": "2018-08-07T09:40:13.802Z",
+    "imported_at": null,
+    // group id defines the referenced alternates
+    "group_id": "fb33b858-277f-4690-81fb-e0a080bd39ac",
+    // resolved alternates by group_id
+    "alternates": [],
+    "sort_by_date": null,
+    "tag_list": [],
+    "is_folder": false,
+    "content": {
+      "_uid": "98cccd01-f807-4494-996d-c6b0de2045a5",
+      "component": "your_content_type"
+      // and fields you define yourself are in here
+    },
+    "path": null,
+    "default_root": null,
+    "disble_fe_editor": false,
+    // parent folder id
+    "parent_id": 369683,
+    // resolved parent folder information
+    "parent": {
+      "id": 369683,
+      "slug": "posts",
+      "name": "Posts",
+      "disble_fe_editor": true,
+      "uuid": "dcfcc350-e63e-4232-8dcb-ba4b8e70799d"
+    },
+    "full_slug": "posts/my-third-post", // automatically generated
+    // resolved full_slug parts
+    "breadcrumbs": [{
+      "id": 369683,
+      "name": "Posts",
+      "parent_id": 0,
+      "disble_fe_editor": true
+    }],
+    "published": false,
+    "unpublished_changes": true,
+    "is_startpage": false,
+    "meta_data": null,
+    "pinned": false,
+    "preview_token": {
+      "token": "279395174a25be38b702f9ec90d08a960e1a5a84",
+      "timestamp": "1545530576"
+    },
+    "last_author": {
+      "id": 39821,
+      "userid": "storyblok"
+    }
+  }
+}
+Retrieve one Story
+Returns a single, fully loaded story object by providing a specific numeric id.
+
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/606/stories/369689" \
+-X GET \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-H "Content-Type: application/json"
+You will receive a fully loaded story object as response.
+
+Retrieve multiple Stories
+Returns an array of story objects without content. Can be filtered with the parameters below and is paged.
+
+Parameter	Description
+page	Current page of stories
+contain_component	Filters by component in all levels of the content. Allows comma separated value for multiple components
+text_search	Filter by a term using full text search
+sort_by	Sort entries by specific attribute and order with content.YOUR_FIELD:asc and content.YOUR_FIELD:desc. To sort integers append :int. To sort floats append :float. Possible values are all root attributes of the entry (position and parent_position are special invisible attributes) and all fields of your content type inside content with a dot as seperator. Example: 'position:asc', 'parent_position:asc', 'content.your_custom_field:asc', 'content.your_number_field:asc:int', 'created_at:desc'.
+pinned	Filter by pinned stories if '1'
+excluding_ids	Exclude stories by ids (comma separated) from result
+by_ids	Filter by ids (comma separated)
+by_uuids	Filter by uuids (comma separated)
+with_tag	Filter by tag
+folder_only	Filter by folders only
+story_only	Filter by stories only
+with_parent	Filter by parent id
+with_slug	Filter by exact slug
+starts_with	Filter stories starting with a specific slug
+in_trash	Filter by items in the trash folder
+search	Filter by search term
+filter_query	Filter by specific attribute(s) of your content type. See content delivery api documentation.
+in_release	Filter items by the release id
+is_published	true for entries that are currently published; false for those that are currently not published or unpublished
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/606/stories/" \
+-X GET \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-H "Content-Type: application/json"
+Example Request with search_term
+
+curl "https://mapi.storyblok.com/v1/spaces/606/stories/?text_search=My%20fulltext%20search" \
+-X GET \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-H "Content-Type: application/json"
+Example Request with by_uuids
+
+curl "https://mapi.storyblok.com/v1/spaces/606/stories/?by_uuids=fb3afwa58-277f-4690-81fb-e0a080bd39ac,81fb81fb-e9fa-42b5-b952-c7d96ab6099d" \
+-X GET \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-H "Content-Type: application/json"
+You will receive an array of story objects without content as response.
+
+Create a Story
+You can set most of the fields that are available in the story object, below we only list the properties in the example and the possible required fields. Stories are not published by default. If you want to create a published Story add the parameter publish with the value 1.
+
+Property	Description
+story	Your full story object
+story[name]	Name of the story is required
+story[slug]	Slug is required; Used to identify the story (can not include /create stories with is_folder and required path segments and parent_id link instead)
+story[content]	Object structure for your content
+story[default_root] (required*)	Default content type/root component. (*Required if is_folder is true)
+story[is_folder]	If true a folder will be created instead of a story
+story[parent_id]	The id of the parent
+story[disble_fe_editor]	Is side by side editor disabled for all entries in folder (true/false)
+story[path]	Given real path, used in the preview editor
+story[is_startpage]	Is startpage of current folder (true/false)
+story[position]	Integer value of the position
+story[first_published_at]	First publishing date (Format: YYYY-mm-dd HH:MM)
+story[translated_slugs_attributes]	Add translated slugs/names if you have the "Translatable slugs" app installed. Example: [{lang: "de", slug: "startseite", name: "Startseite"}].
+publish	Should the story be published immediately (set 1 to publish)
+release_id	Numeric ID of release (optional)
+You can save any data in the story[content] attribute, and use it in the editor, as long as you follow these rules:
+
+The story[content] property needs to be an object at the root level
+Every object inside needs to have the property "component":"your_components_name"
+Only nest components using arrays, except if you want to build a custom field type.
+Every nested object which is a component or custom field type needs a _uid property.
+This lets you import data and define the schema of your components afterwards in the interface where necessary.
+
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/606/stories/" \
+-X POST \
+-H "Content-Type: application/json" \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-d "{\"story\":{\"name\":\"Story Name\",\"slug\":\"story-name\",\"content\":{\"component\":\"page\",\"body\":[]}},\"publish\":1}"
+You will receive a fully loaded story object as a response.
+
+Update a Story
+Can be used for migrations, updates (e.g. if you changed your component structure), or bulk actions. If you want to publish your story immediately, add the parameter publish with the value 1 to the object. In order to set alternate versions of a story, you can set the group_id equal to the group_id of the story (or stories) that should be the alternate(s).
+
+Property	Description
+story	Your full story object
+story[name]	Name of the story is required
+story[slug]	Slug is required; Used to identify the story (can not include /create stories with is_folder and required path segments and parent_id link instead)
+story[content]	Object structure for your content
+story[default_root] (required*)	Default content type/root component. (*Required if is_folder is true)
+story[is_folder]	If true a folder will be created instead of a story
+story[parent_id]	The id of the parent
+story[alternates]	Array of resolved subset of link objects (automatically generated)
+story[disble_fe_editor]	Is side by side editor disabled for all entries in folder (true/false)
+story[path]	Given real path, used in the preview editor
+story[is_startpage]	Is startpage of current folder (true/false)
+story[position]	Integer value of the position
+story[first_published_at]	First publishing date (Format: YYYY-mm-dd HH:MM)
+story[translated_slugs_attributes]	Add/modify/delete translated slugs/names if you have the "Translatable slugs" app installed. Example: [{lang: "de", slug: "startseite", name: "Startseite"}]. To edit existing slugs add the id to the object. To delete an item add _destroy with the value 1 to the object.
+group_id	Numeric ID of the group (optional)
+force_update	If '1' it will overwrite a locked story
+release_id	Numeric ID of release (optional)
+publish	If '1' it will publish the story, 'publish' must be omitted if publication is not desired
+lang	Language code to publish the story individually (must be enabled in the space settings)
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/606/stories/2141" \ 
+-X PUT \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-H "Content-Type: application/json" \
+-d "{\"story\":{\"name\":\"Story Name\",\"slug\":\"story-name\",\"id\":2141,\"content\":{\"component\":\"page\",\"body\":[]}},\"force_update\":1,\"publish\":1}"
+You will receive a fully loaded story object as response.
+
+Delete a Story
+Delete a content entry by using its numeric id.
+
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/606/stories/2141" \ 
+-X DELETE \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-d ""
+Internationalization for Stories
+If you use our field level translations functionality, you can provide the values for the translations/languages within the same content object by appending __i18n__ followed by the language code. Make sure to have the component field option translatable to true.
+
+Get a full list of our languages codes on Github.
+
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/606/stories/" \
+-X POST \
+-H "Content-Type: application/json" \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-d "{\"story\":{\"name\":\"My First Article\",\"slug\":\"first-post\",\"content\":{\"component\":\"post\",\"headline\":\"This is awesome!\",\"headline__i18n__de\":\"Das ist toll!\"}},\"publish\":1}"
+Publish a Story
+Publishing a story besides using the publish property via creation, can be done by using a GET request for each story you want to publish.
+
+Property	Description
+release_id	Numeric ID of release (optional)
+lang	Language code to publish the story individually (optional, must be enabled in the space settings)
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/606/stories/2141/publish" \
+-X GET \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-H "Content-Type: application/json"
+Unpublish a Story
+Unpublishing a story besides using the unpublish action in visual editor or in content viewer, can be done by using a GET request for each story you want to unpublish.
+
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/606/stories/2141/unpublish" \
+-X GET \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-H "Content-Type: application/json"
+Compare a Story Version
+With this endpoint you can compare the changes between two versions of a story in Storyblok. You need to provide the story ID and version ID in the request to retrieve the comparison results.
+
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/185/stories/267/compare?version=151" \
+-X GET \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-H "Content-Type: application/json"
+Get Story Versions
+This allows you to retrieve the versions of a story and the corresponding author information. You can also filter the results based on pagination using the page parameter. This can be done with a GET request on the story version you wish to retrieve.
+
+Parameter	Description
+id	Numeric id of the story version
+event	The type of version change in story
+created_at	Date and time of of change (Format: YYYY-mm-dd HH:MM)
+author_id	ID of the author
+author	Author of the change in the story
+item_id	The story ID
+is_draft	Boolean value, if false means story is published
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/606/stories/123/versions" \
+-X GET \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-H "Content-Type: application/json"
+Example Request with Pagination
+
+curl "https://mapi.storyblok.com/v1/spaces/606/stories/123/versions?page=1" \
+-X GET \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-H "Content-Type: application/json"
+Collaborators
+The collaborators endpoint tells you which collaborators have access to a space. You can use the collaborators endpoint to add, remove or update collaborators, including their roles and permissions.
+
+Edit this section on GitHub
+Endpoint
+
+GET /v1/spaces/:space_id/collaborators
+The Collaborator Object
+This is an object representing collaborators in a space. Some of the properties can be read only and others can be managed by the space owner using the API. You can define the properties of a collaborator such as roles and permissions.
+
+Property	Description
+id	Numeric id of collaborator
+firstname	First name of collaborator
+lastname	Last name of collaborator
+alt_email	Email of collaborator
+avatar	Avatar of collaborator usually an image
+userid	User id of collaborator
+friendly_name	Friendly name of collaborator
+role	Role of the collaborator, could be admin, editor or custom roles
+user_id	User/numeric id of collaborator
+permissions	Allow specific actions for collaborator in interface and add the permission as array of strings
+allowed_paths	Story ids the user should have access to (acts as whitelist). If no item is selected the user has rights to access all content items.
+field_permissions	Hide specific fields for this user with an array of strings with the schema
+space_role_id	Numeric id of the space role connected with collaborators
+space_id	Numeric id of the collaborator space
+space_role_ids	Array of space role ids
+You can learn more about permissions and roles for collaborators in the Space Roles endpoint.
+
+Edit this section on GitHub
+Example Object
+
+{
+   "collaborators":[
+      {
+         "user":{
+            "id":262115,
+            "firstname":"Marve",
+            "lastname":"Priscy",
+            "alt_email":null,
+            "avatar":"avatars/115866/5fgecfcb64/mayve.jpeg",
+            "userid":"mayve@email.com",
+            "friendly_name":"Marve Priscy"
+         },
+         "role":"49708",
+         "user_id":262115,
+         "permissions":["can_subscribe"],
+         "allowed_path":"",
+         "field_permissions":"",
+         "id":236290,
+         "space_role_id":"49708",
+         "invitation":null,
+         "space_role_ids":[],
+         "space_id":866112
+      }
+   ]
+}
+Add a Collaborator
+You can set some of the fields available in the collaborator object, below we only list the properties in the example and the possible required fields.
+
+Property	Description
+collaborator	The collaborator object
+email	Email that will be used in the space interface for collaborator or collaborator SSO ID required
+role	the role name of the collaborator. could be admin, editor or set to a roleid. For custom roles, you need to set role_id for the role and set role to multi if you have more than one custom role required
+space_id	Numeric id of the collaborator space required
+space_role_id	Numeric id connected with a role, usually an array of ids with more than one role required
+space_role_ids	An array of numeric ids for multiple roles in a space for a collaborator
+permissions	Permissions for a collaborator, usually is set to can_subscribe for a collaborator.
+allow_multiple_roles_creation	Boolean value, if true you can create multiple roles for a collaborator
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/656/collaborators/" \
+-X POST \
+-H "Content-Type: application/json" \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-d "{\"email\":\"you@email.com\",\"space_role_id\":18705}"
+You will receive a fully loaded collaborator object as response.
+
+Delete a Collaborator
+Delete a collaborator by using their collaborator id. SSO users can be deleted by using their sso_id.
+
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/656/collaborators/2362" \ 
+-X DELETE \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-d ""
+Update a Collaborator Roles and Permissions
+Property	Description
+collaborator	The collaborator object
+id	The collaborator id
+role	the role name of the collaborator. Could be admin, editor or set to a roleid. For custom roles, you need to set role_id for the role and set role to multi if you have more than one custom role required
+space_role_id	Numeric id connected with a role, usually an array of ids with more than one role required
+permissions	Permissions for a collaborator, usually is set to can_subscribe for a collaborator or empty array.
+allow_multiple_roles_creation	Boolean value, if true allows for creating multiple roles using ids for a collaborator
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/656/collaborators/2362" \ 
+-X PUT \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-H "Content-Type: application/json" \
+-d "{\"collaborator\":{\"role\":49707,\"space_role_id\":49707,\"allow_multiple_roles_creation\":true}}"
+Add a user with SSO
+Similar to add-collaborator. You can add a user with SSO by using the sso_id property. The sso_id is the unique identifier of the user in your system. You can use this identifier to identify the user in Storyblok.
+
+Property	Description
+sso_id	The unique identifier of the user in your system, can be an email required
+email	Email that will be used in the space interface for collaborator or collaborator SSO ID required
+role	Role name of the collaborator, could be admin, editor or custom roles, which is set to id and set to multi if you have more than one role required
+space_role_id	Numeric id of the space role connected with collaborators, usually null with more than one collaborator required
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/656/collaborators/" \
+-X POST \
+-H "Content-Type: application/json" \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-d "{\"collaborator\":{\"sso_id\":\"123456789\",\"role\":\"editor\",\"space_role_id\":18}}"
+Example object
+
+{
+   "collaborator":{
+      "user":null,
+      "role":"editor",
+      "user_id":null,
+      "permissions":[
+         
+      ],
+      "allowed_path":"",
+      "field_permissions":"",
+      "id":110236,
+      "space_role_id":35053,
+      "invitation":{
+         "email":{
+            "SSO Id"
+         },
+         "expires_at":"2022-09-29T00:51:35.074Z"
+      },
+      "space_role_ids":[
+         // ...
+      ],
+      "space_id":175323
+   }
+}
+Components
+A component is a standalone entity that is meaningful in its own right. While components (or bloks) can be nested in each other, semantically they remain equal. Each component is a small piece of your data structure which can be filled with content or nested by your content editor. One component can consist of as many field types as required.
+
+Edit this section on GitHub
+Endpoint
+
+GET /v1/spaces/:space_id/components/:component_id
+The Component Object
+Property	Description
+id	Numeric Unique ID
+name	Technical name used for component property in entries
+display_name	Name that will be used in the editor interface
+created_at	Creation date (Format: YYYY-mm-dd HH:MM)
+image	URL to the preview image, if uploaded
+preview	Define the field that should be used for preview in the interface
+is_root	Component should be usable as a Content Type
+is_nestable	Component should be insertable in blocks field type fields
+all_presets	Array of presets for this component
+real_name	Duplicated technical name, used for internal tasks
+component_group_uuid	The component group uuid of the component
+Edit this section on GitHub
+Example Object
+
+{
+  "component": {
+    "id": 214123,
+    "name": "post",
+    "display_name": "Post",
+    "created_at": "2018-12-28T14:54:01.423Z",
+    "schema": {
+      // definition of fields (schema) for this component
+      "title": {
+        "type": "text",
+        "pos": 0
+      },
+      "description": {
+        "type": "text",
+        "pos": 1
+      },
+      ...
+    },
+    "image": null,
+    "preview_field": null,
+    "is_root": true,
+    "is_nestable": true,
+    "all_presets": [],
+    "preset_id": null,
+    "real_name": "post",
+    "component_group_uuid": "19323-32144-23423-42314"
+  },
+  "update_content": true
+}
+The Component Field
+Not every property will be used for every field type; some may only effect specific types.
+
+Property	Description
+id	Numeric Unique ID
+type	The type of your field
+pos	Position of field in component
+translatable	Can field be translated; Default: false
+required	Is field required; Default: false
+regex	Client Regex validation for the field
+description	Description shown in the editor interface
+default_value	Default value for the field; Can be an escaped JSON object
+can_sync	Advanced usage to sync with field in preview; Default: false
+preview_field	Is used as instance preview field below component name in bloks types
+no_translate	Boolean; Should be excluded in translation export
+rtl	Boolean; Enable global RTL for this field
+Only for type: markdown, text, textarea
+exclude_from_merge	Excludes a blok from being merged during a merge action (only works with the Dimensions App)
+exclude_from_overwrite	Excludes a blok from being overwritten during an overwrite action (only works with the Dimensions App)
+force_merge	Overwrites a blok during a merge action (only works with the Dimensions App)
+rich_markdown	Enable rich markdown view by default (true/false);
+Only for type: markdown
+keys	Array of field keys to include in this section;
+Only for type: section
+field_type	Name of the custom field type plugin;
+Only for type: custom
+source	Possible values: undefined: Self; internal_stories: Stories; internal: Datasource; external: API Endpoint in Datasource Entries Array Format;
+Only for type: options, option, custom;
+use_uuid	Default: true; available in option and source=internal_stories
+folder_slug	Filter on selectable stories path; Effects editor only if source=internal_stories; In case you have a multi-language folder structure you can add the '{0}' placeholder and the path will be adapted dynamically. Examples: "{0}/categories/", {0}/{1}/categories/
+datasource_slug	Define selectable datasources string; Effects editor only if source=internal
+external_datasource	Define external datasource JSON Url; Effects editor only if source=external
+options	Array of datasource entries [{name:"", value:""}]; Effects editor only if source=undefined
+image_crop	Activate force crop for images: (true/false);
+Only for type: image
+keep_image_size	Keep original size: (true/false);
+Only for type: image
+image_width	Define width in px or width ratio if keep_image_size is enabled;
+Only for type: image
+image_height	Define height in px or height ratio if keep_image_size is enabled;
+Only for type: image
+asset_folder_id	Default asset folder numeric id to store uploaded image of that field;
+Only for type: image
+add_https	Prepends https: to stop usage of relative protocol;
+Only for type: image, file
+restrict_components	Activate restriction nestable component option; Default: false;
+Only for type: bloks
+maximum	Maximum amount of added bloks in this blok field;
+Only for type: bloks
+restrict_content_types	Activate restriction content type option;
+Only for type: multilink
+component_whitelist	Array of component/content type names: ["post","page","product"];
+Only for type: bloks, multilink
+disable_time	Disables time selection from date picker; Default: false;
+Only for type: datetime
+max_length	Set the max length of the input string;
+Only for type: text, textarea, markdown
+filetypes	Array of file type names: ["images", "videos", "audios", "texts"];
+Only for type: multiasset
+Edit this section on GitHub
+Example Object
+
+// name of the field as key eg. "field key" in schema property in your component
+"title": {
+  "type": "text",
+  "pos": 0,
+  "translatable": true,
+  "required": true,
+  "regex": "",
+  "description": "Description for the field",
+  "display_name": "",
+  "default_value": "",
+  "can_sync": false,
+  "rtl": false,
+  "no_translate": false
+}
+Possible field types
+Field Type	Description
+bloks	Blocks: a field to interleave other components in your current one
+text	Text: a text field
+textarea	Textarea: a text area
+markdown	Markdown: write markdown with a text area and additional formatting options
+number	Number: a number field
+datetime	Date/Time: a date- and time picker
+boolean	Boolean: a checkbox - true/false
+options	Multi-Options: a list of checkboxes
+option	Single-Option: a single dropdown
+asset	Asset: Single asset (images, videos, audio, and documents)
+multiasset	Multi-Assets: (images, videos, audio, and documents)
+multilink	Link: an input field for internal linking to other stories
+section	Group: no input possibility - allows you to group fields in sections
+custom	Plugin: Extend the editor yourself with a color picker or similar - Check out: Creating a Storyblok field type plugin
+image	Image (old): a upload field for a single image with cropping possibilities
+file	File (old): a upload field for a single file
+Edit this section on GitHub
+Example Object
+
+"field_key": {
+  ...
+  "type": "text", // <-- field type
+  ...
+}
+Retrieve one Component
+Returns a single, fully loaded component object by providing a specific numeric id.
+
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/606/components/4123" \
+-X GET \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-H "Content-Type: application/json"
+You will receive a fully loaded component object as response.
+
+Retrieve multiple Components
+Returns an array of component objects. The response of this endpoint is not paginated and you will retrieve all components.
+
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/606/components/" \
+-X GET \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-H "Content-Type: application/json"
+You will receive an array of component objects as response.
+
+Create a Component
+You can set most of the fields that are available in the component object, below we only list the properties in the example and possible required fields.
+
+Property	Description
+component	The component object
+component[name]	Technical name used for component property in entries required
+component[display_name]	Name that will be used in the editor interface
+component[image]	URL to the preview image, if uploaded
+component[preview]	Define the field that should be used for preview in the interface
+component[is_root]	Component should be usable as a Content Type
+component[is_nestable]	Component should be insertable in blocks field type fields
+component[component_group_uuid]	The component group uuid of the component
+component[schema]	Key value pairs of component fields
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/656/components/" \
+-X POST \
+-H "Content-Type: application/json" \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-d "{\"component\":{\"name\":\"teaser\",\"display_name\":\"Teaser\",\"schema\":{\"title\":{\"type\":\"text\",\"pos\":0},\"image\":{\"type\":\"image\",\"pos\":1}},\"is_root\":false,\"is_nestable\":true}}"
+You will receive a fully loaded component object as response.
+
+Update a Component
+Send the component object with updated values to our backend using the PUT method. An update on component will not take over already inserted values, make sure to also update your stories that contain this component.
+
+Property	Description
+component	Your full component object
+component[name]	Technical name used for component property in entries required
+component[display_name]	Name that will be used in the editor interface
+component[image]	URL to the preview image, if uploaded
+component[preview]	Define the field that should be used for preview in the interface
+component[is_root]	Component should be usable as a Content Type
+component[is_nestable]	Component should be insertable in blocks field type fields
+component[component_group_uuid]	The component group uuid of the component
+component[schema]	Key value pairs of component fields
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/656/components/4123" \ 
+-X PUT \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-H "Content-Type: application/json" \
+-d "{\"component\":{\"name\":\"teaser\",\"id\":4123,\"display_name\":\"Teaser Updated\",\"schema\":{\"title\":{\"type\":\"text\",\"pos\":0},\"image\":{\"type\":\"image\",\"pos\":1},\"description\":{\"type\":\"textarea\",\"pos\":2}},\"is_root\":false,\"is_nestable\":true}}"
+You will receive a fully loaded, updated component object as response.
+
+Delete a Component
+Delete any component using its numeric id. Already used components will still stay in place but will show up with no schema definition so your inserted values won't be removed. You can use the update stories to migrate your content to other or new components.
+
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/606/components/4123" \ 
+-X DELETE \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-d ""
+Component Groups
+A component group can be used to group components together. Each component can have only one component group.
+
+Edit this section on GitHub
+Endpoint
+
+GET /v1/spaces/:space_id/component_groups/:component_group_id
+The Component Group Object
+Property	Description
+id	Numeric Unique ID
+name	Name of the group
+uuid	Uuid of the group
+Edit this section on GitHub
+Example Object
+
+{
+  "component_group": {
+    "id": 214123,
+    "name": "Teasers",
+    "uuid": "19323-32144-23423-42314"
+  }
+}
+Retrieve one Component Group
+Returns a single, fully loaded component group object by providing a specific numeric id.
+
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/606/component_groups/4123" \
+-X GET \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-H "Content-Type: application/json"
+You will receive a fully loaded component group object as response.
+
+Retrieve multiple Component Groups
+Returns an array of component group objects. The response of this endpoint is not paginated and you will retrieve all component groups.
+
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/606/component_groups/" \
+-X GET \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-H "Content-Type: application/json"
+You will receive an array of component group objects as response.
+
+Create a Component Group
+Property	Description
+component_group	Your full component group object
+component_group[name]	The component group name is required
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/656/component_groups/" \
+-X POST \
+-H "Content-Type: application/json" \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-d "{\"component_group\":{\"name\":\"Teasers\"}}"
+You will receive a fully loaded component group object as response.
+
+Update a Component group
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/656/component_groups/4123" \ 
+-X PUT \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-H "Content-Type: application/json" \
+-d "{\"component_group\":{\"name\":\"Teasers\"}}"
+You will receive a fully loaded, updated component group object as response.
+
+Delete a Component Group
+Delete any component group using its numeric id.
+
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/606/component_groups/4123" \ 
+-X DELETE \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-d ""
+Assets
+Assets like images, videos and documents are kept in the CDN as long as possible and will rarely hit the origin server. Each asset object references one of those uploaded images, videos and documents.
+
+Edit this section on GitHub
+Endpoint
+
+GET /v1/spaces/:space_id/assets/:asset_id
+The Asset Object
+Property	Description
+id	Numeric Unique ID
+filename	Full path of the asset, including the file name
+space_id	Space ID in which the asset is connected
+created_at	Creation date (Format: YYYY-mm-dd HH:MM)
+updated_at	Latest update date (Format: YYYY-mm-dd HH:MM)
+deleted_at	Deleted date (Format: YYYY-mm-dd HH:MM)
+file	File Object
+asset_folder_id	Id of the folder containing this asset
+short_filename	The file name of the asset
+content_type	The MIME type of the asset
+content_length	The content length in bytes
+is_private	Defines if the asset should be inaccessable to the public
+Edit this section on GitHub
+Example Object
+
+{
+  "id": 14,
+  "filename": "/f/616/SIZE/UNIQUEIDENTIFIER/your_filename.jpg",
+  "space_id": 616,
+  "created_at": "2018-11-10T15:33:00.578Z",
+  "updated_at": "2018-11-10T15:33:00.578Z",
+  "file": {
+    "url": null
+  },
+  "asset_folder_id": null,
+  "deleted_at": null,
+  "short_filename": "your_filename.jpg",
+  "content_type": "image/jpeg",
+  "content_length": 12303,
+  "is_private": false
+}
+Signed Response Object
+After creating an asset entry using a POST request you will receive a response object with all information needed to finally upload your asset. The second request after the creation of the asset entry will need all information in fields appended to your application/x-www-form-urlencoded request besides the actual file input. See the demo on how to upload an asset.
+
+Edit this section on GitHub
+Example Object
+
+{
+  "pretty_url": "//a-example.storyblok.com/f/606/e5990a3595/your_file.jpg",
+  "public_url": "https://s3.amazonaws.com/a-example.storyblok.com/f/606/e5990a3595/your_file.jpg",
+  "fields": {
+    "key": "f/606/e5990a3595/your_file.jpg",
+    "acl": "public-read",
+    "Expires": "Sun, 10 Nov 2019 15:33:00 GMT",
+    "Cache-Control": "public; max-age=31536000",
+    "Content-Type": "image/jpeg",
+    "policy": "eyJleHBpcmF0aW9uIjoiMjAxOC0xMS0xMFQxNTo...ei1hbGdvcml0aG0iOiJBV1M0LUhNQUM...LWFtei1kYXRlIjoiMjAxODExMTBUMTUzMzAwWiJ9XX0=",
+    "x-amz-credential": "AKIAIU627EN23A/20181110/s3/aws4_request",
+    "x-amz-algorithm": "AWS4-HMAC-SHA256",
+    "x-amz-date": "20181110T153300Z",
+    "x-amz-signature": "aaedd72b54636662b137b7648b54bdb47ee3b1dd28173313647930e625c8"
+  },
+  "post_url": "https://s3.amazonaws.com/a-example.storyblok.com"
+}
+Retrieve one Asset
+Returns a single asset object by providing a specific numeric id.
+
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/606/assets/14" \
+-X GET \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-H "Content-Type: application/json"
+You will receive an asset object as response.
+
+Retrieve multiple Assets
+Returns an array of asset objects. This endpoint is paged.
+
+Parameter	Description
+in_folder	Provide the numeric id of a folder to filter the assets by a specific folder
+sort_by	Possible values: created_at:asc, created_at:desc, updated_at:asc, updated_at:desc, short_filename:asc, short_filename:desc
+search	Provide a search term to filter a specific file by the filename
+is_private	If "1" it only displays private assets
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/606/assets/" \
+-X GET \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-H "Content-Type: application/json"
+You will receive an array of asset objects as response.
+
+Upload Asset
+Uploading assets in Storyblok is a three step process. First you need to sign the asset you want to upload. Then you need to post the image as form data to our Amazon S3 bucket. Lastly, you need to send another request to finalize the process and let Storyblok retrieve the MIME type and the content length for your asset. Uploaded files will have parameterized names; Every dot "." (except the last one) will be replaced with underscore "_".
+
+Here you can find an example using Node.js on Github.
+
+Edit this section on GitHub
+Start by requesting a signed upload URL and parameter
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/656/assets/" \
+-X POST \
+-H "Content-Type: application/json" \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-d "{\"filename\":\"your_file.jpg\",\"size\":\"400x500\"}"
+Example Request (with asset folder)
+
+curl "https://mapi.storyblok.com/v1/spaces/606/assets/" \
+-X POST \
+-H "Content-Type: application/json" \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-d "{\"filename\":\"your_file.jpg\",\"size\":\"400x500\",\"asset_folder_id\":123}"
+Use the received signed response object to upload your file (example uses Node.js) and to finalize the process:
+const FormData = require('form-data')
+const fs = require('fs')
+
+const file = '/path_to/your_file.jpg'
+const fileUpload = (signed_response_object, success, failed) => {
+  let form = new FormData()
+  // apply all fields from the signed response object to the second request
+  for (let key in signed_response_object.fields) {
+    form.append(key, signed_response_object.fields[key])
+  }
+  // also append the file read stream
+  form.append('file', fs.createReadStream(file))
+  // submit your form
+  form.submit(signed_response_object.post_url, (err, res) => {
+    if (err) throw err
+    
+    // 3. finalize the upload
+    Storyblok.get('spaces/606/assets/' + signed_response_object.id + '/finish_upload').then(response => {
+      console.log('https://a.storyblok.com/' + signed_response_object.fields.key + ' uploaded!')
+    }).catch(error => { 
+      throw error
+    })
+    console.log('https://a.storyblok.com/' + signed_response_object.fields.key + ' uploaded!')
+  })
+}
+Update Asset
+Updating assets in Storyblok is very similar to uploading assets, however here you need to specify the ID of the asset you want to update alongside the new asset data. Also, you need to pass a new key and value pair "validate_upload":"1" to the request.
+
+Edit this section on GitHub
+Start by requesting a signed upload URL and parameter
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/656/assets/" \
+-X POST \
+-H "Content-Type: application/json" \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-d "{\"filename\":\"your_file.jpg\",\"id\":\"16383\",\"validate_upload\":\"1\"}"
+Example Request (with asset folder)
+
+curl "https://mapi.storyblok.com/v1/spaces/606/assets/" \
+-X POST \
+-H "Content-Type: application/json" \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-d "{\"filename\":\"your_file.jpg\",\"id\":\"16383\",\"validate_upload\":\"1\",\"asset_folder_id\":123}"
+Use the received signed response object to upload your file (example uses Node.js) and to finalize the process:
+const FormData = require('form-data')
+const fs = require('fs')
+
+const file = '/path_to/your_file.jpg'
+const fileUpload = (signed_response_object, success, failed) => {
+  let form = new FormData()
+  // apply all fields from the signed response object to the second request
+  for (let key in signed_response_object.fields) {
+    form.append(key, signed_response_object.fields[key])
+  }
+  // also append the file read stream
+  form.append('file', fs.createReadStream(file))
+  // submit your form
+  form.submit(signed_response_object.post_url, (err, res) => {
+    if (err) throw err
+    
+    // 3. finalize the upload
+    Storyblok.get('spaces/606/assets/' + signed_response_object.id + '/finish_upload').then(response => {
+      console.log('https://a.storyblok.com/' + signed_response_object.fields.key + ' uploaded!')
+    }).catch(error => { 
+      throw error
+    })
+    console.log('https://a.storyblok.com/' + signed_response_object.fields.key + ' uploaded!')
+  })
+}
+Storyblok.post('spaces/656/assets/', {
+  filename: 'new_file.jpg',
+  id: '18472',
+  validate_upload: '1'
+}).then(response => {
+  console.log(response)
+}).catch(error => { 
+  throw error
+})
+Delete an Asset
+Delete an asset by using its numeric id.
+
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/606/assets/14" \ 
+-X DELETE \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-d ""
+Asset Folders
+Asset folder allow you to group your assets. Besides the overall root folder you can define nested folder structures.
+
+Edit this section on GitHub
+Endpoint
+
+GET /v1/spaces/:space_id/asset_folders/:asset_folder_id
+The Asset Folder Object
+Property	Description
+id	Numeric Unique ID
+name	Display name of your asset folder
+parent_id	Parent asset folder id
+Edit this section on GitHub
+Example Object
+
+{
+  "asset_folder": {
+    "id": 41,
+    "name": "Header Images",
+    "parent_id": null
+  }
+}
+Retrieve one Asset Folder
+Returns a single, asset folder object by providing a specific numeric id.
+
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/606/asset_folders/41" \
+-X GET \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-H "Content-Type: application/json"
+You will receive a fully loaded asset folder object as response.
+
+Retrieve multiple Asset Folders
+Returns an array of asset folder objects.
+
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/606/asset_folders/" \
+-X GET \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-H "Content-Type: application/json"
+You will receive an array of asset folder objects as response.
+
+Create an Asset Folder
+Property	Description
+asset_folder	Your full asset folder object
+asset_folder[name]	Name is required
+asset_folder[parent_id]	The identifier of the parent folder. The parent_id parameter is optional. If the parent_id is omitted or set to null, the folder is created at root level
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/606/asset_folders/" \
+-X POST \
+-H "Content-Type: application/json" \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-d "{\"asset_folder\":{\"name\":\"Header Images\"}}"
+You will receive an asset folder object as response.
+
+Update an Asset Folder
+Property	Description
+asset_folder	Your full asset folder object
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/606/asset_folders/41" \ 
+-X PUT \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-H "Content-Type: application/json" \
+-d "{\"asset_folder\":{\"id\":41,\"name\":\"Update Header Images\"}}"
+You will receive a status code 204 as response.
+
+Delete an Asset Folder
+Delete an asset folder by using its numeric id.
+
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/606/asset_folders/41" \ 
+-X DELETE \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-d ""
+Datasources
+A datasource is a collection of datasource entries with a specific name and slug. Each datasource entry is a collection of key-value pairs (KVP), so called datasource entries. Those key-value pairs can be used for a single choice, multiple choice options and as well directly through our API to use them for multi-language labels, categories, or anything similar.
+
+Edit this section on GitHub
+Endpoint
+
+GET /v1/spaces/:space_id/datasources/:datasource_id
+The Datasource Object
+Property	Description
+id	Numeric Unique ID, used to reference datasource entries
+name	The key which will be used to resolve the given value
+slug	The slug used to request the datasource via API
+dimensions	List of defined dimensions for this datasource
+Edit this section on GitHub
+Example Object
+
+{
+  "datasource": {
+    "id": 91,
+    "name": "Labels for Website",
+    "slug": "labels",
+    "dimensions": [
+
+    ]
+  }
+}
+Retrieve one Datasource
+Returns a single datasource object with a specific numeric id.
+
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/606/datasources/91" \
+-X GET \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-H "Content-Type: application/json"
+You will receive a datasource object as response.
+
+Retrieve multiple Datasources
+Returns an array of datasource objects. This endpoint is paged and can be filtered by slug.
+
+Parameter	Description
+search	Provide a search string
+by_ids	Provide ids
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/606/datasources/" \
+-X GET \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-H "Content-Type: application/json"
+You will receive an array of datasource objects as response.
+
+Create a Datasource
+Property	Description
+datasource	Your full datasource object
+datasource[name]	Name is required
+datasource[slug]	Slug is required
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/606/datasources/" \
+-X POST \
+-H "Content-Type: application/json" \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-d "{\"datasource\":{\"name\":\"Labels for Website\",\"slug\":\"labels\"}}"
+You will receive a datasource object as response.
+
+Update a Datasource
+Property	Description
+datasource	A datasource object
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/606/datasources/91" \ 
+-X PUT \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-H "Content-Type: application/json" \
+-d "{\"datasource\":{\"id\":91,\"name\":\"Labels for Website\",\"slug\":\"labels_for_website\"}}"
+You will receive a datasource object as response.
+
+Delete a Datasource
+Delete a datasource by using its numeric id.
+
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/606/datasources/91" \ 
+-X DELETE \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-d ""
+Datasource Entries
+The actual KEY/VALUE pair object a datasource consists of. One specific datasource entry is a set of two linked data items: a key, which is a unique identifier for the item of data scoped in the data source, and the value, which is the data that is identified.
+
+Edit this section on GitHub
+Endpoint
+
+GET /v1/spaces/:space_id/datasource_entries/:datasource_entry_id
+The Datasource Entry Object
+Property	Description
+id	Numeric Unique ID
+name	The key which will be used to resolve the given value
+value	The actual value for the provided key
+datasource_id	Numeric ID of connected datasource
+Edit this section on GitHub
+Example Object
+
+{ 
+  "datasource_entry" : {
+    "id": 52,
+    "name": "newsletter_text",
+    "value": "Subscribe to our newsletter to make sure you don’t miss anything.",
+    "datasource_id": ""
+  }
+}
+Retrieve one Datasource Entry
+Returns a single datasource entry object with a specific numeric id.
+
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/606/datasource_entries/52" \
+-X GET \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-H "Content-Type: application/json"
+You will receive a datasource entry object as response.
+
+Retrieve multiple Datasource Entries
+Returns an array of datasource entry objects. This endpoint is paged and can be filtered by a datasource id or slug. The dimension parameter allows you to have the dimension value filled with the according data.
+
+Parameter	Description
+datasource_id	Provide the numeric id of a datasource
+datasource_slug	Provide the slug of a datasource
+dimension	Provide dimension to receive the dimension_value filled
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/606/datasource_entries/?datasource_id=124" \
+-X GET \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-H "Content-Type: application/json"
+You will receive an array of datasource entry objects as response.
+
+Create a Datasource Entry
+Property	Description
+datasource_entry	Your full datasource entry object
+datasource_entry[name]	Name is required
+datasource_entry[value]	Value is required
+datasource_entry[datasource_id]	Datasource Id is required
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/606/datasource_entries/" \
+-X POST \
+-H "Content-Type: application/json" \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-d "{\"datasource_entry\":{\"name\":\"newsletter_text\",\"value\":\"Subscribe to our newsletter to make sure you don’t miss anything.\",\"datasource_id\":12345}}"
+You will receive a datasource entry object as response.
+
+Update a Datasource Entry
+Property	Description
+datasource_entry	Your full datasource entry object
+datasource_entry[name]	Name is required
+datasource_entry[value]	Value is required
+datasource_entry[dimension_value]	Value of the key in the provided dimension_id (optional)
+dimension_id	Numeric dimension id (optional, but required to set a dimension_value)
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/606/datasource_entries/52" \ 
+-X PUT \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-H "Content-Type: application/json" \
+-d "{\"datasource_entry\":{\"id\":52,\"name\":\"newsletter_text\",\"value\":\"Subscribe to our updated newsletter to make sure you don’t miss anything.\"}}"
+You will receive a datasource entry object as response.
+
+Example Request for setting a value for specific dimension
+
+curl "https://mapi.storyblok.com/v1/spaces/606/datasource_entries/52" \ 
+-X PUT \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-H "Content-Type: application/json" \
+-d "{\"datasource_entry\":{\"id\":52,\"name\":\"newsletter_text\",\"value\":\"Subscribe to our updated newsletter to make sure you don’t miss anything.\",\"dimension_value\":\"Abonnieren Sie unseren Newsletter um sicher zu sein nie etwas zu verpassen!\",\"datasource_id\":\"112\"},\"dimension_id\":142}"
+You will receive a datasource entry object as response. The dimension_id is available in your datasource object
+
+Delete a Datasource Entry
+Delete a datasource entry by using its numeric id.
+
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/606/datasource_entries/52" \ 
+-X DELETE \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-d ""
+Spaces
+A space is a content repository. Think of it as a place to keep all the content related to one project. Each space has its own components, datasources, assets, environments, domains, collaborators, and permissions.
+
+If you want to launch several websites or apps, the best way to go is to create a separate space for each project.
+
+If your goal is to deliver the same content to multiple platforms (a common set would be the web, iOS, and an Android app), then you should use one space and create multiple API keys to deliver the content. You can find the API keys in the space dashboard.
+
+Edit this section on GitHub
+Endpoint
+
+GET /v1/spaces/:space_id
+The Space Object
+The space object contains all information of one of your accounts spaces. Some of the properties are read only other can be managed by the API. Properties that you are able to change or use during creation can be found in the specifici sections.
+
+Example Space Options
+...
+"options": {
+  "branch_deployed_hook": "", // Your webhook endpoint for branch deployments
+  "s3_bucket": "storyblok-backup", // Your S3 bucket name
+  "aws_arn": "arn:aws:iam::12312412:role/StoryblokRemote49122",
+  "backup_frequency": "daily", 
+  "languages": [ { "code": "de", "name": "German" } ]
+}
+Example Space Billing Address
+...
+"billing_address": {
+  "tax_number": "ATU72706128", // Your VAT number
+  "order_number": "Your custom order number",
+  "company": "Storyblok GmbH",
+  "email": "billing@storyblok.com", 
+  "name": "Ing. Dominik Angerer", 
+  "address_city": "Linz", 
+  "address_country": "Austria", 
+  "address_iso_country": "AT",
+  "address_line1": "Peter-Behrens-Platz 1", 
+  "address_zip": "4020", 
+}
+Edit this section on GitHub
+Example Object
+
+{
+  "space": {
+    "name": "Example Space",
+    "domain": "https://example.storyblok.com",
+    "uniq_domain": null,
+    "plan": "starter",
+    "plan_level": 0,
+    "limits": { },
+    "created_at": "2018-11-10T15:33:18.402Z",
+    "id": 680,
+    "role": "admin",
+    "owner_id": 1114,
+    "story_published_hook": null,
+    "environments": null,
+    "stories_count": 1,
+    "parent_id": null,
+    "assets_count": 0,
+    "searchblok_id": null,
+    "duplicatable": null,
+    "request_count_today": 0,
+    "api_requests": 1000,
+    "exceeded_requests": 0,
+    "billing_address": { 
+      // billing infromation
+    },
+    "routes": [ ],
+    "euid": null,
+    "trial": true,
+    "default_root": "page",
+    "has_slack_webhook": false,
+    "api_logs_per_month": [ ],
+    "first_token": "8IE7MzYCzw5d7KLckDa38Att",
+    "has_pending_tasks": false,
+    "options": { },
+    "collaborators": [ ],
+    "settings": [ ],
+    "owner": {
+      // user object
+    }
+  }
+}
+Retrieve one Space
+Returns a single space object by providing a specific numeric id.
+
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/606/" \
+-X GET \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-H "Content-Type: application/json"
+You will receive a space object as response.
+
+Retrieve multiple Spaces
+Returns an array of space objects.
+
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/" \
+-X GET \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-H "Content-Type: application/json"
+You will receive an array of space objects as response.
+
+Create a Space
+Property	Description
+space[name]	Name of your space; required
+space[domain]	Domain for your default preview url
+space[story_published_hook]	Published Webhook URL
+space[searchblok_id]	Searchblok id, if available
+space[environments]	Array of name and location (url) objects
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/" \
+-X POST \
+-H "Content-Type: application/json" \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-d "{\"space\":{\"name\":\"Example Space\"}}"
+You will receive a space object as response.
+
+Update a Space
+You're only able to update the following properties of your space.
+
+Property	Description
+space[id]	Numeric id of your space
+space[name]	Name of your space
+space[domain]	Domain for your default preview url
+space[uniq_domain]	Unique Domain for the Storyblok Rendering Service
+space[owner_id]	Numeric user id of the owner for that space
+space[parent_id]	Space id of a possible parent space
+space[duplicatable]	Is the space globally duplicatable by all users
+space[default_root]	Default content type used for this space default: page
+space[options]	Options for backup and language configurations
+space[routes]	Routes for the Storyblok Rendering Service
+space[story_published_hook]	Published Webhook URL
+space[searchblok_id]	Searchblok id, if available
+space[environments]	Array of name, location (url) objects
+space[billing_address]	Billing information used to generate your invoices for this space
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/12422/" \ 
+-X PUT \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-H "Content-Type: application/json" \
+-d "{\"space\":{\"id\":12422,\"name\":\"Updated Example Space\"}}"
+You will receive a space object as response.
+
+Delete a Space
+Delete a space by its numeric id.
+
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/12422/" \ 
+-X DELETE \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-d ""
+Duplicate a Space
+Duplicate a space and all it's content entries and components; Assets will not be duplicated and still will reference the original space.
+
+Property	Description
+space[name]	Name of your space; required
+space[domain]	Domain for your default preview url
+space[story_published_hook]	Published Webhook URL
+space[searchblok_id]	Searchblok id, if available
+space[environments]	Array of name and location (url) objects
+dup_id	The numeric id of the original space
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/" \
+-X POST \
+-H "Content-Type: application/json" \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-d "{\"dup_id\":12422,\"space\":{\"name\":\"Example Space\"}}"
+You will receive a space object as response.
+
+Backup a Space
+Trigger the backup task for your space. Make sure you've configured backups in your space options.
+
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/12422/backups" \
+-X POST \
+-H "Content-Type: application/json" \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-d "{}"
+You will receive a space object as response.
+
+Space Roles
+Space roles are custom permission sets that can be attached to collaborators to define their roles and permissions in a specific space.
+
+Edit this section on GitHub
+Endpoint
+
+GET /v1/spaces/:space_id/space_roles/:space_role_id
+The Space Role Object
+Property	Description
+id	Numeric Unique ID
+role	Name used in the interface
+access_tasks	Is allowed to access the Tasks menu item
+allowed_paths	Story ids the user should have access to (acts as whitelist). If no item is selected the user has rights to access all content items.
+resolved_allowed_paths	Resolved allowed_paths for displaying paths
+field_permissions	Hide specific fields for this user with an array of strings with the schema: "component_name.field_name"
+permissions	Allow specific actions in interface by adding the permission as array of strings
+Possible Permissions
+Permission	Description
+publish_stories	Allow publishing of content entries
+save_stories	Allow editing and saving of content entries
+edit_datasources	Allow editing and saving of datasources
+access_commerce	Allow access to commerce app
+edit_story_slug	Deny the change of slugs of content entries
+move_story	Deny moving of content entries
+view_composer	Deny access to visual composer
+Edit this section on GitHub
+Example Object
+
+{
+  "space_role": {
+    "id": 18,
+    "role": "English User",
+    "access_tasks": true,
+    "resolved_allowed_paths": [
+
+    ],
+    "allowed_paths": [
+      12412,
+      51122
+    ],
+    "field_permissions": [
+
+    ],
+    "permissions": [
+
+    ]
+  }
+}
+Retrieve one Space Role
+Returns a single, space role object by providing a specific numeric id.
+
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/606/space_roles/18" \
+-X GET \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-H "Content-Type: application/json"
+You will receive a space role object as response.
+
+Retrieve multiple Space Role
+Returns an array of space role objects.
+
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/606/space_roles/" \
+-X GET \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-H "Content-Type: application/json"
+You will receive an array of space role objects as response.
+
+Create a Space Role
+Property	Description
+space_role	Your space role object
+space_role[name]	The space role name is required
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/656/space_roles/" \
+-X POST \
+-H "Content-Type: application/json" \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-d "{\"space_role\":{\"role\":\"English User\"}}"
+You will receive a space role object as response.
+
+Update a Space Role
+Property	Description
+space_role	Your full component object
+space_role[name]	The space role name is required
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/656/space_roles/18" \ 
+-X PUT \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-H "Content-Type: application/json" \
+-d "{\"space_role\":{\"id\":18,\"role\":\"English Editor\"}}"
+You will receive a space role object as response.
+
+Delete a Space Role
+Delete a space role using its numeric id.
+
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/606/space_roles/18" \ 
+-X DELETE \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-d ""
+Tasks
+You can create a Task to send requests to one of your custom endpoints. This lets you trigger a build for production or other common use-cases like product syncs or publishing tasks. Future updates will also bring scheduled and timed tasks so you can handle all your tasks at one place.
+
+The payload Storyblok will send to your webhook url as POST request:
+
+{
+  "task": {
+    "id": 214, 
+    "name": "My Task Name"
+  }, 
+  "space_id": 606
+}
+Edit this section on GitHub
+Endpoint
+
+GET /v1/spaces/:space_id/tasks/:task_id
+The Task Object
+Property	Description
+id	Numeric ID of your task
+name	Given name of your task
+description	A brief description of your task for your editors
+task_type	Default: webhook; Currently available: webhook
+last_execution	Date and time of last execution (Format: YYYY-mm-dd HH:MM)
+webhook_url	URL of webhook that should be called when tasks is being executed
+last_response	Last execution response log
+lambda_code	Beta: Lambda function code
+Edit this section on GitHub
+Example Object
+
+{
+  "task": {
+    "id": 124,
+    "name": "My Task Name",
+    "description": null,
+    "task_type": "webhook",
+    "last_execution": null,
+    "lambda_code": null,
+    "last_response": null,
+    "webhook_url": "https://www.storyblok.com"
+  }
+}
+Retrieve one Task
+Returns a single task object with a specific numeric id.
+
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/606/tasks/124" \
+-X GET \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-H "Content-Type: application/json"
+You will receive a task object as response.
+
+Retrieve multiple Tasks
+Returns an array of task objects. This endpoint is paged.
+
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/606/tasks/" \
+-X GET \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-H "Content-Type: application/json"
+You will receive an array of task objects as response.
+
+Create a Task
+Property	Description
+task	Your full task object
+task[name]	Name is required
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/606/tasks/" \
+-X POST \
+-H "Content-Type: application/json" \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-d "{\"task\":{\"name\":\"My Task Name\",\"task_type\":\"webhook\",\"webhook_url\":\"https://www.storyblok.com\"}}"
+You will receive a fully loaded task object as response.
+
+Update a Task
+Property	Description
+task	Your full task object
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/606/tasks/124" \ 
+-X PUT \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-H "Content-Type: application/json" \
+-d "{\"task\":{\"name\":\"My Updated Task Name\",\"task_type\":\"webhook\",\"webhook_url\":\"https://www.storyblok.com\"}}"
+You will receive a fully loaded task object as response.
+
+Delete a Task
+Delete a task by using its numeric id.
+
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/606/tasks/124" \ 
+-X DELETE \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-d ""
+Approvals
+Triggers an approval message for a specific content entry. It allows you to send an approval request to another collaborator of the space.
+
+Edit this section on GitHub
+Endpoint
+
+GET /v1/spaces/:space_id/approvals/:approval_id
+The Approval Object
+Property	Description
+id	Numeric Unique ID
+status	Status of approval
+story_id	ID of content entry that should be approved
+approver_id	ID of the User that should be the approver
+Edit this section on GitHub
+Example Object
+
+{
+  "approval": {
+    "id": 11,
+    "status": "pending",
+    "story_id": 1066,
+    "approver_id": 1028
+  }
+}
+Retrieve one Approval
+Returns a single approval object with a specific numeric id.
+
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/606/approvals/5405" \
+-X GET \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-H "Content-Type: application/json"
+You will receive a approval object as response.
+
+Retrieve multiple Approvals
+Returns an array of approval objects. This endpoint can be filtered on approver and is paged.
+
+Parameter	Description
+approver	Numeric Id of the approver
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/606/approvals/?approver=1028" \
+-X GET \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-H "Content-Type: application/json"
+You will receive an array of approval objects as response.
+
+Create Approval
+Property	Description
+story_id	ID of content entry that should be approved
+approver_id	ID of the User that should be the approver
+Edit this section on GitHub
+Example Request Object
+
+{
+  "approval": {
+    "story_id": 1066,
+    "approver_id": 1028
+  }
+}
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/606/approvals/" \
+-X POST \
+-H "Content-Type: application/json" \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-d "{\"approval\":{\"story_id\":1066,\"approver_id\":1028}}"
+Example Response Object
+
+{
+  "approval": {
+    "id": 11,
+    "status": "pending"
+  }
+}
+Create Release Approval
+Property	Description
+story_id	ID of content entry that should be approved
+approver_id	ID of the User that should be the approver
+release_id	ID of the release that should be approved
+Edit this section on GitHub
+Example Request Object
+
+{
+  "approval": {
+    "story_id": 1067,
+    "approver_id": 1030
+  },
+  "release_id": 16
+}
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/606/approvals/" \
+-X POST \
+-H "Content-Type: application/json" \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-d "{\"approval\":{\"story_id\":1066,\"approver_id\":1028},\"release_id\":16}"
+Example Response Object
+
+{
+  "approval": {
+    "id": 12,
+    "status": "pending"
+  }
+}
+Delete an Approval
+Delete an approval by using its numeric id.
+
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/606/approvals/5405" \ 
+-X DELETE \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-d ""
+Activities
+Activities are created on update, create and delete actions in Storyblok for resources like stories, components, spaces, datasources and datasource entries.
+
+Edit this section on GitHub
+Endpoint
+
+GET /v1/spaces/:space_id/activities/:activity_id
+The Activity Object
+Property	Description
+id	Numeric Unique ID
+trackable_id	Id of reference object that was changes
+trackable_type	Type of the referenced object
+owner_id	Id of User that created the object
+owner_type	Default: "User"
+key	Key defined by type.action (eg: story.create, story.update, component.create)
+parameters	Additional parameter passed; Default: null
+recipient_id	Default: null
+recipient_type	Default: null
+created_at	Creation date (Format: YYYY-mm-dd HH:MM)
+updated_at	Latest update date (Format: YYYY-mm-dd HH:MM)
+space_id	Space ID reference
+Edit this section on GitHub
+Example Object
+
+{
+  "activity": {
+    "id": 5405,
+    "trackable_id": null,
+    "trackable_type": null,
+    "owner_id": null,
+    "owner_type": null,
+    "key": null,
+    "parameters": {
+    },
+    "recipient_id": null,
+    "recipient_type": null,
+    "created_at": "2018-11-10T15:32:58.649Z",
+    "updated_at": "2018-11-10T15:32:58.649Z",
+    "space_id": 606
+  }
+}
+Retrieve one Activity
+Returns a single activity object with a specific numeric id.
+
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/606/activities/5405" \
+-X GET \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-H "Content-Type: application/json"
+You will receive a fully loaded activity object as response.
+
+Retrieve multiple Activities
+Returns an array of activity objects. Can be filtered on date ranges and is paged.
+
+Parameter	Description
+created_at_gte	Activity creation date is greater than YYYY-MM-DD
+created_at_lte	Activity creation date is lower than YYYY-MM-DD
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/606/activities/?created_at_gte=2018-12-14&created_at_lte=2018-12-18" \
+-X GET \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-H "Content-Type: application/json"
+You will receive an array of activity objects as response.
+
+Presets
+As a developer, you can now define multiple default values for your components. For example, a teaser component can have three styles:
+
+teaser with a background image
+teaser with text only and solid background color
+teaser with a call to action button.
+To make it easier for the editor to find the necessary configuration of this three styles you can save it as presets and upload a screenshot.
+
+Edit this section on GitHub
+Endpoint
+
+GET /v1/spaces/:space_id/presets/:preset_id
+The Preset Object
+Property	Description
+id	Numeric ID of your preset
+name	Given name of your preset
+preset[preset]	Object with the fields you want to save in the preset
+component_id	ID of the component the preset should be connected
+image	Screenshot or other preview image for your editor; Default: null
+created_at	Creation date (Format: YYYY-mm-dd HH:MM)
+updated_at	Latest update date (Format: YYYY-mm-dd HH:MM)
+Edit this section on GitHub
+Example Object
+
+{
+  "preset": {
+    "id": 1814,
+    "name": "Teaser with filled headline",
+    "preset": {
+      // fields of the component filled with content
+      "headline": "This is a default value for the preset!",
+      ...
+    },
+    "component_id": 62,
+    "space_id": 606,
+    "image": "//a.storyblok.com/f/606/...",
+    "created_at": "2018-11-10T15:33:16.726Z",
+    "updated_at": "2018-11-10T15:33:16.726Z"
+  }
+}
+Retrieve one Preset
+Returns a single preset object with a specific numeric id.
+
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/606/presets/1814" \
+-X GET \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-H "Content-Type: application/json"
+You will receive a preset object as response.
+
+Retrieve multiple Presets
+Returns an array of preset objects.
+
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/606/presets/" \
+-X GET \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-H "Content-Type: application/json"
+You will receive an array of preset objects as response.
+
+Create a Preset
+Property	Description
+preset	Your full preset object
+preset[name]	Name is required
+preset[component_id]	Use numeric component id for referencing
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/606/presets/" \
+-X POST \
+-H "Content-Type: application/json" \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-d "{\"preset\":{\"name\":\"Teaser with filled headline\",\"preset\":{\"headline\":\"This is a default value for the preset!\"},\"component_id\":62}}"
+You will receive a fully loaded preset object as response.
+
+Update a Preset
+Property	Description
+preset	Your full preset object
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/606/presets/1814" \ 
+-X PUT \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-H "Content-Type: application/json" \
+-d "{\"preset\":{\"id\":1814,\"name\":\"Teaser with headline and image\",\"preset\":{\"headline\":\"This is a default value for the preset!\",\"image\":\"//a.storyblok.com/f/606/...\"},\"component_id\":62}}"
+You will receive a fully loaded preset object as response.
+
+Delete a Preset
+Delete a preset by using its numeric id.
+
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/606/presets/1814" \ 
+-X DELETE \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-d ""
+Field types
+We built Storyblok with a robust and flexible plugin system to give our customers the power to extend the editor with custom fields like a color picker or a google maps location selector. It’s basically a Vue.js 2.5.2 component extended with a few helpers in the ‘window.Storyblok.plugin’ variable.
+
+This endpoint lets you push and pull the code of your field type via the management api and can be used to automatically deploy a plugin.
+
+Read more about field type development.
+
+Edit this section on GitHub
+Endpoint
+
+GET /v1/field_types/:id
+The Field Type Object
+Property	Description
+id	Numeric ID of your field type
+name	Given name of your field type. Needs to be unique. A personal prefix is recommended (Example: my-geo-selector).
+body	The uncompiled javascript code of the field type.
+compiled_body	Used by the online code editor. Needs to be an empty string if using local plugin development.
+space_ids	Array of space ids where the field type is assigned to.
+Edit this section on GitHub
+Example Object
+
+{
+  "field_type": {
+    "id": 124,
+    "name": "my-geo-selector",
+    "body": "var Fieldtype = {}",
+    "compiled_body": "",
+    "space_ids": []
+  }
+}
+Retrieve one Field Type
+Returns a single field type object with a specific numeric id.
+
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/field_types/124" \
+-X GET \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-H "Content-Type: application/json"
+You will receive a field type object as response.
+
+Retrieve multiple Field Types
+Returns an array of field type objects. This endpoint is paged.
+
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/field_types/" \
+-X GET \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-H "Content-Type: application/json"
+You will receive a field type object as response.
+
+Create a Field Type
+Property	Description
+field_type	Your field type object
+field_type[name]	Name is required
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/field_types/" \
+-X POST \
+-H "Content-Type: application/json" \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-d "{\"field_type\":{\"name\":\"my-geo-selector\"}}"
+You will receive a field type object as response.
+
+Update a Field Type
+Property	Description
+field_type	Your full field type object.
+field_type[body]	The javascript code of the field type.
+field_type[compiled_body]	Used by the online code editor. Needs to be an empty string if using local plugin development.
+field_type[space_ids]	Array of space ids where the field type is assigned to.
+publish	If this parameter is not empty the field type will be published.
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/field_types/124" \ 
+-X PUT \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-H "Content-Type: application/json" \
+-d "{\"field_type\":{\"body\":\"const Fieldtype = {}\",\"compiled_body\":\"\"}}"
+You will receive a field type object as response.
+
+Delete a Field Type
+Delete a field type by using its numeric id.
+
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/field_types/1" \ 
+-X DELETE \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-d ""
+Workflow Stage
+Content production in enterprises sometimes requires strict workflows to make sure that every team member gets involved. Storyblok allows you to define workflow stages and rules to control what each user is allowed to do.
+
+Edit this section on GitHub
+Endpoint
+
+GET /v1/spaces/:space_id/workflow_stages/:id
+The Workflow Stage Object
+Property	Description
+id	Numeric Unique ID
+after_publish_id	Workflow stage id that gets assigned after publishing
+allow_publish	Boolean to allow publishing
+is_default	Boolean to set as default
+position	Position (Integer)
+allow_all_stages	Boolean to allow all stages
+allow_all_users	Boolean to allow change to all users
+name	Workflow name
+color	Workflow color
+user_ids	User ids that are allowed to change the stage
+space_role_ids	Space role ids that are allowed to change the stage
+workflow_stage_ids	Workflow stage ids the user can change the stage to
+Edit this section on GitHub
+Example Object
+
+{
+  "workflow_stage": {
+    "id": 2,
+    "allow_publish": false,
+    "is_default": true,
+    "user_ids": [9,2],
+    "space_role_ids": [],
+    "workflow_stage_ids": [3],
+    "name": "Drafting",
+    "color": "#babcb6",
+    "allow_all_stages": false,
+    "allow_all_users": false,
+    "position": 1,
+    "after_publish_id": null
+  }
+}
+Retrieve one Workflow Stage
+Returns a single, workflow stage object by providing a specific numeric id.
+
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/606/workflow_stages/18" \
+-X GET \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-H "Content-Type: application/json"
+You will receive a workflow stage object as response.
+
+Retrieve multiple Workflow Stages
+Returns an array of workflow stages.
+
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/606/workflow_stages/" \
+-X GET \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-H "Content-Type: application/json"
+You will an array of workflow stages as response.
+
+Create a Workflow Stage
+Property	Description
+workflow_stage	Your workflow stage object required
+workflow_stage[after_publish_id]	Workflow stage id that gets assigned after publishing
+workflow_stage[allow_publish]	Boolean to allow publishing
+workflow_stage[is_default]	Boolean to set as default
+workflow_stage[position]	Position (Integer)
+workflow_stage[allow_all_stages]	Boolean to allow all stages
+workflow_stage[allow_all_users]	Boolean to allow change to all users
+workflow_stage[name]	Workflow name
+workflow_stage[color]	Workflow color
+workflow_stage[user_ids]	User ids that are allowed to change the stage
+workflow_stage[space_role_ids]	Space role ids that are allowed to change the stage
+workflow_stage[workflow_stage_ids]	Workflow stage ids the user can change the stage to
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/656/workflow_stages/" \
+-X POST \
+-H "Content-Type: application/json" \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-d "{\"workflow_stage\":{\"after_publish_id\":[],\"allow_publish\":[],\"is_default\":false,\"position\":0,\"allow_all_stages\":true,\"allow_all_users\":true,\"name\":\"Ready to Publish\",\"color\":\"#333\",\"user_ids\":[],\"space_role_ids\":[],\"workflow_stage_ids\":[]}}"
+You will receive a workflow stage object as response.
+
+Update a Workflow Stage
+Property	Description
+workflow_stage	Your workflow stage object required
+workflow_stage[after_publish_id]	Workflow stage id that gets assigned after publishing
+workflow_stage[allow_publish]	Boolean to allow publishing
+workflow_stage[is_default]	Boolean to set as default
+workflow_stage[position]	Position (Integer)
+workflow_stage[allow_all_stages]	Boolean to allow all stages
+workflow_stage[allow_all_users]	Boolean to allow change to all users
+workflow_stage[name]	Workflow name
+workflow_stage[color]	Workflow color
+workflow_stage[user_ids]	User ids that are allowed to change the stage
+workflow_stage[space_role_ids]	Space role ids that are allowed to change the stage
+workflow_stage[workflow_stage_ids]	Workflow stage ids the user can change the stage to
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/656/workflow_stages/123" \ 
+-X PUT \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-H "Content-Type: application/json" \
+-d "{\"workflow_stage\":{\"after_publish_id\":[],\"allow_publish\":[],\"is_default\":false,\"position\":0,\"allow_all_stages\":true,\"allow_all_users\":true,\"name\":\"Ready to Publish\",\"color\":\"#333\",\"user_ids\":[],\"space_role_ids\":[],\"workflow_stage_ids\":[]}}"
+You will receive a workflow stage object as response.
+
+Delete a Workflow Stage
+Delete a workflow stage using its numeric id.
+
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/606/workflow_stages/18" \ 
+-X DELETE \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-d ""
+Workflow Stage Changes
+Workflow stage changes are objects that are assigned to a specific content item.
+
+Edit this section on GitHub
+Endpoint
+
+GET /v1/spaces/:space_id/workflow_stage_changes/:id
+The Workflow Stage Change Object
+Property	Description
+id	Numeric Unique ID
+user_id	User id
+created_at	Creation date
+workflow_stage_id	Workflow stage id
+Edit this section on GitHub
+Example Object
+
+{
+  "workflow_stage_change": {
+    "id": 18,
+    "workflow_stage_id": 123,
+    "created_at": "2020-01-01 10:00:00",
+    "user_id": 123
+  }
+}
+Retrieve multiple Workflow Stage Changes
+Returns an array of workflow stage change objects.
+
+Parameter	Description
+with_story	Id of Story
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/606/workflow_stage_changes?with_story=123" \
+-X GET \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-H "Content-Type: application/json"
+You will get an array of workflow stage change objects as response.
+
+Create a Workflow Stage Change
+Property	Description
+workflow_stage_change	Your workflow stage change object
+workflow_stage_change[workflow_stage_id]	Workflow stage id required
+workflow_stage_change[story_id]	Story id required
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/656/workflow_stage_changes/" \
+-X POST \
+-H "Content-Type: application/json" \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-d "{\"workflow_stage_change\":{\"workflow_stage_id\":123,\"story_id\":123}}"
+You will receive a workflow stage change object as response.
+
+Releases
+You can read more about releases here.
+
+Edit this section on GitHub
+Endpoint
+
+GET /v1/spaces/:space_id/releases
+The Release object
+Property	Description
+name	Name of the releases to be deployed
+id	Numeric ID of a release
+release_at	Date to deploy the release (Format: YYYY-mm-dd HH:MM)
+released	Boolean if the release is released
+uuid	Unique ID of the release
+timezone	Timezone of the release
+branches_to_deploy	An array of branches to deploy the release to
+created_at	Date and time the release was created (Format: YYYY-mm-dd HH:MM)
+owner_id	Numeric ID of the release owner
+Edit this section on GitHub
+Example Object
+
+{
+    "releases": [
+        {
+            "name": "Winter Special Release",
+            "id": 95629,
+            "release_at": "2023-04-20T18:30:00.000Z",
+            "released": false,
+            "uuid": "b8997523-2837-4f75-8613-05da9e7471af",
+            "timezone": "Africa/Algiers",
+            "branches_to_deploy": [9,2],
+            "created_at": "2023-04-20T17:15:47.646Z",
+            "owner_id": 99734
+        }
+    ]
+}
+Retrieve one Release
+Returns a single release object by providing a specific numeric id.
+
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/606/releases/18" \
+-X GET \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-H "Content-Type: application/json"
+You will receive a release object as response.
+
+Retrieve multiple Releases
+Returns an array of releases.
+
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/606/releases/" \
+-X GET \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-H "Content-Type: application/json"
+You will get an array of release objects as response.
+
+Create a Release
+Property	Description
+release	Your release object required
+release[name]	Name of the release
+release[release_at]	Date to deploy the release (Format: YYYY-mm-dd HH:MM)
+release[branches_to_deploy]	Ids of pipeline stages (called branches before) to deploy the release to
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/656/releases/" \
+-X POST \
+-H "Content-Type: application/json" \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-d "{\"release\":{\"name\":\"Summer Special\",\"release_at\":\"2025-01-01 01:01\",\"branches_to_deploy\":[123,456]}}"
+You will receive a release object as response.
+
+Update a Release
+Property	Description
+release	Your release object required
+release[name]	Name of the release
+release[release_at]	Date to deploy the release (Format: YYYY-mm-dd HH:MM)
+release[branches_to_deploy]	Ids of branches to deploy the release to
+do_release	If this parameter is included in the request the release will be deployed
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/656/releases/123" \ 
+-X PUT \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-H "Content-Type: application/json" \
+-d "{\"releases\":{\"name\":\"Summer Special\",\"release_at\":\"2025-01-01 01:01\",\"branches_to_deploy\":[123,456]}}"
+You will receive a release object as response.
+
+Delete a Release
+Delete a release using its numeric id.
+
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/606/releases/18" \ 
+-X DELETE \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-d ""
+Branch deployments
+The endpoint /v1/spaces/:space_id/deployments can be used to trigger the deployment process across the branches.
+
+Stories created via the Management API are created in the default branch (Preview). Subsequently, they can be released to other branches (e.g. Staging, Production) by creating a branch deployment.
+
+Stories created via the Management API are created in the default branch (Preview). Subsequently, they can be deployed to other branches (e.g. Staging, Production according to the "source of sync" option) by triggering a deployment.
+
+For using this endpoint, you have to install the Pipelines application.
+
+Edit this section on GitHub
+Create a Branch Deployment
+Once you have set your pipelines (via the Storyblok App or the Management API), you can start to trigger the deployment. The deployment could be triggered via Storyblok UI in the Content section, by selecting the pipeline in the Pipelines dropdown.
+
+Property	Description
+branch_id	The branch id to deploy required
+release_uuids	The array of releases (referenced by their respective uuids to deploy)
+Edit this section on GitHub
+Example Request
+
+curl "https://mapi.storyblok.com/v1/spaces/656/deployments/" \
+-X POST \
+-H "Content-Type: application/json" \
+-H "Authorization: YOUR_OAUTH_TOKEN" \
+-d "{\"branch_id\":1,\"release_uuids\":[\"1234-4567\",\"1234-4568\"]}"
