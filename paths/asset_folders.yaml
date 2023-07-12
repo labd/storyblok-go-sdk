@@ -1,0 +1,105 @@
+create:
+  summary: Create a asset folder
+  description: Create a asset folder
+  operationId: createAssetFolder
+  tags:
+    - asset folder
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            asset_folder:
+              $ref: "../schemas/asset_folders.yaml#/AssetFolderCreateInput"
+  responses:
+    "201":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              asset_folder:
+                $ref: "../schemas/asset_folders.yaml#/AssetFolder"
+
+update:
+  summary: Update a asset folder
+  description: Update a asset folder
+  operationId: updateAssetFolder
+  tags:
+    - asset folders
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            asset_folder:
+              $ref: "../schemas/asset_folders.yaml#/AssetFolderUpdateInput"
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              asset_folder:
+                $ref: "../schemas/asset_folders.yaml#/AssetFolder"
+
+getOne:
+  summary: Get a asset folder
+  description: Get a asset folder
+  operationId: getAssetFolder
+  tags:
+    - asset folders
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              asset_folder:
+                $ref: "../schemas/asset_folders.yaml#/AssetFolder"
+
+getMultiple:
+  summary: List asset folder
+  description: Retrieve a list of asset folder
+  operationId: listAssetFolders
+  tags:
+    - asset folders
+  responses:
+    "200":
+      description: OK
+      headers:
+        schema:
+          $ref: "../schemas/pagination.yaml#/pagination"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              asset_folders:
+                type: array
+                items:
+                  $ref: "../schemas/asset_folders.yaml#/AssetFolder"
+
+delete:
+  summary: Delete a asset folder
+  description: Delete a asset folder
+  operationId: deleteAssetFolder
+  tags:
+    - asset folders
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              asset_folder:
+                $ref: "../schemas/asset_folders.yaml#/AssetFolder"

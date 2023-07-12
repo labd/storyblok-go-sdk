@@ -5,15 +5,52 @@ info:
     Unofficial Storyblok Management OpenAPI Specs. Generated from
     https://www.storyblok.com/docs/api/management/v1 by mostly ChatGPT ;-)
   version: 0.0.1
-
 security:
   - BearerAuth: []
-
 paths:
+  /v1/spaces/:
+    post:
+      summary: Create a space
+      description: Create a space
+      operationId: createSpace
+      tags:
+        - spaces
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                space:
+                  $ref: '#/components/schemas/SpaceCreateInput'
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Space'
+    get:
+      summary: List spaces
+      description: Retrieve a list of spaces
+      operationId: listSpaces
+      tags:
+        - spaces
+      responses:
+        '200':
+          description: OK
+          headers:
+            schema:
+              $ref: '#/components/headers/pagination'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Space'
   /v1/spaces/{space_id}/:
     parameters:
-      - $ref: "#/components/parameters/spaceIdParam"
-
+      - $ref: '#/components/parameters/spaceIdParam'
     get:
       summary: Get a space
       description: Get a space
@@ -21,19 +58,85 @@ paths:
       tags:
         - spaces
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  space:
-                    $ref: "#/components/schemas/Space"
-
+                $ref: '#/components/schemas/Space'
+    put:
+      summary: Update a space
+      description: Update a space
+      operationId: updateSpace
+      tags:
+        - spaces
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                space:
+                  $ref: '#/components/schemas/SpaceUpdateInput'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Space'
+    delete:
+      summary: Delete a space
+      description: Delete a space
+      operationId: deleteSpace
+      tags:
+        - spaces
+      responses:
+        '200':
+          description: OK
+    post:
+      summary: Duplicate a space
+      description: Duplicate a space
+      operationId: duplicateSpace
+      tags:
+        - spaces
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                space:
+                  $ref: '#/components/schemas/SpaceCreateInput'
+                dup_id:
+                  type: integer
+                  description: The numeric id of the original space
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Space'
+  /v1/spaces/{space_id}/backups/:
+    parameters:
+      - $ref: '#/components/parameters/spaceIdParam'
+    post:
+      summary: Backup a space
+      description: Backup a space
+      operationId: backupSpace
+      tags:
+        - spaces
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Space'
   /v1/spaces/{space_id}/components/:
     parameters:
-      - $ref: "#/components/parameters/spaceIdParam"
+      - $ref: '#/components/parameters/spaceIdParam'
     post:
       summary: Create a component
       description: Create a component
@@ -44,29 +147,39 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ComponentInput"
+              type: object
+              properties:
+                component:
+                  $ref: '#/components/schemas/ComponentCreateInput'
       responses:
-        "201":
+        '201':
           description: OK
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  component:
-                    $ref: "#/components/schemas/Component"
-
+                $ref: '#/components/schemas/Component'
+    get:
+      summary: List components
+      description: Retrieve a list of components
+      operationId: listComponents
+      tags:
+        - components
+      responses:
+        '200':
+          description: OK
+          headers:
+            schema:
+              $ref: '#/components/headers/pagination'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Component'
   /v1/spaces/{space_id}/components/{id}:
     parameters:
-      - $ref: "#/components/parameters/spaceIdParam"
-      - in: path
-        name: id
-        required: true
-        schema:
-          type: integer
-          format: int64
-        description: The ID of the component
-
+      - $ref: '#/components/parameters/spaceIdParam'
+      - $ref: '#/components/parameters/idParam'
     get:
       summary: Get a component
       description: Get a component
@@ -74,15 +187,12 @@ paths:
       tags:
         - components
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  component:
-                    $ref: "#/components/schemas/Component"
+                $ref: '#/components/schemas/Component'
     put:
       summary: Update a component
       description: Update a component
@@ -93,128 +203,388 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ComponentInput"
+              type: object
+              properties:
+                component:
+                  $ref: '#/components/schemas/ComponentUpdateInput'
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  component:
-                    $ref: "#/components/schemas/Component"
-
+                $ref: '#/components/schemas/Component'
     delete:
       summary: Delete a component
-      description: Delet a component
+      description: Delete a component
       operationId: deleteComponent
       tags:
         - components
       responses:
-        "200":
+        '200':
           description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  component:
-                    $ref: "#/components/schemas/Component"
-
   /v1/spaces/{space_id}/component_groups/:
+    parameters:
+      - $ref: '#/components/parameters/spaceIdParam'
     post:
-      tags:
-        - components
-      summary: Create Component Group
+      summary: Create a component group
+      description: Create a component group
       operationId: createComponentGroup
-      parameters:
-        - $ref: "#/components/parameters/spaceIdParam"
+      tags:
+        - component group
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ComponentGroupInput"
+              type: object
+              properties:
+                component_group:
+                  $ref: '#/components/schemas/ComponentGroupCreateInput'
       responses:
-        "201":
+        '201':
           description: OK
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  component_group:
-                    $ref: "#/components/schemas/ComponentGroup"
-
-  /v1/spaces/{space_id}/component_groups/{group_id}:
+                $ref: '#/components/schemas/ComponentGroup'
     get:
+      summary: List component group
+      description: Retrieve a list of component group
+      operationId: listComponentGroups
       tags:
-        - components
-      summary: Get Component Group by ID
-      operationId: getComponentGroup
-      parameters:
-        - $ref: "#/components/parameters/spaceIdParam"
-        - $ref: "#/components/parameters/groupIdParam"
+        - component groups
       responses:
-        "200":
+        '200':
+          description: OK
+          headers:
+            schema:
+              $ref: '#/components/headers/pagination'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ComponentGroup'
+  /v1/spaces/{space_id}/component_groups/{id}:
+    parameters:
+      - $ref: '#/components/parameters/spaceIdParam'
+      - $ref: '#/components/parameters/idParam'
+    get:
+      summary: Get a component group
+      description: Get a component group
+      operationId: getComponentGroup
+      tags:
+        - component groups
+      responses:
+        '200':
           description: OK
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  component_group:
-                    $ref: "#/components/schemas/ComponentGroup"
+                $ref: '#/components/schemas/ComponentGroup'
     put:
-      tags:
-        - components
-      summary: Update Component Group by ID
+      summary: Update a component group
+      description: Update a component group
       operationId: updateComponentGroup
-      parameters:
-        - $ref: "#/components/parameters/spaceIdParam"
-        - $ref: "#/components/parameters/groupIdParam"
+      tags:
+        - component groups
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ComponentGroupInput"
+              type: object
+              properties:
+                component_group:
+                  $ref: '#/components/schemas/ComponentGroupUpdateInput'
       responses:
-        "200":
+        '200':
           description: OK
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  component_group:
-                    $ref: "#/components/schemas/ComponentGroup"
+                $ref: '#/components/schemas/ComponentGroup'
     delete:
-      tags:
-        - components
-      summary: Delete Component Group by ID
+      summary: Delete a component group
+      description: Delete a component group
       operationId: deleteComponentGroup
-      parameters:
-        - $ref: "#/components/parameters/spaceIdParam"
-        - $ref: "#/components/parameters/groupIdParam"
+      tags:
+        - component groups
       responses:
-        "200":
+        '200':
+          description: OK
+  /v1/spaces/{space_id}/asset_folders/:
+    parameters:
+      - $ref: '#/components/parameters/spaceIdParam'
+    post:
+      summary: Create a asset folder
+      description: Create a asset folder
+      operationId: createAssetFolder
+      tags:
+        - asset folder
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                asset_folder:
+                  $ref: '#/components/schemas/AssetFolderCreateInput'
+      responses:
+        '201':
           description: OK
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  component_group:
-                    $ref: "#/components/schemas/ComponentGroup"
-
-
-
+                $ref: '#/components/schemas/AssetFolder'
+    get:
+      summary: List asset folder
+      description: Retrieve a list of asset folder
+      operationId: listAssetFolders
+      tags:
+        - asset folders
+      responses:
+        '200':
+          description: OK
+          headers:
+            schema:
+              $ref: '#/components/headers/pagination'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AssetFolder'
+  /v1/spaces/{space_id}/asset_folders/{id}:
+    parameters:
+      - $ref: '#/components/parameters/spaceIdParam'
+      - $ref: '#/components/parameters/idParam'
+    get:
+      summary: Get a asset folder
+      description: Get a asset folder
+      operationId: getAssetFolder
+      tags:
+        - asset folders
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssetFolder'
+    put:
+      summary: Update a asset folder
+      description: Update a asset folder
+      operationId: updateAssetFolder
+      tags:
+        - asset folders
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                asset_folder:
+                  $ref: '#/components/schemas/AssetFolderUpdateInput'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssetFolder'
+    delete:
+      summary: Delete a asset folder
+      description: Delete a asset folder
+      operationId: deleteAssetFolder
+      tags:
+        - asset folders
+      responses:
+        '200':
+          description: OK
+  /v1/spaces/{space_id}/datasources/:
+    parameters:
+      - $ref: '#/components/parameters/spaceIdParam'
+    post:
+      summary: Create a datasource
+      description: Create a datasource
+      operationId: createDatasource
+      tags:
+        - datasource
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                asset_folder:
+                  $ref: '#/components/schemas/DatasourceCreateInput'
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Datasource'
+    get:
+      summary: List datasource
+      description: Retrieve a list of datasource
+      operationId: listDatasources
+      tags:
+        - datasources
+      responses:
+        '200':
+          description: OK
+          headers:
+            schema:
+              $ref: '#/components/headers/pagination'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Datasource'
+  /v1/spaces/{space_id}/datasources/{id}:
+    parameters:
+      - $ref: '#/components/parameters/spaceIdParam'
+      - $ref: '#/components/parameters/idParam'
+    get:
+      summary: Get a datasource
+      description: Get a datasource
+      operationId: getDatasource
+      tags:
+        - datasources
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Datasource'
+    put:
+      summary: Update a datasource
+      description: Update a datasource
+      operationId: updateDatasource
+      tags:
+        - datasources
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                asset_folder:
+                  $ref: '#/components/schemas/DatasourceUpdateInput'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Datasource'
+    delete:
+      summary: Delete a datasource
+      description: Delete a datasource
+      operationId: deleteDatasource
+      tags:
+        - datasources
+      responses:
+        '200':
+          description: OK
+  /v1/spaces/{space_id}/datasource_entries/:
+    parameters:
+      - $ref: '#/components/parameters/spaceIdParam'
+    post:
+      summary: Create a datasource entries
+      description: Create a datasource entries
+      operationId: createDatasourceEntry
+      tags:
+        - datasource entries
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                asset_folder:
+                  $ref: '#/components/schemas/DatasourceEntryCreateInput'
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatasourceEntry'
+    get:
+      summary: List datasource entries
+      description: Retrieve a list of datasource entries
+      operationId: listDatasourceEntrys
+      tags:
+        - datasource entriess
+      responses:
+        '200':
+          description: OK
+          headers:
+            schema:
+              $ref: '#/components/headers/pagination'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DatasourceEntry'
+  /v1/spaces/{space_id}/datasource_entries/{id}:
+    parameters:
+      - $ref: '#/components/parameters/spaceIdParam'
+      - $ref: '#/components/parameters/idParam'
+    get:
+      summary: Get a datasource entries
+      description: Get a datasource entries
+      operationId: getDatasourceEntry
+      tags:
+        - datasource entries
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatasourceEntry'
+    put:
+      summary: Update a datasource entries
+      description: Update a datasource entries
+      operationId: updateDatasourceEntry
+      tags:
+        - datasource entries
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                asset_folder:
+                  $ref: '#/components/schemas/DatasourceEntryUpdateInput'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatasourceEntry'
+    delete:
+      summary: Delete a datasource entries
+      description: Delete a datasource entries
+      operationId: deleteDatasourceEntry
+      tags:
+        - datasource entries
+      responses:
+        '200':
+          description: OK
   /spaces/{space_id}/webhooks:
     get:
       summary: List Webhooks
       description: Retrieve a list of webhooks in a space.
       parameters:
-        - $ref: "#/components/parameters/spaceIdParam"
+        - $ref: '#/components/parameters/spaceIdParam'
         - name: token
           in: query
           description: The API access token
@@ -222,7 +592,7 @@ paths:
           schema:
             type: string
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json:
@@ -232,16 +602,15 @@ paths:
                   webhooks:
                     type: array
                     items:
-                      $ref: "#/components/schemas/Webhook"
+                      $ref: '#/components/schemas/Webhook'
                   total:
                     type: integer
-
   /spaces/{space_id}/webhooks/{webhook_id}:
     get:
       summary: Get Webhook
       description: Retrieve a specific webhook by ID.
       parameters:
-        - $ref: "#/components/parameters/spaceIdParam"
+        - $ref: '#/components/parameters/spaceIdParam'
         - name: webhook_id
           in: path
           description: The ID of the webhook
@@ -255,19 +624,17 @@ paths:
           schema:
             type: string
       responses:
-        "200":
+        '200':
           description: Successful response
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Webhook"
-
+                $ref: '#/components/schemas/Webhook'
 components:
   securitySchemes:
     BearerAuth:
       type: http
       scheme: bearer
-
   parameters:
     spaceIdParam:
       in: path
@@ -277,20 +644,100 @@ components:
         type: integer
         format: int64
       description: The ID of the space
-
-    groupIdParam:
+    idParam:
       in: path
-      name: group_id
+      name: id
       schema:
         type: integer
         format: int64
       required: true
       description: The ID of the component group to retrieve
-
   schemas:
-    ComponentInput:
+    AssetFolderCreateInput:
       type: object
-      description: ComponentInput
+      properties:
+        name:
+          type: string
+          description: The name of the asset folder
+        parent_id:
+          type: integer
+          format: int64
+          description: The ID of the parent folder
+      required:
+        - name
+    AssetFolderUpdateInput:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/AssetFolderCreateInput'
+    AssetFolder:
+      type: object
+      description: A asset folder can be used to group components together. Each component can have only one asset folder.
+      allOf:
+        - $ref: '#/components/schemas/AssetFolderUpdateInput'
+        - type: object
+          properties:
+            id:
+              type: integer
+              format: int64
+              description: The ID of the asset folder
+            created_at:
+              type: string
+              format: date-time
+              description: The creation timestamp of the asset folder
+            updated_at:
+              type: string
+              format: date-time
+              description: The latest update timestamp of the asset folder
+          required:
+            - id
+            - created_at
+            - updated_at
+    ComponentGroupCreateInput:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the component group
+      required:
+        - name
+    ComponentGroupUpdateInput:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/ComponentGroupCreateInput'
+    ComponentGroup:
+      type: object
+      description: A component group can be used to group components together. Each component can have only one component group.
+      allOf:
+        - $ref: '#/components/schemas/ComponentGroupUpdateInput'
+        - type: object
+          properties:
+            id:
+              type: integer
+              format: int64
+              description: The ID of the component group
+            created_at:
+              type: string
+              format: date-time
+              description: The creation timestamp of the component group
+            updated_at:
+              type: string
+              format: date-time
+              description: The latest update timestamp of the component group
+            uuid:
+              type: string
+              format: uuid
+              description: The UUID of the component group
+              x-go-type: uuid.UUID
+              x-go-type-import:
+                name: uuid
+                path: github.com/gofrs/uuid
+          required:
+            - id
+            - created_at
+            - updated_at
+            - uuid
+    ComponentCreateInput:
+      type: object
       properties:
         name:
           type: string
@@ -304,6 +751,52 @@ components:
         preview:
           type: string
           description: Define the field that should be used for preview in the interface
+        icon:
+          type: string
+          description: An optional icon for the component to identify this component type in the interface
+          enum:
+            - block-@
+            - block-1-2block
+            - block-add
+            - block-arrow-pointer
+            - block-block
+            - block-buildin
+            - block-center-m
+            - block-comment
+            - block-doc
+            - block-dollar-sign
+            - block-email
+            - block-image
+            - block-keyboard
+            - block-locked
+            - block-map-pin
+            - block-mobile
+            - block-monitor
+            - block-paycard
+            - block-resize-fc
+            - block-cart
+            - block-share
+            - block-shield-2
+            - block-shield
+            - block-sticker
+            - block-suitcase
+            - block-table-2
+            - block-table
+            - block-tag
+            - block-text-c
+            - block-text-img-c
+            - block-text-img-l
+            - block-text-img-r-l
+            - block-text-img-r
+            - block-text-img-t-l
+            - block-text-img-t-r
+            - block-text-l
+            - block-text-r
+            - block-unlocked
+            - block-wallet
+        color:
+          type: string
+          description: Css color used as background for the icon
         is_root:
           type: boolean
           description: Component should be usable as a Content Type
@@ -317,26 +810,27 @@ components:
           x-go-type: uuid.UUID
           x-go-type-import:
             name: uuid
-            path: "github.com/gofrs/uuid"
+            path: github.com/gofrs/uuid
         schema:
           type: object
           description: The definition of fields (schema) for this component
           additionalProperties:
-            $ref: "#/components/schemas/FieldInput"
-          # Hack; storyblok is not using the pos field but the order of the
-          # fields in the schema.
+            $ref: '#/components/schemas/FieldInput'
           x-go-type: orderedmap.OrderedMap[string,FieldInput]
           x-go-type-import:
             name: orderedmap
-            path: "github.com/wk8/go-ordered-map/v2"
+            path: github.com/wk8/go-ordered-map/v2
       required:
         - name
-
+    ComponentUpdateInput:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/ComponentCreateInput'
     Component:
       type: object
-      description: Component
+      description: A component is a standalone entity that is meaningful in its own right. While components (or bloks) can be nested in each other, semantically they remain equal. Each component is a small piece of your data structure which can be filled with content or nested by your content editor. One component can consist of as many field types as required.
       allOf:
-        - $ref: "#/components/schemas/ComponentInput"
+        - $ref: '#/components/schemas/ComponentUpdateInput'
         - type: object
           properties:
             id:
@@ -347,10 +841,6 @@ components:
               type: string
               format: date-time
               description: The creation timestamp of the component
-            all_presets:
-              type: array
-              items: {}
-              description: An array of presets associated with the component
             preset_id:
               type: string
               description: The ID of the preset associated with the component (null if not set)
@@ -360,347 +850,259 @@ components:
           required:
             - id
             - created_at
-
-    FieldInput:
-      type: object
-      properties:
-        type:
-          type: string
-          description: The type of the field
-        pos:
-          type: integer
-          format: int64
-          description: The position of the field
-
-        add_https:
-          type: boolean
-          description: "Prepends https: to stop usage of relative protocol"
-          default: false
-
-        asset_folder_id:
-          type: integer
-          format: int64
-          description: "Default asset folder numeric id to store uploaded image of that field"
-
-        can_sync:
-          type: boolean
-          description: "Advanced usage to sync with field in preview; Default: false"
-          default: false
-
-        component_whitelist:
-          type: array
-          items:
-            type: string
-          description: "Array of component/content type names: [\"post\",\"page\",\"product\"]"
-
-        datasource_slug:
-          type: string
-          description: "Define selectable datasources string; Effects editor only if source=internal"
-
-        default_value:
-          type: string
-          description: "Default value for the field; Can be an escaped JSON object"
-
-        description:
-          type: string
-          description: "Description shown in the editor interface"
-
-        display_name:
-          type: string
-          description: "Name of the field for the editor interface"
-
-        disable_time:
-          type: boolean
-          description: "Disables time selection from date picker; Default: false"
-          default: false
-
-        external_datasource:
-          type: string
-          description: "Define external datasource JSON Url; Effects editor only if source=external"
-
-        field_type:
-          type: string
-          description: "Name of the custom field type plugin"
-
-        filetypes:
-          type: array
-          items:
-            type: string
-          description: "Array of file type names: [\"images\", \"videos\", \"audios\", \"texts\"]"
-
-        folder_slug:
-          type: string
-          description: "Filter on selectable stories path; Effects editor only if source=internal_stories; In case you have a multi-language folder structure you can add the '{0}' placeholder and the path will be adapted dynamically. Examples: \"{0}/categories/\", {0}/{1}/categories/"
-
-        image_crop:
-          type: boolean
-          description: "Activate force crop for images: (true/false)"
-
-        image_height:
-          type: string
-          description: "Define height in px or height ratio if keep_image_size is enabled"
-
-        image_width:
-          type: string
-          description: "Define width in px or width ratio if keep_image_size is enabled"
-
-        keep_image_size:
-          type: boolean
-          description: "Keep original size: (true/false)"
-
-        keys:
-          type: array
-          items:
-            type: string
-          description: "Array of field keys to include in this section"
-
-        max_length:
-          type: integer
-          format: int64
-          description: "Set the max length of the input string"
-
-        maximum:
-          type: integer
-          format: int64
-          description: "Maximum amount of added bloks in this blok field"
-
-        no_translate:
-          type: boolean
-          description: "Should be excluded in translation export"
-
-        options:
-          type: array
-          description: 'Array of datasource entries [{name:"", value:""}]; Effects editor only if source=undefined'
-          items:
-            $ref: "#/components/schemas/FieldOption"
-
-        tooltip:
-          type: boolean
-          description: "Show the description as a tooltip"
-          default: false
-
-        preview_field:
-          type: boolean
-          description: "Is used as instance preview field below component name in bloks types"
-
-        regex:
-          type: string
-          description: "Client Regex validation for the field"
-
-        required:
-          type: boolean
-          description: "Is field required; Default: false"
-          default: false
-
-        restrict_components:
-          type: boolean
-          description: "Activate restriction nestable component option; Default: false"
-          default: false
-
-        restrict_content_types:
-          type: boolean
-          description: "Activate restriction content type option"
-
-        rich_markdown:
-          type: boolean
-          description: "Enable rich markdown view by default (true/false)"
-
-        rtl:
-          type: boolean
-          description: "Enable global RTL for this field"
-
-        source:
-          type: string
-          description: "Possible values: undefined: Self; internal_stories: Stories; internal: Datasource; external: API Endpoint in Datasource Entries Array Format"
-
-        translatable:
-          type: boolean
-          description: "Can field be translated; Default: false"
-          default: false
-
-        use_uuid:
-          type: boolean
-          description: "Default: true; available in option and source=internal_stories"
-          default: true
-
-
-      required:
-        - type
-        - pos
-
-    Field:
-      type: object
-      allOf:
-        - $ref: "#/components/schemas/FieldInput"
-        - type: object
-          properties:
-            id:
-              type: integer
-              format: int64
-              description: Numeric Unique ID
-
-    FieldOption:
+    DatasourceEntryCreateInput:
       type: object
       properties:
         name:
           type: string
+          description: The name of the datasource entry
         value:
           type: string
+          description: The value of the datasource entry
+        datasource_id:
+          type: integer
+          format: int64
+          description: The ID of the datasource containing the entry
       required:
         - name
-        - value
-
-    ComponentGroupInput:
-      type: object
-      properties:
-        name:
-          type: string
-          description: The name of the component group
-      required:
-        - name
-
-    ComponentGroup:
+        - slug
+    DatasourceEntryUpdateInput:
       type: object
       allOf:
-        - $ref: "#/components/schemas/ComponentGroupInput"
+        - $ref: '#/components/schemas/DatasourceEntryCreateInput'
+    DatasourceEntry:
+      type: object
+      description: 'The actual KEY/VALUE pair object a datasource consists of. One specific datasource entry is a set of two linked data items: a key, which is a unique identifier for the item of data scoped in the data source, and the value, which is the data that is identified.'
+      allOf:
+        - $ref: '#/components/schemas/DatasourceEntryUpdateInput'
         - type: object
           properties:
             id:
               type: integer
               format: int64
-            uuid:
-              type: string
-              format: uuid
-              description: The UUID of the component group
-              x-go-type: uuid.UUID
-              x-go-type-import:
-                name: uuid
-                path: "github.com/gofrs/uuid"
+              description: The ID of the datasource entry
             created_at:
               type: string
               format: date-time
+              description: The creation timestamp of the datasource entry
             updated_at:
               type: string
               format: date-time
+              description: The update timestamp of the datasource entry
           required:
             - id
-            - uuid
+            - name
             - created_at
             - updated_at
-
-    Space:
+    DatasourceCreateInput:
       type: object
       properties:
-        id:
-          type: integer
-          format: int64
-          description: The ID of the space
+        name:
+          type: string
+          description: The name of the data source
+        slug:
+          type: string
+          description: The slug of the data source
+      required:
+        - name
+        - slug
+    DatasourceUpdateInput:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/DatasourceCreateInput'
+    Datasource:
+      type: object
+      description: A datasource is a collection of datasource entries with a specific name and slug. Each datasource entry is a collection of key-value pairs (KVP), so called datasource entries. Those key-value pairs can be used for a single choice, multiple choice options and as well directly through our API to use them for multi-language labels, categories, or anything similar.
+      allOf:
+        - $ref: '#/components/schemas/DatasourceUpdateInput'
+        - type: object
+          properties:
+            id:
+              type: integer
+              format: int64
+              description: The ID of the datasource
+            created_at:
+              type: string
+              format: date-time
+              description: The creation timestamp of the datasource
+            updated_at:
+              type: string
+              format: date-time
+              description: The update timestamp of the datasource
+            space_id:
+              type: integer
+              format: int64
+              description: The ID of the space containing the datasource
+            datasource_entries:
+              type: array
+              items:
+                $ref: '#/components/schemas/DatasourceEntry'
+            asset_folder_id:
+              type: integer
+              format: int64
+              description: The ID of the asset folder associated with the datasource
+          required:
+            - id
+            - name
+            - created_at
+            - updated_at
+            - space_id
+            - datasource_entries
+    SpaceCreateInput:
+      type: object
+      properties:
         name:
           type: string
           description: The name of the space
         domain:
           type: string
           description: The domain of the space
-        uniq_domain:
-          type: string
-          description: The unique domain of the space (null if not set)
-        plan:
-          type: string
-          description: The plan of the space
-        plan_level:
-          type: integer
-          description: The plan level of the space
-        limits:
-          type: object
-          description: The limits of the space
-          additionalProperties: {}
-        created_at:
-          type: string
-          format: date-time
-          description: The creation timestamp of the space
-        role:
-          type: string
-          description: The role of the user in the space
-        owner_id:
-          type: integer
-          description: The ID of the owner of the space
         story_published_hook:
           type: string
           description: The story published hook of the space (null if not set)
-        environments:
-          type: string
-          description: The environments of the space (null if not set)
-        stories_count:
-          type: integer
-          description: The count of stories in the space
-        parent_id:
-          type: string
-          description: The ID of the parent space (null if not set)
-        assets_count:
-          type: integer
-          description: The count of assets in the space
         searchblok_id:
           type: string
           description: The Searchblok ID of the space (null if not set)
-        duplicatable:
+        environments:
           type: string
-          description: Indicates whether the space is duplicatable (null if not set)
-        request_count_today:
-          type: integer
-          description: The count of requests made today
-        api_requests:
-          type: integer
-          description: The total number of API requests allowed
-        exceeded_requests:
-          type: integer
-          description: The count of exceeded API requests
-        billing_address:
-          type: object
-          description: The billing address of the space
-          additionalProperties: {}
-        routes:
-          type: array
-          items: {}
-          description: An array of routes
-        euid:
-          type: string
-          description: The EUID of the space (null if not set)
-        trial:
-          type: boolean
-          description: Indicates whether the space is in trial mode
-        default_root:
-          type: string
-          description: The default root of the space
-        has_slack_webhook:
-          type: boolean
-          description: Indicates whether the space has a Slack webhook
-        api_logs_per_month:
-          type: array
-          items: {}
-          description: An array of API logs per month
-        first_token:
-          type: string
-          description: The first token of the space
-        has_pending_tasks:
-          type: boolean
-          description: Indicates whether the space has pending tasks
-        options:
-          type: object
-          description: The options of the space
-          additionalProperties: {}
-        collaborators:
-          type: array
-          items: {}
-          description: An array of collaborators
-        settings:
-          type: array
-          items: {}
-          description: An array of settings
-        owner:
-          type: object
-          description: The owner of the space
-          additionalProperties: {}
-
+          description: The environments of the space (null if not set)
+      required:
+        - name
+    SpaceUpdateInput:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/SpaceCreateInput'
+        - type: object
+          properties:
+            id:
+              type: integer
+              format: int64
+              description: The ID of the space
+            uniq_domain:
+              type: string
+              description: The unique domain of the space (null if not set)
+            owner_id:
+              type: integer
+              description: The ID of the owner of the space
+            parent_id:
+              type: string
+              description: The ID of the parent space (null if not set)
+            duplicatable:
+              type: string
+              description: Indicates whether the space is duplicatable (null if not set)
+            default_root:
+              type: string
+              description: The default root of the space
+            options:
+              type: object
+              description: The options of the space
+              additionalProperties: {}
+            routes:
+              type: array
+              items: {}
+              description: An array of routes
+            billing_address:
+              type: object
+              description: The billing address of the space
+              additionalProperties: {}
+    Space:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/SpaceUpdateInput'
+        - type: object
+          properties:
+            plan:
+              type: string
+              description: The plan of the space
+            plan_level:
+              type: integer
+              description: The plan level of the space
+            limits:
+              type: object
+              description: The limits of the space
+              additionalProperties: {}
+            created_at:
+              type: string
+              format: date-time
+              description: The creation timestamp of the space
+            role:
+              type: string
+              description: The role of the user in the space
+            stories_count:
+              type: integer
+              description: The count of stories in the space
+            assets_count:
+              type: integer
+              description: The count of assets in the space
+            request_count_today:
+              type: integer
+              description: The count of requests made today
+            api_requests:
+              type: integer
+              description: The total number of API requests allowed
+            exceeded_requests:
+              type: integer
+              description: The count of exceeded API requests
+            euid:
+              type: string
+              description: The EUID of the space (null if not set)
+            trial:
+              type: boolean
+              description: Indicates whether the space is in trial mode
+            has_slack_webhook:
+              type: boolean
+              description: Indicates whether the space has a Slack webhook
+            api_logs_per_month:
+              type: array
+              items: {}
+              description: An array of API logs per month
+            first_token:
+              type: string
+              description: The first token of the space
+            has_pending_tasks:
+              type: boolean
+              description: Indicates whether the space has pending tasks
+            options:
+              type: object
+              description: The options of the space
+              additionalProperties: {}
+            collaborators:
+              type: array
+              items: {}
+              description: An array of collaborators
+            settings:
+              type: array
+              items: {}
+              description: An array of settings
+            owner:
+              type: object
+              description: The owner of the space
+              additionalProperties: {}
+          required:
+            - name
+            - domain
+            - plan
+            - plan_level
+            - created_at
+            - id
+            - role
+            - owner_id
+            - stories_count
+            - assets_count
+            - request_count_today
+            - api_requests
+            - exceeded_requests
+            - trial
+            - routes
+            - default_root
+            - has_slack_webhook
+            - api_logs_per_month
+            - first_token
+            - has_pending_tasks
+            - options
+            - collaborators
+            - settings
+            - owner
     Webhook:
       type: object
       properties:
@@ -720,3 +1122,154 @@ components:
         updated_at:
           type: string
           format: date-time
+    FieldOption:
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: string
+      required:
+        - name
+        - value
+    FieldInput:
+      type: object
+      properties:
+        type:
+          type: string
+          description: The type of the field
+        pos:
+          type: integer
+          format: int64
+          description: The position of the field
+        add_https:
+          type: boolean
+          description: 'Prepends https: to stop usage of relative protocol'
+          default: false
+        asset_folder_id:
+          type: integer
+          format: int64
+          description: Default asset folder numeric id to store uploaded image of that field
+        can_sync:
+          type: boolean
+          description: 'Advanced usage to sync with field in preview; Default: false'
+          default: false
+        component_whitelist:
+          type: array
+          items:
+            type: string
+          description: 'Array of component/content type names: ["post","page","product"]'
+        datasource_slug:
+          type: string
+          description: Define selectable datasources string; Effects editor only if source=internal
+        default_value:
+          type: string
+          description: Default value for the field; Can be an escaped JSON object
+        description:
+          type: string
+          description: Description shown in the editor interface
+        display_name:
+          type: string
+          description: Name of the field for the editor interface
+        disable_time:
+          type: boolean
+          description: 'Disables time selection from date picker; Default: false'
+          default: false
+        external_datasource:
+          type: string
+          description: Define external datasource JSON Url; Effects editor only if source=external
+        field_type:
+          type: string
+          description: Name of the custom field type plugin
+        filetypes:
+          type: array
+          items:
+            type: string
+          description: 'Array of file type names: ["images", "videos", "audios", "texts"]'
+        folder_slug:
+          type: string
+          description: 'Filter on selectable stories path; Effects editor only if source=internal_stories; In case you have a multi-language folder structure you can add the ''{0}'' placeholder and the path will be adapted dynamically. Examples: "{0}/categories/", {0}/{1}/categories/'
+        image_crop:
+          type: boolean
+          description: 'Activate force crop for images: (true/false)'
+        image_height:
+          type: string
+          description: Define height in px or height ratio if keep_image_size is enabled
+        image_width:
+          type: string
+          description: Define width in px or width ratio if keep_image_size is enabled
+        keep_image_size:
+          type: boolean
+          description: 'Keep original size: (true/false)'
+        keys:
+          type: array
+          items:
+            type: string
+          description: Array of field keys to include in this section
+        max_length:
+          type: integer
+          format: int64
+          description: Set the max length of the input string
+        maximum:
+          type: integer
+          format: int64
+          description: Maximum amount of added bloks in this blok field
+        no_translate:
+          type: boolean
+          description: Should be excluded in translation export
+        options:
+          type: array
+          description: Array of datasource entries [{name:"", value:""}]; Effects editor only if source=undefined
+          items:
+            $ref: '#/components/schemas/FieldOption'
+        tooltip:
+          type: boolean
+          description: Show the description as a tooltip
+          default: false
+        preview_field:
+          type: boolean
+          description: Is used as instance preview field below component name in bloks types
+        regex:
+          type: string
+          description: Client Regex validation for the field
+        required:
+          type: boolean
+          description: 'Is field required; Default: false'
+          default: false
+        restrict_components:
+          type: boolean
+          description: 'Activate restriction nestable component option; Default: false'
+          default: false
+        restrict_content_types:
+          type: boolean
+          description: Activate restriction content type option
+        rich_markdown:
+          type: boolean
+          description: Enable rich markdown view by default (true/false)
+        rtl:
+          type: boolean
+          description: Enable global RTL for this field
+        source:
+          type: string
+          description: 'Possible values: undefined: Self; internal_stories: Stories; internal: Datasource; external: API Endpoint in Datasource Entries Array Format'
+        translatable:
+          type: boolean
+          description: 'Can field be translated; Default: false'
+          default: false
+        use_uuid:
+          type: boolean
+          description: 'Default: true; available in option and source=internal_stories'
+          default: true
+      required:
+        - type
+        - pos
+  headers:
+    pagination:
+      type: object
+      properties:
+        total:
+          type: integer
+          description: The total number of items
+        per-page:
+          type: integer
+          description: The number of items per page

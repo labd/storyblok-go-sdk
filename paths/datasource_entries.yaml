@@ -1,0 +1,105 @@
+create:
+  summary: Create a datasource entry
+  description: Create a datasource entry
+  operationId: createDatasourceEntry
+  tags:
+    - datasource_entries
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            datasource_entry:
+              $ref: "../schemas/datasource_entries.yaml#/DatasourceEntryCreateInput"
+  responses:
+    "201":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              datasource_entry:
+                $ref: "../schemas/datasource_entries.yaml#/DatasourceEntry"
+
+update:
+  summary: Update a datasource entry
+  description: Update a datasource entry
+  operationId: updateDatasourceEntry
+  tags:
+    - datasource_entries
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            datasource_entry:
+              $ref: "../schemas/datasource_entries.yaml#/DatasourceEntryUpdateInput"
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              datasource_entry:
+                $ref: "../schemas/datasource_entries.yaml#/DatasourceEntry"
+
+getOne:
+  summary: Get a datasource entry
+  description: Get a datasource entry
+  operationId: getDatasourceEntry
+  tags:
+    - datasource_entries
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              datasource_entry:
+                $ref: "../schemas/datasource_entries.yaml#/DatasourceEntry"
+
+getMultiple:
+  summary: List datasource entries
+  description: Retrieve a list of datasource entries
+  operationId: listDatasourceEntries
+  tags:
+    - datasource_entries
+  responses:
+    "200":
+      description: OK
+      headers:
+        schema:
+          $ref: "../schemas/pagination.yaml#/pagination"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              datasource_entries:
+                type: array
+                items:
+                  $ref: "../schemas/datasource_entries.yaml#/DatasourceEntry"
+
+delete:
+  summary: Delete a datasource entry
+  description: Delete a datasource entry
+  operationId: deleteDatasourceEntry
+  tags:
+    - datasource_entries
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              datasource_entry:
+                $ref: "../schemas/datasource_entries.yaml#/DatasourceEntry"

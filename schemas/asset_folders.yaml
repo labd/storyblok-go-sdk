@@ -1,0 +1,41 @@
+AssetFolderCreateInput:
+  type: object
+  properties:
+    name:
+      type: string
+      description: The name of the asset folder
+    parent_id:
+      type: integer
+      format: int64
+      description: The ID of the parent folder
+  required:
+    - name
+
+AssetFolderUpdateInput:
+  type: object
+  allOf:
+    - $ref: "#/AssetFolderCreateInput"
+
+AssetFolder:
+  type: object
+  description: A asset folder can be used to group components together. Each component can have only one asset folder.
+  allOf:
+    - $ref: "#/AssetFolderUpdateInput"
+    - type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: The ID of the asset folder
+        created_at:
+          type: string
+          format: date-time
+          description: The creation timestamp of the asset folder
+        updated_at:
+          type: string
+          format: date-time
+          description: The latest update timestamp of the asset folder
+      required:
+        - id
+        - created_at
+        - updated_at

@@ -1,0 +1,105 @@
+create:
+  summary: Create a component group
+  description: Create a component group
+  operationId: createComponentGroup
+  tags:
+    - component group
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            component_group:
+              $ref: "../schemas/component_groups.yaml#/ComponentGroupCreateInput"
+  responses:
+    "201":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              component_group:
+                $ref: "../schemas/component_groups.yaml#/ComponentGroup"
+
+update:
+  summary: Update a component group
+  description: Update a component group
+  operationId: updateComponentGroup
+  tags:
+    - component groups
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            component_group:
+              $ref: "../schemas/component_groups.yaml#/ComponentGroupUpdateInput"
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              component_group:
+                $ref: "../schemas/component_groups.yaml#/ComponentGroup"
+
+getOne:
+  summary: Get a component group
+  description: Get a component group
+  operationId: getComponentGroup
+  tags:
+    - component groups
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              component_group:
+                $ref: "../schemas/component_groups.yaml#/ComponentGroup"
+
+getMultiple:
+  summary: List component group
+  description: Retrieve a list of component group
+  operationId: listComponentGroups
+  tags:
+    - component groups
+  responses:
+    "200":
+      description: OK
+      headers:
+        schema:
+          $ref: "../schemas/pagination.yaml#/pagination"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              component_groups:
+                type: array
+                items:
+                  $ref: "../schemas/component_groups.yaml#/ComponentGroup"
+
+delete:
+  summary: Delete a component group
+  description: Delete a component group
+  operationId: deleteComponentGroup
+  tags:
+    - component groups
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              component_group:
+                $ref: "../schemas/component_groups.yaml#/ComponentGroup"

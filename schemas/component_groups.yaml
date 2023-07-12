@@ -1,0 +1,46 @@
+ComponentGroupCreateInput:
+  type: object
+  properties:
+    name:
+      type: string
+      description: The name of the component group
+  required:
+    - name
+
+ComponentGroupUpdateInput:
+  type: object
+  allOf:
+    - $ref: "#/ComponentGroupCreateInput"
+
+ComponentGroup:
+  type: object
+  description: A component group can be used to group components together. Each component can have only one component group.
+  allOf:
+    - $ref: "#/ComponentGroupUpdateInput"
+    - type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: The ID of the component group
+        created_at:
+          type: string
+          format: date-time
+          description: The creation timestamp of the component group
+        updated_at:
+          type: string
+          format: date-time
+          description: The latest update timestamp of the component group
+        uuid:
+          type: string
+          format: uuid
+          description: The UUID of the component group
+          x-go-type: uuid.UUID
+          x-go-type-import:
+            name: uuid
+            path: "github.com/gofrs/uuid"
+      required:
+        - id
+        - created_at
+        - updated_at
+        - uuid

@@ -1,0 +1,105 @@
+create:
+  summary: Create a datasource
+  description: Create a datasource
+  operationId: createDatasource
+  tags:
+    - datasource
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            datasource:
+              $ref: "../schemas/datasources.yaml#/DatasourceCreateInput"
+  responses:
+    "201":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              datasource:
+                $ref: "../schemas/datasources.yaml#/Datasource"
+
+update:
+  summary: Update a datasource
+  description: Update a datasource
+  operationId: updateDatasource
+  tags:
+    - datasources
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            datasource:
+              $ref: "../schemas/datasources.yaml#/DatasourceUpdateInput"
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type:
+            properties:
+              datasource:
+                $ref: "../schemas/datasources.yaml#/Datasource"
+
+getOne:
+  summary: Get a datasource
+  description: Get a datasource
+  operationId: getDatasource
+  tags:
+    - datasources
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type:
+            properties:
+              datasource:
+                $ref: "../schemas/datasources.yaml#/Datasource"
+
+getMultiple:
+  summary: List datasource
+  description: Retrieve a list of datasource
+  operationId: listDatasources
+  tags:
+    - datasources
+  responses:
+    "200":
+      description: OK
+      headers:
+        schema:
+          $ref: "../schemas/pagination.yaml#/pagination"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              datasources:
+                type: array
+                items:
+                  $ref: "../schemas/datasources.yaml#/Datasource"
+
+delete:
+  summary: Delete a datasource
+  description: Delete a datasource
+  operationId: deleteDatasource
+  tags:
+    - datasources
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type:
+            properties:
+              datasource:
+                $ref: "../schemas/datasources.yaml#/Datasource"

@@ -1,0 +1,56 @@
+DatasourceCreateInput:
+  type: object
+  properties:
+    name:
+      type: string
+      description: The name of the data source
+    slug:
+      type: string
+      description: The slug of the data source
+  required:
+    - name
+    - slug
+
+DatasourceUpdateInput:
+  type: object
+  allOf:
+    - $ref: "#/DatasourceCreateInput"
+
+Datasource:
+  type: object
+  description: A datasource is a collection of datasource entries with a specific name and slug. Each datasource entry is a collection of key-value pairs (KVP), so called datasource entries. Those key-value pairs can be used for a single choice, multiple choice options and as well directly through our API to use them for multi-language labels, categories, or anything similar.
+  allOf:
+    - $ref: "#/DatasourceUpdateInput"
+    - type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: The ID of the datasource
+        created_at:
+          type: string
+          format: date-time
+          description: The creation timestamp of the datasource
+        updated_at:
+          type: string
+          format: date-time
+          description: The update timestamp of the datasource
+        space_id:
+          type: integer
+          format: int64
+          description: The ID of the space containing the datasource
+        datasource_entries:
+          type: array
+          items:
+            $ref: "./datasource_entries.yaml#/DatasourceEntry"
+        asset_folder_id:
+          type: integer
+          format: int64
+          description: The ID of the asset folder associated with the datasource
+      required:
+        - id
+        - name
+        - created_at
+        - updated_at
+        - space_id
+        - datasource_entries

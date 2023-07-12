@@ -1,0 +1,151 @@
+create:
+  summary: Create a space
+  description: Create a space
+  operationId: createSpace
+  tags:
+    - spaces
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            space:
+              $ref: "../schemas/spaces.yaml#/SpaceCreateInput"
+  responses:
+    "201":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              space:
+                $ref: "../schemas/spaces.yaml#/Space"
+
+update:
+  summary: Update a space
+  description: Update a space
+  operationId: updateSpace
+  tags:
+    - spaces
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            space:
+              $ref: "../schemas/spaces.yaml#/SpaceUpdateInput"
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              space:
+                $ref: "../schemas/spaces.yaml#/Space"
+
+getOne:
+  summary: Get a space
+  description: Get a space
+  operationId: getSpace
+  tags:
+    - spaces
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              space:
+                $ref: "../schemas/spaces.yaml#/Space"
+
+getMultiple:
+  summary: List spaces
+  description: Retrieve a list of spaces
+  operationId: listSpaces
+  tags:
+    - spaces
+  responses:
+    "200":
+      description: OK
+      headers:
+        schema:
+          $ref: "../schemas/pagination.yaml#/pagination"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              spaces:
+                type: array
+                items:
+                  $ref: "../schemas/spaces.yaml#/Space"
+
+delete:
+  summary: Delete a space
+  description: Delete a space
+  operationId: deleteSpace
+  tags:
+    - spaces
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              space:
+                $ref: "../schemas/spaces.yaml#/Space"
+
+duplicate:
+  summary: Duplicate a space
+  description: Duplicate a space
+  operationId: duplicateSpace
+  tags:
+    - spaces
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            space:
+              $ref: "../schemas/spaces.yaml#/SpaceCreateInput"
+            dup_id:
+              type: integer
+              description: The numeric id of the original space
+
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              space:
+                $ref: "../schemas/spaces.yaml#/Space"
+
+backup:
+  summary: Backup a space
+  description: Backup a space
+  operationId: backupSpace
+  tags:
+    - spaces
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              space:
+                $ref: "../schemas/spaces.yaml#/Space"

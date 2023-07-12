@@ -1,0 +1,47 @@
+DatasourceEntryCreateInput:
+  type: object
+  properties:
+    name:
+      type: string
+      description: The name of the datasource entry
+    value:
+      type: string
+      description: The value of the datasource entry
+    datasource_id:
+      type: integer
+      format: int64
+      description: The ID of the datasource containing the entry
+  required:
+    - name
+    - slug
+
+DatasourceEntryUpdateInput:
+  type: object
+  allOf:
+    - $ref: "#/DatasourceEntryCreateInput"
+
+DatasourceEntry:
+  type: object
+  description: "The actual KEY/VALUE pair object a datasource consists of. One specific datasource entry is a set of two linked data items: a key, which is a unique identifier for the item of data scoped in the data source, and the value, which is the data that is identified."
+
+  allOf:
+    - $ref: "#/DatasourceEntryUpdateInput"
+    - type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: The ID of the datasource entry
+        created_at:
+          type: string
+          format: date-time
+          description: The creation timestamp of the datasource entry
+        updated_at:
+          type: string
+          format: date-time
+          description: The update timestamp of the datasource entry
+      required:
+        - id
+        - name
+        - created_at
+        - updated_at
