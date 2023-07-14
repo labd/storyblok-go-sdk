@@ -27,15 +27,12 @@ AssetFolder:
           type: integer
           format: int64
           description: The ID of the asset folder
-        created_at:
+        uuid:
           type: string
-          format: date-time
-          description: The creation timestamp of the asset folder
-        updated_at:
+          description: The UUID of the asset folder
+        parent_uuid:
           type: string
-          format: date-time
-          description: The latest update timestamp of the asset folder
+          description: The UUID of the asset folder
       required:
         - id
-        - created_at
-        - updated_at
+        - uuid

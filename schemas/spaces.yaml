@@ -77,6 +77,10 @@ Space:
           type: string
           format: date-time
           description: The creation timestamp of the space
+        updated_at:
+          type: string
+          format: date-time
+          description: The update timestamp of the space
         role:
           type: string
           description: The role of the user in the space
@@ -136,6 +140,7 @@ Space:
         - plan
         - plan_level
         - created_at
+        - updated_at
         - id
         - role
         - owner_id

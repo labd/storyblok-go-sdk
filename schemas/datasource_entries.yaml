@@ -32,16 +32,6 @@ DatasourceEntry:
           type: integer
           format: int64
           description: The ID of the datasource entry
-        created_at:
-          type: string
-          format: date-time
-          description: The creation timestamp of the datasource entry
-        updated_at:
-          type: string
-          format: date-time
-          description: The update timestamp of the datasource entry
       required:
         - id
         - name
-        - created_at
-        - updated_at

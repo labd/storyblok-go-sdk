@@ -111,9 +111,6 @@ const (
 
 // AssetFolder defines model for AssetFolder.
 type AssetFolder struct {
-	// CreatedAt The creation timestamp of the asset folder
-	CreatedAt time.Time `json:"created_at"`
-
 	// Id The ID of the asset folder
 	Id int64 `json:"id"`
 
@@ -123,8 +120,11 @@ type AssetFolder struct {
 	// ParentId The ID of the parent folder
 	ParentId *int64 `json:"parent_id,omitempty"`
 
-	// UpdatedAt The latest update timestamp of the asset folder
-	UpdatedAt time.Time `json:"updated_at"`
+	// ParentUuid The UUID of the asset folder
+	ParentUuid *string `json:"parent_uuid,omitempty"`
+
+	// Uuid The UUID of the asset folder
+	Uuid string `json:"uuid"`
 }
 
 // AssetFolderCreateInput defines model for AssetFolderCreateInput.
@@ -182,6 +182,9 @@ type Component struct {
 
 	// Schema The definition of fields (schema) for this component
 	Schema *orderedmap.OrderedMap[string, FieldInput] `json:"schema,omitempty"`
+
+	// UpdatedAt The creation timestamp of the component
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 // ComponentIcon An optional icon for the component to identify this component type in the interface
@@ -225,17 +228,11 @@ type ComponentCreateInputIcon string
 
 // ComponentGroup defines model for ComponentGroup.
 type ComponentGroup struct {
-	// CreatedAt The creation timestamp of the component group
-	CreatedAt time.Time `json:"created_at"`
-
 	// Id The ID of the component group
 	Id int64 `json:"id"`
 
 	// Name The name of the component group
 	Name string `json:"name"`
-
-	// UpdatedAt The latest update timestamp of the component group
-	UpdatedAt time.Time `json:"updated_at"`
 
 	// Uuid The UUID of the component group
 	Uuid uuid.UUID `json:"uuid"`
@@ -255,12 +252,8 @@ type ComponentUpdateInput = ComponentCreateInput
 
 // Datasource defines model for Datasource.
 type Datasource struct {
-	// AssetFolderId The ID of the asset folder associated with the datasource
-	AssetFolderId *int64 `json:"asset_folder_id,omitempty"`
-
 	// CreatedAt The creation timestamp of the datasource
-	CreatedAt         time.Time         `json:"created_at"`
-	DatasourceEntries []DatasourceEntry `json:"datasource_entries"`
+	CreatedAt time.Time `json:"created_at"`
 
 	// Id The ID of the datasource
 	Id int64 `json:"id"`
@@ -270,9 +263,6 @@ type Datasource struct {
 
 	// Slug The slug of the data source
 	Slug string `json:"slug"`
-
-	// SpaceId The ID of the space containing the datasource
-	SpaceId int64 `json:"space_id"`
 
 	// UpdatedAt The update timestamp of the datasource
 	UpdatedAt time.Time `json:"updated_at"`
@@ -289,9 +279,6 @@ type DatasourceCreateInput struct {
 
 // DatasourceEntry defines model for DatasourceEntry.
 type DatasourceEntry struct {
-	// CreatedAt The creation timestamp of the datasource entry
-	CreatedAt time.Time `json:"created_at"`
-
 	// DatasourceId The ID of the datasource containing the entry
 	DatasourceId *int64 `json:"datasource_id,omitempty"`
 
@@ -300,9 +287,6 @@ type DatasourceEntry struct {
 
 	// Name The name of the datasource entry
 	Name string `json:"name"`
-
-	// UpdatedAt The update timestamp of the datasource entry
-	UpdatedAt time.Time `json:"updated_at"`
 
 	// Value The value of the datasource entry
 	Value *string `json:"value,omitempty"`
@@ -540,6 +524,9 @@ type Space struct {
 
 	// UniqDomain The unique domain of the space (null if not set)
 	UniqDomain *string `json:"uniq_domain,omitempty"`
+
+	// UpdatedAt The update timestamp of the space
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 // SpaceCreateInput defines model for SpaceCreateInput.
@@ -682,22 +669,22 @@ type UpdateComponentJSONBody struct {
 
 // CreateDatasourceEntryJSONBody defines parameters for CreateDatasourceEntry.
 type CreateDatasourceEntryJSONBody struct {
-	AssetFolder *DatasourceEntryCreateInput `json:"asset_folder,omitempty"`
+	DatasourceEntry *DatasourceEntryCreateInput `json:"datasource_entry,omitempty"`
 }
 
 // UpdateDatasourceEntryJSONBody defines parameters for UpdateDatasourceEntry.
 type UpdateDatasourceEntryJSONBody struct {
-	AssetFolder *DatasourceEntryUpdateInput `json:"asset_folder,omitempty"`
+	DatasourceEntry *DatasourceEntryUpdateInput `json:"datasource_entry,omitempty"`
 }
 
 // CreateDatasourceJSONBody defines parameters for CreateDatasource.
 type CreateDatasourceJSONBody struct {
-	AssetFolder *DatasourceCreateInput `json:"asset_folder,omitempty"`
+	Datasource *DatasourceCreateInput `json:"datasource,omitempty"`
 }
 
 // UpdateDatasourceJSONBody defines parameters for UpdateDatasource.
 type UpdateDatasourceJSONBody struct {
-	AssetFolder *DatasourceUpdateInput `json:"asset_folder,omitempty"`
+	Datasource *DatasourceUpdateInput `json:"datasource,omitempty"`
 }
 
 // CreateSpaceJSONRequestBody defines body for CreateSpace for application/json ContentType.
@@ -902,8 +889,8 @@ type ClientInterface interface {
 
 	UpdateComponent(ctx context.Context, spaceId SpaceIdParam, id IdParam, body UpdateComponentJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// ListDatasourceEntrys request
-	ListDatasourceEntrys(ctx context.Context, spaceId SpaceIdParam, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// ListDatasourceEntries request
+	ListDatasourceEntries(ctx context.Context, spaceId SpaceIdParam, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// CreateDatasourceEntry request with any body
 	CreateDatasourceEntryWithBody(ctx context.Context, spaceId SpaceIdParam, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -1337,8 +1324,8 @@ func (c *Client) UpdateComponent(ctx context.Context, spaceId SpaceIdParam, id I
 	return c.Client.Do(req)
 }
 
-func (c *Client) ListDatasourceEntrys(ctx context.Context, spaceId SpaceIdParam, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewListDatasourceEntrysRequest(c.Server, spaceId)
+func (c *Client) ListDatasourceEntries(ctx context.Context, spaceId SpaceIdParam, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListDatasourceEntriesRequest(c.Server, spaceId)
 	if err != nil {
 		return nil, err
 	}
@@ -2530,8 +2517,8 @@ func NewUpdateComponentRequestWithBody(server string, spaceId SpaceIdParam, id I
 	return req, nil
 }
 
-// NewListDatasourceEntrysRequest generates requests for ListDatasourceEntrys
-func NewListDatasourceEntrysRequest(server string, spaceId SpaceIdParam) (*http.Request, error) {
+// NewListDatasourceEntriesRequest generates requests for ListDatasourceEntries
+func NewListDatasourceEntriesRequest(server string, spaceId SpaceIdParam) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -3097,8 +3084,8 @@ type ClientWithResponsesInterface interface {
 
 	UpdateComponentWithResponse(ctx context.Context, spaceId SpaceIdParam, id IdParam, body UpdateComponentJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateComponentResponse, error)
 
-	// ListDatasourceEntrys request
-	ListDatasourceEntrysWithResponse(ctx context.Context, spaceId SpaceIdParam, reqEditors ...RequestEditorFn) (*ListDatasourceEntrysResponse, error)
+	// ListDatasourceEntries request
+	ListDatasourceEntriesWithResponse(ctx context.Context, spaceId SpaceIdParam, reqEditors ...RequestEditorFn) (*ListDatasourceEntriesResponse, error)
 
 	// CreateDatasourceEntry request with any body
 	CreateDatasourceEntryWithBodyWithResponse(ctx context.Context, spaceId SpaceIdParam, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateDatasourceEntryResponse, error)
@@ -3186,7 +3173,9 @@ func (r GetSpacesSpaceIdWebhooksWebhookIdResponse) StatusCode() int {
 type ListSpacesResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *[]Space
+	JSON200      *struct {
+		Spaces *[]Space `json:"spaces,omitempty"`
+	}
 }
 
 // Status returns HTTPResponse.Status
@@ -3208,7 +3197,9 @@ func (r ListSpacesResponse) StatusCode() int {
 type CreateSpaceResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON201      *Space
+	JSON201      *struct {
+		Space *Space `json:"space,omitempty"`
+	}
 }
 
 // Status returns HTTPResponse.Status
@@ -3230,6 +3221,9 @@ func (r CreateSpaceResponse) StatusCode() int {
 type DeleteSpaceResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
+	JSON200      *struct {
+		Space *Space `json:"space,omitempty"`
+	}
 }
 
 // Status returns HTTPResponse.Status
@@ -3251,7 +3245,9 @@ func (r DeleteSpaceResponse) StatusCode() int {
 type GetSpaceResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *Space
+	JSON200      *struct {
+		Space *Space `json:"space,omitempty"`
+	}
 }
 
 // Status returns HTTPResponse.Status
@@ -3273,7 +3269,9 @@ func (r GetSpaceResponse) StatusCode() int {
 type DuplicateSpaceResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *Space
+	JSON200      *struct {
+		Space *Space `json:"space,omitempty"`
+	}
 }
 
 // Status returns HTTPResponse.Status
@@ -3295,7 +3293,9 @@ func (r DuplicateSpaceResponse) StatusCode() int {
 type UpdateSpaceResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *Space
+	JSON200      *struct {
+		Space *Space `json:"space,omitempty"`
+	}
 }
 
 // Status returns HTTPResponse.Status
@@ -3317,7 +3317,9 @@ func (r UpdateSpaceResponse) StatusCode() int {
 type ListAssetFoldersResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *[]AssetFolder
+	JSON200      *struct {
+		AssetFolders *[]AssetFolder `json:"asset_folders,omitempty"`
+	}
 }
 
 // Status returns HTTPResponse.Status
@@ -3339,7 +3341,10 @@ func (r ListAssetFoldersResponse) StatusCode() int {
 type CreateAssetFolderResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON201      *AssetFolder
+	JSON201      *struct {
+		// AssetFolder A asset folder can be used to group components together. Each component can have only one asset folder.
+		AssetFolder *AssetFolder `json:"asset_folder,omitempty"`
+	}
 }
 
 // Status returns HTTPResponse.Status
@@ -3361,6 +3366,10 @@ func (r CreateAssetFolderResponse) StatusCode() int {
 type DeleteAssetFolderResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
+	JSON200      *struct {
+		// AssetFolder A asset folder can be used to group components together. Each component can have only one asset folder.
+		AssetFolder *AssetFolder `json:"asset_folder,omitempty"`
+	}
 }
 
 // Status returns HTTPResponse.Status
@@ -3382,7 +3391,10 @@ func (r DeleteAssetFolderResponse) StatusCode() int {
 type GetAssetFolderResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *AssetFolder
+	JSON200      *struct {
+		// AssetFolder A asset folder can be used to group components together. Each component can have only one asset folder.
+		AssetFolder *AssetFolder `json:"asset_folder,omitempty"`
+	}
 }
 
 // Status returns HTTPResponse.Status
@@ -3404,7 +3416,10 @@ func (r GetAssetFolderResponse) StatusCode() int {
 type UpdateAssetFolderResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *AssetFolder
+	JSON200      *struct {
+		// AssetFolder A asset folder can be used to group components together. Each component can have only one asset folder.
+		AssetFolder *AssetFolder `json:"asset_folder,omitempty"`
+	}
 }
 
 // Status returns HTTPResponse.Status
@@ -3426,7 +3441,9 @@ func (r UpdateAssetFolderResponse) StatusCode() int {
 type BackupSpaceResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *Space
+	JSON200      *struct {
+		Space *Space `json:"space,omitempty"`
+	}
 }
 
 // Status returns HTTPResponse.Status
@@ -3448,7 +3465,9 @@ func (r BackupSpaceResponse) StatusCode() int {
 type ListComponentGroupsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *[]ComponentGroup
+	JSON200      *struct {
+		ComponentGroups *[]ComponentGroup `json:"component_groups,omitempty"`
+	}
 }
 
 // Status returns HTTPResponse.Status
@@ -3470,7 +3489,10 @@ func (r ListComponentGroupsResponse) StatusCode() int {
 type CreateComponentGroupResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON201      *ComponentGroup
+	JSON201      *struct {
+		// ComponentGroup A component group can be used to group components together. Each component can have only one component group.
+		ComponentGroup *ComponentGroup `json:"component_group,omitempty"`
+	}
 }
 
 // Status returns HTTPResponse.Status
@@ -3492,6 +3514,10 @@ func (r CreateComponentGroupResponse) StatusCode() int {
 type DeleteComponentGroupResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
+	JSON200      *struct {
+		// ComponentGroup A component group can be used to group components together. Each component can have only one component group.
+		ComponentGroup *ComponentGroup `json:"component_group,omitempty"`
+	}
 }
 
 // Status returns HTTPResponse.Status
@@ -3513,7 +3539,10 @@ func (r DeleteComponentGroupResponse) StatusCode() int {
 type GetComponentGroupResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *ComponentGroup
+	JSON200      *struct {
+		// ComponentGroup A component group can be used to group components together. Each component can have only one component group.
+		ComponentGroup *ComponentGroup `json:"component_group,omitempty"`
+	}
 }
 
 // Status returns HTTPResponse.Status
@@ -3535,7 +3564,10 @@ func (r GetComponentGroupResponse) StatusCode() int {
 type UpdateComponentGroupResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *ComponentGroup
+	JSON200      *struct {
+		// ComponentGroup A component group can be used to group components together. Each component can have only one component group.
+		ComponentGroup *ComponentGroup `json:"component_group,omitempty"`
+	}
 }
 
 // Status returns HTTPResponse.Status
@@ -3557,7 +3589,9 @@ func (r UpdateComponentGroupResponse) StatusCode() int {
 type ListComponentsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *[]Component
+	JSON200      *struct {
+		Components *[]Component `json:"components,omitempty"`
+	}
 }
 
 // Status returns HTTPResponse.Status
@@ -3579,7 +3613,10 @@ func (r ListComponentsResponse) StatusCode() int {
 type CreateComponentResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON201      *Component
+	JSON201      *struct {
+		// Component A component is a standalone entity that is meaningful in its own right. While components (or bloks) can be nested in each other, semantically they remain equal. Each component is a small piece of your data structure which can be filled with content or nested by your content editor. One component can consist of as many field types as required.
+		Component *Component `json:"component,omitempty"`
+	}
 }
 
 // Status returns HTTPResponse.Status
@@ -3601,6 +3638,10 @@ func (r CreateComponentResponse) StatusCode() int {
 type DeleteComponentResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
+	JSON200      *struct {
+		// Component A component is a standalone entity that is meaningful in its own right. While components (or bloks) can be nested in each other, semantically they remain equal. Each component is a small piece of your data structure which can be filled with content or nested by your content editor. One component can consist of as many field types as required.
+		Component *Component `json:"component,omitempty"`
+	}
 }
 
 // Status returns HTTPResponse.Status
@@ -3622,7 +3663,10 @@ func (r DeleteComponentResponse) StatusCode() int {
 type GetComponentResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *Component
+	JSON200      *struct {
+		// Component A component is a standalone entity that is meaningful in its own right. While components (or bloks) can be nested in each other, semantically they remain equal. Each component is a small piece of your data structure which can be filled with content or nested by your content editor. One component can consist of as many field types as required.
+		Component *Component `json:"component,omitempty"`
+	}
 }
 
 // Status returns HTTPResponse.Status
@@ -3644,7 +3688,10 @@ func (r GetComponentResponse) StatusCode() int {
 type UpdateComponentResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *Component
+	JSON200      *struct {
+		// Component A component is a standalone entity that is meaningful in its own right. While components (or bloks) can be nested in each other, semantically they remain equal. Each component is a small piece of your data structure which can be filled with content or nested by your content editor. One component can consist of as many field types as required.
+		Component *Component `json:"component,omitempty"`
+	}
 }
 
 // Status returns HTTPResponse.Status
@@ -3663,14 +3710,16 @@ func (r UpdateComponentResponse) StatusCode() int {
 	return 0
 }
 
-type ListDatasourceEntrysResponse struct {
+type ListDatasourceEntriesResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *[]DatasourceEntry
+	JSON200      *struct {
+		DatasourceEntries *[]DatasourceEntry `json:"datasource_entries,omitempty"`
+	}
 }
 
 // Status returns HTTPResponse.Status
-func (r ListDatasourceEntrysResponse) Status() string {
+func (r ListDatasourceEntriesResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -3678,7 +3727,7 @@ func (r ListDatasourceEntrysResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r ListDatasourceEntrysResponse) StatusCode() int {
+func (r ListDatasourceEntriesResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -3688,7 +3737,10 @@ func (r ListDatasourceEntrysResponse) StatusCode() int {
 type CreateDatasourceEntryResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON201      *DatasourceEntry
+	JSON201      *struct {
+		// DatasourceEntry The actual KEY/VALUE pair object a datasource consists of. One specific datasource entry is a set of two linked data items: a key, which is a unique identifier for the item of data scoped in the data source, and the value, which is the data that is identified.
+		DatasourceEntry *DatasourceEntry `json:"datasource_entry,omitempty"`
+	}
 }
 
 // Status returns HTTPResponse.Status
@@ -3710,6 +3762,10 @@ func (r CreateDatasourceEntryResponse) StatusCode() int {
 type DeleteDatasourceEntryResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
+	JSON200      *struct {
+		// DatasourceEntry The actual KEY/VALUE pair object a datasource consists of. One specific datasource entry is a set of two linked data items: a key, which is a unique identifier for the item of data scoped in the data source, and the value, which is the data that is identified.
+		DatasourceEntry *DatasourceEntry `json:"datasource_entry,omitempty"`
+	}
 }
 
 // Status returns HTTPResponse.Status
@@ -3731,7 +3787,10 @@ func (r DeleteDatasourceEntryResponse) StatusCode() int {
 type GetDatasourceEntryResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *DatasourceEntry
+	JSON200      *struct {
+		// DatasourceEntry The actual KEY/VALUE pair object a datasource consists of. One specific datasource entry is a set of two linked data items: a key, which is a unique identifier for the item of data scoped in the data source, and the value, which is the data that is identified.
+		DatasourceEntry *DatasourceEntry `json:"datasource_entry,omitempty"`
+	}
 }
 
 // Status returns HTTPResponse.Status
@@ -3753,7 +3812,10 @@ func (r GetDatasourceEntryResponse) StatusCode() int {
 type UpdateDatasourceEntryResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *DatasourceEntry
+	JSON200      *struct {
+		// DatasourceEntry The actual KEY/VALUE pair object a datasource consists of. One specific datasource entry is a set of two linked data items: a key, which is a unique identifier for the item of data scoped in the data source, and the value, which is the data that is identified.
+		DatasourceEntry *DatasourceEntry `json:"datasource_entry,omitempty"`
+	}
 }
 
 // Status returns HTTPResponse.Status
@@ -3775,7 +3837,9 @@ func (r UpdateDatasourceEntryResponse) StatusCode() int {
 type ListDatasourcesResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *[]Datasource
+	JSON200      *struct {
+		Datasources *[]Datasource `json:"datasources,omitempty"`
+	}
 }
 
 // Status returns HTTPResponse.Status
@@ -3797,7 +3861,10 @@ func (r ListDatasourcesResponse) StatusCode() int {
 type CreateDatasourceResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON201      *Datasource
+	JSON201      *struct {
+		// Datasource A datasource is a collection of datasource entries with a specific name and slug. Each datasource entry is a collection of key-value pairs (KVP), so called datasource entries. Those key-value pairs can be used for a single choice, multiple choice options and as well directly through our API to use them for multi-language labels, categories, or anything similar.
+		Datasource *Datasource `json:"datasource,omitempty"`
+	}
 }
 
 // Status returns HTTPResponse.Status
@@ -3819,6 +3886,10 @@ func (r CreateDatasourceResponse) StatusCode() int {
 type DeleteDatasourceResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
+	JSON200      *struct {
+		// Datasource A datasource is a collection of datasource entries with a specific name and slug. Each datasource entry is a collection of key-value pairs (KVP), so called datasource entries. Those key-value pairs can be used for a single choice, multiple choice options and as well directly through our API to use them for multi-language labels, categories, or anything similar.
+		Datasource *Datasource `json:"datasource,omitempty"`
+	}
 }
 
 // Status returns HTTPResponse.Status
@@ -3840,7 +3911,10 @@ func (r DeleteDatasourceResponse) StatusCode() int {
 type GetDatasourceResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *Datasource
+	JSON200      *struct {
+		// Datasource A datasource is a collection of datasource entries with a specific name and slug. Each datasource entry is a collection of key-value pairs (KVP), so called datasource entries. Those key-value pairs can be used for a single choice, multiple choice options and as well directly through our API to use them for multi-language labels, categories, or anything similar.
+		Datasource *Datasource `json:"datasource,omitempty"`
+	}
 }
 
 // Status returns HTTPResponse.Status
@@ -3862,7 +3936,10 @@ func (r GetDatasourceResponse) StatusCode() int {
 type UpdateDatasourceResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *Datasource
+	JSON200      *struct {
+		// Datasource A datasource is a collection of datasource entries with a specific name and slug. Each datasource entry is a collection of key-value pairs (KVP), so called datasource entries. Those key-value pairs can be used for a single choice, multiple choice options and as well directly through our API to use them for multi-language labels, categories, or anything similar.
+		Datasource *Datasource `json:"datasource,omitempty"`
+	}
 }
 
 // Status returns HTTPResponse.Status
@@ -4169,13 +4246,13 @@ func (c *ClientWithResponses) UpdateComponentWithResponse(ctx context.Context, s
 	return ParseUpdateComponentResponse(rsp)
 }
 
-// ListDatasourceEntrysWithResponse request returning *ListDatasourceEntrysResponse
-func (c *ClientWithResponses) ListDatasourceEntrysWithResponse(ctx context.Context, spaceId SpaceIdParam, reqEditors ...RequestEditorFn) (*ListDatasourceEntrysResponse, error) {
-	rsp, err := c.ListDatasourceEntrys(ctx, spaceId, reqEditors...)
+// ListDatasourceEntriesWithResponse request returning *ListDatasourceEntriesResponse
+func (c *ClientWithResponses) ListDatasourceEntriesWithResponse(ctx context.Context, spaceId SpaceIdParam, reqEditors ...RequestEditorFn) (*ListDatasourceEntriesResponse, error) {
+	rsp, err := c.ListDatasourceEntries(ctx, spaceId, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseListDatasourceEntrysResponse(rsp)
+	return ParseListDatasourceEntriesResponse(rsp)
 }
 
 // CreateDatasourceEntryWithBodyWithResponse request with arbitrary body returning *CreateDatasourceEntryResponse
@@ -4361,7 +4438,9 @@ func ParseListSpacesResponse(rsp *http.Response) (*ListSpacesResponse, error) {
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest []Space
+		var dest struct {
+			Spaces *[]Space `json:"spaces,omitempty"`
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -4387,7 +4466,9 @@ func ParseCreateSpaceResponse(rsp *http.Response) (*CreateSpaceResponse, error) 
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
-		var dest Space
+		var dest struct {
+			Space *Space `json:"space,omitempty"`
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -4411,6 +4492,18 @@ func ParseDeleteSpaceResponse(rsp *http.Response) (*DeleteSpaceResponse, error) 
 		HTTPResponse: rsp,
 	}
 
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			Space *Space `json:"space,omitempty"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
 	return response, nil
 }
 
@@ -4429,7 +4522,9 @@ func ParseGetSpaceResponse(rsp *http.Response) (*GetSpaceResponse, error) {
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest Space
+		var dest struct {
+			Space *Space `json:"space,omitempty"`
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -4455,7 +4550,9 @@ func ParseDuplicateSpaceResponse(rsp *http.Response) (*DuplicateSpaceResponse, e
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest Space
+		var dest struct {
+			Space *Space `json:"space,omitempty"`
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -4481,7 +4578,9 @@ func ParseUpdateSpaceResponse(rsp *http.Response) (*UpdateSpaceResponse, error) 
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest Space
+		var dest struct {
+			Space *Space `json:"space,omitempty"`
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -4507,7 +4606,9 @@ func ParseListAssetFoldersResponse(rsp *http.Response) (*ListAssetFoldersRespons
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest []AssetFolder
+		var dest struct {
+			AssetFolders *[]AssetFolder `json:"asset_folders,omitempty"`
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -4533,7 +4634,10 @@ func ParseCreateAssetFolderResponse(rsp *http.Response) (*CreateAssetFolderRespo
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
-		var dest AssetFolder
+		var dest struct {
+			// AssetFolder A asset folder can be used to group components together. Each component can have only one asset folder.
+			AssetFolder *AssetFolder `json:"asset_folder,omitempty"`
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -4557,6 +4661,19 @@ func ParseDeleteAssetFolderResponse(rsp *http.Response) (*DeleteAssetFolderRespo
 		HTTPResponse: rsp,
 	}
 
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			// AssetFolder A asset folder can be used to group components together. Each component can have only one asset folder.
+			AssetFolder *AssetFolder `json:"asset_folder,omitempty"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
 	return response, nil
 }
 
@@ -4575,7 +4692,10 @@ func ParseGetAssetFolderResponse(rsp *http.Response) (*GetAssetFolderResponse, e
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest AssetFolder
+		var dest struct {
+			// AssetFolder A asset folder can be used to group components together. Each component can have only one asset folder.
+			AssetFolder *AssetFolder `json:"asset_folder,omitempty"`
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -4601,7 +4721,10 @@ func ParseUpdateAssetFolderResponse(rsp *http.Response) (*UpdateAssetFolderRespo
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest AssetFolder
+		var dest struct {
+			// AssetFolder A asset folder can be used to group components together. Each component can have only one asset folder.
+			AssetFolder *AssetFolder `json:"asset_folder,omitempty"`
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -4627,7 +4750,9 @@ func ParseBackupSpaceResponse(rsp *http.Response) (*BackupSpaceResponse, error) 
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest Space
+		var dest struct {
+			Space *Space `json:"space,omitempty"`
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -4653,7 +4778,9 @@ func ParseListComponentGroupsResponse(rsp *http.Response) (*ListComponentGroupsR
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest []ComponentGroup
+		var dest struct {
+			ComponentGroups *[]ComponentGroup `json:"component_groups,omitempty"`
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -4679,7 +4806,10 @@ func ParseCreateComponentGroupResponse(rsp *http.Response) (*CreateComponentGrou
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
-		var dest ComponentGroup
+		var dest struct {
+			// ComponentGroup A component group can be used to group components together. Each component can have only one component group.
+			ComponentGroup *ComponentGroup `json:"component_group,omitempty"`
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -4703,6 +4833,19 @@ func ParseDeleteComponentGroupResponse(rsp *http.Response) (*DeleteComponentGrou
 		HTTPResponse: rsp,
 	}
 
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			// ComponentGroup A component group can be used to group components together. Each component can have only one component group.
+			ComponentGroup *ComponentGroup `json:"component_group,omitempty"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
 	return response, nil
 }
 
@@ -4721,7 +4864,10 @@ func ParseGetComponentGroupResponse(rsp *http.Response) (*GetComponentGroupRespo
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest ComponentGroup
+		var dest struct {
+			// ComponentGroup A component group can be used to group components together. Each component can have only one component group.
+			ComponentGroup *ComponentGroup `json:"component_group,omitempty"`
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -4747,7 +4893,10 @@ func ParseUpdateComponentGroupResponse(rsp *http.Response) (*UpdateComponentGrou
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest ComponentGroup
+		var dest struct {
+			// ComponentGroup A component group can be used to group components together. Each component can have only one component group.
+			ComponentGroup *ComponentGroup `json:"component_group,omitempty"`
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -4773,7 +4922,9 @@ func ParseListComponentsResponse(rsp *http.Response) (*ListComponentsResponse, e
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest []Component
+		var dest struct {
+			Components *[]Component `json:"components,omitempty"`
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -4799,7 +4950,10 @@ func ParseCreateComponentResponse(rsp *http.Response) (*CreateComponentResponse,
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
-		var dest Component
+		var dest struct {
+			// Component A component is a standalone entity that is meaningful in its own right. While components (or bloks) can be nested in each other, semantically they remain equal. Each component is a small piece of your data structure which can be filled with content or nested by your content editor. One component can consist of as many field types as required.
+			Component *Component `json:"component,omitempty"`
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -4823,6 +4977,19 @@ func ParseDeleteComponentResponse(rsp *http.Response) (*DeleteComponentResponse,
 		HTTPResponse: rsp,
 	}
 
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			// Component A component is a standalone entity that is meaningful in its own right. While components (or bloks) can be nested in each other, semantically they remain equal. Each component is a small piece of your data structure which can be filled with content or nested by your content editor. One component can consist of as many field types as required.
+			Component *Component `json:"component,omitempty"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
 	return response, nil
 }
 
@@ -4841,7 +5008,10 @@ func ParseGetComponentResponse(rsp *http.Response) (*GetComponentResponse, error
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest Component
+		var dest struct {
+			// Component A component is a standalone entity that is meaningful in its own right. While components (or bloks) can be nested in each other, semantically they remain equal. Each component is a small piece of your data structure which can be filled with content or nested by your content editor. One component can consist of as many field types as required.
+			Component *Component `json:"component,omitempty"`
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -4867,7 +5037,10 @@ func ParseUpdateComponentResponse(rsp *http.Response) (*UpdateComponentResponse,
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest Component
+		var dest struct {
+			// Component A component is a standalone entity that is meaningful in its own right. While components (or bloks) can be nested in each other, semantically they remain equal. Each component is a small piece of your data structure which can be filled with content or nested by your content editor. One component can consist of as many field types as required.
+			Component *Component `json:"component,omitempty"`
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -4878,22 +5051,24 @@ func ParseUpdateComponentResponse(rsp *http.Response) (*UpdateComponentResponse,
 	return response, nil
 }
 
-// ParseListDatasourceEntrysResponse parses an HTTP response from a ListDatasourceEntrysWithResponse call
-func ParseListDatasourceEntrysResponse(rsp *http.Response) (*ListDatasourceEntrysResponse, error) {
+// ParseListDatasourceEntriesResponse parses an HTTP response from a ListDatasourceEntriesWithResponse call
+func ParseListDatasourceEntriesResponse(rsp *http.Response) (*ListDatasourceEntriesResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &ListDatasourceEntrysResponse{
+	response := &ListDatasourceEntriesResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest []DatasourceEntry
+		var dest struct {
+			DatasourceEntries *[]DatasourceEntry `json:"datasource_entries,omitempty"`
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -4919,7 +5094,10 @@ func ParseCreateDatasourceEntryResponse(rsp *http.Response) (*CreateDatasourceEn
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
-		var dest DatasourceEntry
+		var dest struct {
+			// DatasourceEntry The actual KEY/VALUE pair object a datasource consists of. One specific datasource entry is a set of two linked data items: a key, which is a unique identifier for the item of data scoped in the data source, and the value, which is the data that is identified.
+			DatasourceEntry *DatasourceEntry `json:"datasource_entry,omitempty"`
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -4943,6 +5121,19 @@ func ParseDeleteDatasourceEntryResponse(rsp *http.Response) (*DeleteDatasourceEn
 		HTTPResponse: rsp,
 	}
 
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			// DatasourceEntry The actual KEY/VALUE pair object a datasource consists of. One specific datasource entry is a set of two linked data items: a key, which is a unique identifier for the item of data scoped in the data source, and the value, which is the data that is identified.
+			DatasourceEntry *DatasourceEntry `json:"datasource_entry,omitempty"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
 	return response, nil
 }
 
@@ -4961,7 +5152,10 @@ func ParseGetDatasourceEntryResponse(rsp *http.Response) (*GetDatasourceEntryRes
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest DatasourceEntry
+		var dest struct {
+			// DatasourceEntry The actual KEY/VALUE pair object a datasource consists of. One specific datasource entry is a set of two linked data items: a key, which is a unique identifier for the item of data scoped in the data source, and the value, which is the data that is identified.
+			DatasourceEntry *DatasourceEntry `json:"datasource_entry,omitempty"`
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -4987,7 +5181,10 @@ func ParseUpdateDatasourceEntryResponse(rsp *http.Response) (*UpdateDatasourceEn
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest DatasourceEntry
+		var dest struct {
+			// DatasourceEntry The actual KEY/VALUE pair object a datasource consists of. One specific datasource entry is a set of two linked data items: a key, which is a unique identifier for the item of data scoped in the data source, and the value, which is the data that is identified.
+			DatasourceEntry *DatasourceEntry `json:"datasource_entry,omitempty"`
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -5013,7 +5210,9 @@ func ParseListDatasourcesResponse(rsp *http.Response) (*ListDatasourcesResponse,
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest []Datasource
+		var dest struct {
+			Datasources *[]Datasource `json:"datasources,omitempty"`
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -5039,7 +5238,10 @@ func ParseCreateDatasourceResponse(rsp *http.Response) (*CreateDatasourceRespons
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
-		var dest Datasource
+		var dest struct {
+			// Datasource A datasource is a collection of datasource entries with a specific name and slug. Each datasource entry is a collection of key-value pairs (KVP), so called datasource entries. Those key-value pairs can be used for a single choice, multiple choice options and as well directly through our API to use them for multi-language labels, categories, or anything similar.
+			Datasource *Datasource `json:"datasource,omitempty"`
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -5063,6 +5265,19 @@ func ParseDeleteDatasourceResponse(rsp *http.Response) (*DeleteDatasourceRespons
 		HTTPResponse: rsp,
 	}
 
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			// Datasource A datasource is a collection of datasource entries with a specific name and slug. Each datasource entry is a collection of key-value pairs (KVP), so called datasource entries. Those key-value pairs can be used for a single choice, multiple choice options and as well directly through our API to use them for multi-language labels, categories, or anything similar.
+			Datasource *Datasource `json:"datasource,omitempty"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
 	return response, nil
 }
 
@@ -5081,7 +5296,10 @@ func ParseGetDatasourceResponse(rsp *http.Response) (*GetDatasourceResponse, err
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest Datasource
+		var dest struct {
+			// Datasource A datasource is a collection of datasource entries with a specific name and slug. Each datasource entry is a collection of key-value pairs (KVP), so called datasource entries. Those key-value pairs can be used for a single choice, multiple choice options and as well directly through our API to use them for multi-language labels, categories, or anything similar.
+			Datasource *Datasource `json:"datasource,omitempty"`
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -5107,7 +5325,10 @@ func ParseUpdateDatasourceResponse(rsp *http.Response) (*UpdateDatasourceRespons
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest Datasource
+		var dest struct {
+			// Datasource A datasource is a collection of datasource entries with a specific name and slug. Each datasource entry is a collection of key-value pairs (KVP), so called datasource entries. Those key-value pairs can be used for a single choice, multiple choice options and as well directly through our API to use them for multi-language labels, categories, or anything similar.
+			Datasource *Datasource `json:"datasource,omitempty"`
+		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}

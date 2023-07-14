@@ -107,6 +107,10 @@ Component:
           type: string
           format: date-time
           description: The creation timestamp of the component
+        updated_at:
+          type: string
+          format: date-time
+          description: The update timestamp of the component
         preset_id:
           type: string
           description: The ID of the preset associated with the component (null if not set)
@@ -116,6 +120,7 @@ Component:
       required:
         - id
         - created_at
+        - updated_at
 
 FieldInput:
   type: object

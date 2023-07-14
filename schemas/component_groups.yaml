@@ -23,14 +23,6 @@ ComponentGroup:
           type: integer
           format: int64
           description: The ID of the component group
-        created_at:
-          type: string
-          format: date-time
-          description: The creation timestamp of the component group
-        updated_at:
-          type: string
-          format: date-time
-          description: The latest update timestamp of the component group
         uuid:
           type: string
           format: uuid
@@ -41,6 +33,4 @@ ComponentGroup:
             path: "github.com/gofrs/uuid"
       required:
         - id
-        - created_at
-        - updated_at
         - uuid
