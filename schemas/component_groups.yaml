@@ -1,4 +1,4 @@
-ComponentGroupCreateInput:
+ComponentGroupBase:
   type: object
   properties:
     name:
@@ -6,6 +6,14 @@ ComponentGroupCreateInput:
       description: The name of the component group
   required:
     - name
+
+ComponentGroupCreateInput:
+  type: object
+  properties:
+    component_group:
+      $ref: "#/ComponentGroupBase"
+  required:
+    - component_group
 
 ComponentGroupUpdateInput:
   type: object
@@ -16,7 +24,7 @@ ComponentGroup:
   type: object
   description: A component group can be used to group components together. Each component can have only one component group.
   allOf:
-    - $ref: "#/ComponentGroupUpdateInput"
+    - $ref: "#/ComponentGroupBase"
     - type: object
       properties:
         id:

@@ -1,4 +1,4 @@
-SpaceCreateInput:
+SpaceBase:
   type: object
   properties:
     name:
@@ -18,6 +18,25 @@ SpaceCreateInput:
       description: The environments of the space (null if not set)
   required:
     - name
+
+SpaceCreateInput:
+  type: object
+  properties:
+    space:
+      $ref: "#/SpaceBase"
+  required:
+    - space
+
+SpaceDuplicateInput:
+  type: object
+  properties:
+    space:
+      $ref: "#/SpaceBase"
+    dup_id:
+      type: integer
+      description: The numeric id of the original space
+  required:
+    - space
 
 SpaceUpdateInput:
   type: object
@@ -60,7 +79,7 @@ SpaceUpdateInput:
 Space:
   type: object
   allOf:
-    - $ref: "#/SpaceUpdateInput"
+    - $ref: "#/SpaceBase"
     - type: object
       properties:
         plan:

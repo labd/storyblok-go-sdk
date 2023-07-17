@@ -8,10 +8,7 @@ create:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            space:
-              $ref: "../schemas/spaces.yaml#/SpaceCreateInput"
+          $ref: "../schemas/spaces.yaml#/SpaceCreateInput"
   responses:
     "201":
       description: OK
@@ -33,10 +30,7 @@ update:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            space:
-              $ref: "../schemas/spaces.yaml#/SpaceUpdateInput"
+          $ref: "../schemas/spaces.yaml#/SpaceUpdateInput"
   responses:
     "200":
       description: OK
@@ -113,13 +107,7 @@ duplicate:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            space:
-              $ref: "../schemas/spaces.yaml#/SpaceCreateInput"
-            dup_id:
-              type: integer
-              description: The numeric id of the original space
+          $ref: "../schemas/spaces.yaml#/SpaceDuplicateInput"
 
   responses:
     "200":

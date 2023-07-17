@@ -1,4 +1,4 @@
-ComponentCreateInput:
+ComponentBase:
   type: object
   properties:
     name:
@@ -87,6 +87,14 @@ ComponentCreateInput:
   required:
     - name
 
+ComponentCreateInput:
+  type: object
+  properties:
+    component:
+      $ref: "#/ComponentBase"
+  required:
+    - component
+
 ComponentUpdateInput:
   type: object
   allOf:
@@ -96,7 +104,7 @@ Component:
   type: object
   description: A component is a standalone entity that is meaningful in its own right. While components (or bloks) can be nested in each other, semantically they remain equal. Each component is a small piece of your data structure which can be filled with content or nested by your content editor. One component can consist of as many field types as required.
   allOf:
-    - $ref: "#/ComponentUpdateInput"
+    - $ref: "#/ComponentBase"
     - type: object
       properties:
         id:

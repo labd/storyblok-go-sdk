@@ -19,10 +19,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                space:
-                  $ref: '#/components/schemas/SpaceCreateInput'
+              $ref: '#/components/schemas/SpaceCreateInput'
       responses:
         '201':
           description: OK
@@ -80,10 +77,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                space:
-                  $ref: '#/components/schemas/SpaceUpdateInput'
+              $ref: '#/components/schemas/SpaceUpdateInput'
       responses:
         '200':
           description: OK
@@ -120,13 +114,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                space:
-                  $ref: '#/components/schemas/SpaceCreateInput'
-                dup_id:
-                  type: integer
-                  description: The numeric id of the original space
+              $ref: '#/components/schemas/SpaceDuplicateInput'
       responses:
         '200':
           description: OK
@@ -169,10 +157,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                component:
-                  $ref: '#/components/schemas/ComponentCreateInput'
+              $ref: '#/components/schemas/ComponentCreateInput'
       responses:
         '201':
           description: OK
@@ -231,10 +216,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                component:
-                  $ref: '#/components/schemas/ComponentUpdateInput'
+              $ref: '#/components/schemas/ComponentUpdateInput'
       responses:
         '200':
           description: OK
@@ -274,10 +256,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                component_group:
-                  $ref: '#/components/schemas/ComponentGroupCreateInput'
+              $ref: '#/components/schemas/ComponentGroupCreateInput'
       responses:
         '201':
           description: OK
@@ -336,10 +315,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                component_group:
-                  $ref: '#/components/schemas/ComponentGroupUpdateInput'
+              $ref: '#/components/schemas/ComponentGroupUpdateInput'
       responses:
         '200':
           description: OK
@@ -379,10 +355,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                asset_folder:
-                  $ref: '#/components/schemas/AssetFolderCreateInput'
+              $ref: '#/components/schemas/AssetFolderCreateInput'
       responses:
         '201':
           description: OK
@@ -441,10 +414,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                asset_folder:
-                  $ref: '#/components/schemas/AssetFolderUpdateInput'
+              $ref: '#/components/schemas/AssetFolderUpdateInput'
       responses:
         '200':
           description: OK
@@ -484,20 +454,14 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                datasource:
-                  $ref: '#/components/schemas/DatasourceCreateInput'
+              $ref: '#/components/schemas/DatasourceCreateInput'
       responses:
         '201':
           description: OK
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  datasource:
-                    $ref: '#/components/schemas/Datasource'
+                $ref: '#/components/schemas/Datasource'
     get:
       summary: List datasource
       description: Retrieve a list of datasource
@@ -599,10 +563,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                datasource_entry:
-                  $ref: '#/components/schemas/DatasourceEntryCreateInput'
+              $ref: '#/components/schemas/DatasourceEntryCreateInput'
       responses:
         '201':
           description: OK
@@ -664,10 +625,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                datasource_entry:
-                  $ref: '#/components/schemas/DatasourceEntryUpdateInput'
+              $ref: '#/components/schemas/DatasourceEntryUpdateInput'
       responses:
         '200':
           description: OK
@@ -758,16 +716,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                story:
-                  $ref: '#/components/schemas/StoryCreateInput'
-                publish:
-                  type: integer
-                  format: int64
-                release_id:
-                  type: integer
-                  format: int64
+              $ref: '#/components/schemas/StoryCreateInput'
       responses:
         '201':
           description: OK
@@ -868,22 +817,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                story:
-                  $ref: '#/components/schemas/StoryUpdateInput'
-                publish:
-                  type: integer
-                  description: If '1' it will publish the story, 'publish' must be omitted if publication is not desired
-                force_update:
-                  type: integer
-                  description: If '1' it will overwrite a locked story
-                release_id:
-                  type: integer
-                group_id:
-                  type: integer
-                lang:
-                  type: string
+              $ref: '#/components/schemas/StoryUpdateInput'
       responses:
         '200':
           description: OK
@@ -1053,15 +987,10 @@ components:
     AssetFolderCreateInput:
       type: object
       properties:
-        name:
-          type: string
-          description: The name of the asset folder
-        parent_id:
-          type: integer
-          format: int64
-          description: The ID of the parent folder
+        asset_folder:
+          $ref: '#/components/schemas/AssetFolderBase'
       required:
-        - name
+        - asset_folder
     AssetFolderUpdateInput:
       type: object
       allOf:
@@ -1070,7 +999,7 @@ components:
       type: object
       description: A asset folder can be used to group components together. Each component can have only one asset folder.
       allOf:
-        - $ref: '#/components/schemas/AssetFolderUpdateInput'
+        - $ref: '#/components/schemas/AssetFolderBase'
         - type: object
           properties:
             id:
@@ -1089,11 +1018,10 @@ components:
     ComponentGroupCreateInput:
       type: object
       properties:
-        name:
-          type: string
-          description: The name of the component group
+        component_group:
+          $ref: '#/components/schemas/ComponentGroupBase'
       required:
-        - name
+        - component_group
     ComponentGroupUpdateInput:
       type: object
       allOf:
@@ -1102,7 +1030,7 @@ components:
       type: object
       description: A component group can be used to group components together. Each component can have only one component group.
       allOf:
-        - $ref: '#/components/schemas/ComponentGroupUpdateInput'
+        - $ref: '#/components/schemas/ComponentGroupBase'
         - type: object
           properties:
             id:
@@ -1123,89 +1051,10 @@ components:
     ComponentCreateInput:
       type: object
       properties:
-        name:
-          type: string
-          description: Technical name used for component property in entries
-        display_name:
-          type: string
-          description: The display name of the component
-        image:
-          type: string
-          description: URL to the preview image, if uploaded
-        preview:
-          type: string
-          description: Define the field that should be used for preview in the interface
-        icon:
-          type: string
-          description: An optional icon for the component to identify this component type in the interface
-          enum:
-            - block-@
-            - block-1-2block
-            - block-add
-            - block-arrow-pointer
-            - block-block
-            - block-buildin
-            - block-center-m
-            - block-comment
-            - block-doc
-            - block-dollar-sign
-            - block-email
-            - block-image
-            - block-keyboard
-            - block-locked
-            - block-map-pin
-            - block-mobile
-            - block-monitor
-            - block-paycard
-            - block-resize-fc
-            - block-cart
-            - block-share
-            - block-shield-2
-            - block-shield
-            - block-sticker
-            - block-suitcase
-            - block-table-2
-            - block-table
-            - block-tag
-            - block-text-c
-            - block-text-img-c
-            - block-text-img-l
-            - block-text-img-r-l
-            - block-text-img-r
-            - block-text-img-t-l
-            - block-text-img-t-r
-            - block-text-l
-            - block-text-r
-            - block-unlocked
-            - block-wallet
-        color:
-          type: string
-          description: Css color used as background for the icon
-        is_root:
-          type: boolean
-          description: Component should be usable as a Content Type
-        is_nestable:
-          type: boolean
-          description: Component should be insertable in blocks field type fields
-        component_group_uuid:
-          type: string
-          format: uuid
-          description: The component group uuid of the component
-          x-go-type: uuid.UUID
-          x-go-type-import:
-            name: uuid
-            path: github.com/gofrs/uuid
-        schema:
-          type: object
-          description: The definition of fields (schema) for this component
-          additionalProperties:
-            $ref: '#/components/schemas/FieldInput'
-          x-go-type: orderedmap.OrderedMap[string,FieldInput]
-          x-go-type-import:
-            name: orderedmap
-            path: github.com/wk8/go-ordered-map/v2
+        component:
+          $ref: '#/components/schemas/ComponentBase'
       required:
-        - name
+        - component
     ComponentUpdateInput:
       type: object
       allOf:
@@ -1214,7 +1063,7 @@ components:
       type: object
       description: A component is a standalone entity that is meaningful in its own right. While components (or bloks) can be nested in each other, semantically they remain equal. Each component is a small piece of your data structure which can be filled with content or nested by your content editor. One component can consist of as many field types as required.
       allOf:
-        - $ref: '#/components/schemas/ComponentUpdateInput'
+        - $ref: '#/components/schemas/ComponentBase'
         - type: object
           properties:
             id:
@@ -1242,19 +1091,10 @@ components:
     DatasourceEntryCreateInput:
       type: object
       properties:
-        name:
-          type: string
-          description: The name of the datasource entry
-        value:
-          type: string
-          description: The value of the datasource entry
-        datasource_id:
-          type: integer
-          format: int64
-          description: The ID of the datasource containing the entry
+        datasource_entry:
+          $ref: '#/components/schemas/DatasourceEntryBase'
       required:
-        - name
-        - slug
+        - datasource_entry
     DatasourceEntryUpdateInput:
       type: object
       allOf:
@@ -1263,7 +1103,7 @@ components:
       type: object
       description: 'The actual KEY/VALUE pair object a datasource consists of. One specific datasource entry is a set of two linked data items: a key, which is a unique identifier for the item of data scoped in the data source, and the value, which is the data that is identified.'
       allOf:
-        - $ref: '#/components/schemas/DatasourceEntryUpdateInput'
+        - $ref: '#/components/schemas/DatasourceEntryBase'
         - type: object
           properties:
             id:
@@ -1276,15 +1116,10 @@ components:
     DatasourceCreateInput:
       type: object
       properties:
-        name:
-          type: string
-          description: The name of the data source
-        slug:
-          type: string
-          description: The slug of the data source
+        datasource:
+          $ref: '#/components/schemas/DatasourceBase'
       required:
-        - name
-        - slug
+        - datasource
     DatasourceUpdateInput:
       type: object
       allOf:
@@ -1293,7 +1128,7 @@ components:
       type: object
       description: A datasource is a collection of datasource entries with a specific name and slug. Each datasource entry is a collection of key-value pairs (KVP), so called datasource entries. Those key-value pairs can be used for a single choice, multiple choice options and as well directly through our API to use them for multi-language labels, categories, or anything similar.
       allOf:
-        - $ref: '#/components/schemas/DatasourceUpdateInput'
+        - $ref: '#/components/schemas/DatasourceBase'
         - type: object
           properties:
             id:
@@ -1318,23 +1153,10 @@ components:
     SpaceCreateInput:
       type: object
       properties:
-        name:
-          type: string
-          description: The name of the space
-        domain:
-          type: string
-          description: The domain of the space
-        story_published_hook:
-          type: string
-          description: The story published hook of the space (null if not set)
-        searchblok_id:
-          type: string
-          description: The Searchblok ID of the space (null if not set)
-        environments:
-          type: string
-          description: The environments of the space (null if not set)
+        space:
+          $ref: '#/components/schemas/SpaceBase'
       required:
-        - name
+        - space
     SpaceUpdateInput:
       type: object
       allOf:
@@ -1375,7 +1197,7 @@ components:
     Space:
       type: object
       allOf:
-        - $ref: '#/components/schemas/SpaceUpdateInput'
+        - $ref: '#/components/schemas/SpaceBase'
         - type: object
           properties:
             plan:
@@ -1494,6 +1316,36 @@ components:
         updated_at:
           type: string
           format: date-time
+    SpaceBase:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the space
+        domain:
+          type: string
+          description: The domain of the space
+        story_published_hook:
+          type: string
+          description: The story published hook of the space (null if not set)
+        searchblok_id:
+          type: string
+          description: The Searchblok ID of the space (null if not set)
+        environments:
+          type: string
+          description: The environments of the space (null if not set)
+      required:
+        - name
+    SpaceDuplicateInput:
+      type: object
+      properties:
+        space:
+          $ref: '#/components/schemas/SpaceBase'
+        dup_id:
+          type: integer
+          description: The numeric id of the original space
+      required:
+        - space
     FieldOption:
       type: object
       properties:
@@ -1635,7 +1487,141 @@ components:
       required:
         - type
         - pos
-    StoryCreateInput:
+    ComponentBase:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Technical name used for component property in entries
+        display_name:
+          type: string
+          description: The display name of the component
+        image:
+          type: string
+          description: URL to the preview image, if uploaded
+        preview:
+          type: string
+          description: Define the field that should be used for preview in the interface
+        icon:
+          type: string
+          description: An optional icon for the component to identify this component type in the interface
+          enum:
+            - block-@
+            - block-1-2block
+            - block-add
+            - block-arrow-pointer
+            - block-block
+            - block-buildin
+            - block-center-m
+            - block-comment
+            - block-doc
+            - block-dollar-sign
+            - block-email
+            - block-image
+            - block-keyboard
+            - block-locked
+            - block-map-pin
+            - block-mobile
+            - block-monitor
+            - block-paycard
+            - block-resize-fc
+            - block-cart
+            - block-share
+            - block-shield-2
+            - block-shield
+            - block-sticker
+            - block-suitcase
+            - block-table-2
+            - block-table
+            - block-tag
+            - block-text-c
+            - block-text-img-c
+            - block-text-img-l
+            - block-text-img-r-l
+            - block-text-img-r
+            - block-text-img-t-l
+            - block-text-img-t-r
+            - block-text-l
+            - block-text-r
+            - block-unlocked
+            - block-wallet
+        color:
+          type: string
+          description: Css color used as background for the icon
+        is_root:
+          type: boolean
+          description: Component should be usable as a Content Type
+        is_nestable:
+          type: boolean
+          description: Component should be insertable in blocks field type fields
+        component_group_uuid:
+          type: string
+          format: uuid
+          description: The component group uuid of the component
+          x-go-type: uuid.UUID
+          x-go-type-import:
+            name: uuid
+            path: github.com/gofrs/uuid
+        schema:
+          type: object
+          description: The definition of fields (schema) for this component
+          additionalProperties:
+            $ref: '#/components/schemas/FieldInput'
+          x-go-type: orderedmap.OrderedMap[string,FieldInput]
+          x-go-type-import:
+            name: orderedmap
+            path: github.com/wk8/go-ordered-map/v2
+      required:
+        - name
+    ComponentGroupBase:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the component group
+      required:
+        - name
+    AssetFolderBase:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the asset folder
+        parent_id:
+          type: integer
+          format: int64
+          description: The ID of the parent folder
+      required:
+        - name
+    DatasourceBase:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the data source
+        slug:
+          type: string
+          description: The slug of the data source
+      required:
+        - name
+        - slug
+    DatasourceEntryBase:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the datasource entry
+        value:
+          type: string
+          description: The value of the datasource entry
+        datasource_id:
+          type: integer
+          format: int64
+          description: The ID of the datasource containing the entry
+      required:
+        - name
+        - slug
+    StoryBase:
       type: object
       properties:
         name:
@@ -1685,15 +1671,11 @@ components:
       required:
         - name
         - slug
-    StoryUpdateInput:
-      type: object
-      allOf:
-        - $ref: '#/components/schemas/StoryCreateInput'
     Story:
       type: object
       description: This is an object representing your content entry. One Story object can be of a specific type, so called content types and is able to contain components. You define the fields and nestability of your content types to achieve your content structure. You can use this object to build up your entities when migrating or importing content. You can set alternate versions of a story with Management API using the group_id of the story.
       allOf:
-        - $ref: '#/components/schemas/StoryUpdateInput'
+        - $ref: '#/components/schemas/StoryBase'
         - type: object
           properties:
             id:
@@ -1801,6 +1783,33 @@ components:
             - translated_stories
             - preview_token
             - alternates
+    StoryCreateInput:
+      type: object
+      properties:
+        story:
+          $ref: '#/components/schemas/StoryBase'
+        publish:
+          type: integer
+          description: If '1' it will publish the story, 'publish' must be omitted if publication is not desired
+          format: int64
+        release_id:
+          type: integer
+          format: int64
+      required:
+        - story
+    StoryUpdateInput:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/StoryCreateInput'
+        - type: object
+          properties:
+            force_update:
+              type: integer
+              description: If '1' it will overwrite a locked story
+            group_id:
+              type: integer
+            lang:
+              type: string
     Version:
       type: object
       properties:

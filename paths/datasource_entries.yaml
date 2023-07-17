@@ -8,10 +8,7 @@ create:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            datasource_entry:
-              $ref: "../schemas/datasource_entries.yaml#/DatasourceEntryCreateInput"
+          $ref: "../schemas/datasource_entries.yaml#/DatasourceEntryCreateInput"
   responses:
     "201":
       description: OK
@@ -33,10 +30,7 @@ update:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            datasource_entry:
-              $ref: "../schemas/datasource_entries.yaml#/DatasourceEntryUpdateInput"
+          $ref: "../schemas/datasource_entries.yaml#/DatasourceEntryUpdateInput"
   responses:
     "200":
       description: OK

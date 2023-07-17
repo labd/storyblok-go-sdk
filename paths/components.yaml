@@ -8,10 +8,7 @@ create:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            component:
-              $ref: "../schemas/components.yaml#/ComponentCreateInput"
+          $ref: "../schemas/components.yaml#/ComponentCreateInput"
   responses:
     "201":
       description: OK
@@ -33,10 +30,7 @@ update:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            component:
-              $ref: "../schemas/components.yaml#/ComponentUpdateInput"
+          $ref: "../schemas/components.yaml#/ComponentUpdateInput"
   responses:
     "200":
       description: OK

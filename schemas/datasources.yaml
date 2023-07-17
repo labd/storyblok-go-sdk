@@ -1,4 +1,4 @@
-DatasourceCreateInput:
+DatasourceBase:
   type: object
   properties:
     name:
@@ -11,6 +11,14 @@ DatasourceCreateInput:
     - name
     - slug
 
+DatasourceCreateInput:
+  type: object
+  properties:
+    datasource:
+      $ref: "#/DatasourceBase"
+  required:
+    - datasource
+
 DatasourceUpdateInput:
   type: object
   allOf:
@@ -20,7 +28,7 @@ Datasource:
   type: object
   description: A datasource is a collection of datasource entries with a specific name and slug. Each datasource entry is a collection of key-value pairs (KVP), so called datasource entries. Those key-value pairs can be used for a single choice, multiple choice options and as well directly through our API to use them for multi-language labels, categories, or anything similar.
   allOf:
-    - $ref: "#/DatasourceUpdateInput"
+    - $ref: "#/DatasourceBase"
     - type: object
       properties:
         id:

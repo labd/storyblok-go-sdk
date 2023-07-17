@@ -8,10 +8,7 @@ create:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            asset_folder:
-              $ref: "../schemas/asset_folders.yaml#/AssetFolderCreateInput"
+          $ref: "../schemas/asset_folders.yaml#/AssetFolderCreateInput"
   responses:
     "201":
       description: OK
@@ -33,10 +30,7 @@ update:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            asset_folder:
-              $ref: "../schemas/asset_folders.yaml#/AssetFolderUpdateInput"
+          $ref: "../schemas/asset_folders.yaml#/AssetFolderUpdateInput"
   responses:
     "200":
       description: OK

@@ -8,16 +8,8 @@ create:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            story:
-              $ref: "../schemas/stories.yaml#/StoryCreateInput"
-            publish:
-              type: integer
-              format: int64
-            release_id:
-              type: integer
-              format: int64
+          $ref: "../schemas/stories.yaml#/StoryCreateInput"
+
   responses:
     "201":
       description: OK
@@ -38,22 +30,7 @@ update:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            story:
-              $ref: "../schemas/stories.yaml#/StoryUpdateInput"
-            publish:
-              type: integer
-              description: If '1' it will publish the story, 'publish' must be omitted if publication is not desired
-            force_update:
-              type: integer
-              description: If '1' it will overwrite a locked story
-            release_id:
-              type: integer
-            group_id:
-              type: integer
-            lang:
-              type: string
+          $ref: "../schemas/stories.yaml#/StoryUpdateInput"
   responses:
     "200":
       description: OK

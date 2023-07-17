@@ -1,4 +1,4 @@
-AssetFolderCreateInput:
+AssetFolderBase:
   type: object
   properties:
     name:
@@ -11,6 +11,14 @@ AssetFolderCreateInput:
   required:
     - name
 
+AssetFolderCreateInput:
+  type: object
+  properties:
+    asset_folder:
+      $ref: "#/AssetFolderBase"
+  required:
+    - asset_folder
+
 AssetFolderUpdateInput:
   type: object
   allOf:
@@ -20,7 +28,7 @@ AssetFolder:
   type: object
   description: A asset folder can be used to group components together. Each component can have only one asset folder.
   allOf:
-    - $ref: "#/AssetFolderUpdateInput"
+    - $ref: "#/AssetFolderBase/"
     - type: object
       properties:
         id:

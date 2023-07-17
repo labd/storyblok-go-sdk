@@ -8,20 +8,14 @@ create:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            datasource:
-              $ref: "../schemas/datasources.yaml#/DatasourceCreateInput"
+          $ref: "../schemas/datasources.yaml#/DatasourceCreateInput"
   responses:
     "201":
       description: OK
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              datasource:
-                $ref: "../schemas/datasources.yaml#/Datasource"
+            $ref: "../schemas/datasources.yaml#/Datasource"
 
 update:
   summary: Update a datasource

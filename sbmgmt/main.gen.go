@@ -66,47 +66,47 @@ const (
 	ComponentIconBlockWallet       ComponentIcon = "block-wallet"
 )
 
-// Defines values for ComponentCreateInputIcon.
+// Defines values for ComponentBaseIcon.
 const (
-	ComponentCreateInputIconBlock             ComponentCreateInputIcon = "block-@"
-	ComponentCreateInputIconBlock12block      ComponentCreateInputIcon = "block-1-2block"
-	ComponentCreateInputIconBlockAdd          ComponentCreateInputIcon = "block-add"
-	ComponentCreateInputIconBlockArrowPointer ComponentCreateInputIcon = "block-arrow-pointer"
-	ComponentCreateInputIconBlockBlock        ComponentCreateInputIcon = "block-block"
-	ComponentCreateInputIconBlockBuildin      ComponentCreateInputIcon = "block-buildin"
-	ComponentCreateInputIconBlockCart         ComponentCreateInputIcon = "block-cart"
-	ComponentCreateInputIconBlockCenterM      ComponentCreateInputIcon = "block-center-m"
-	ComponentCreateInputIconBlockComment      ComponentCreateInputIcon = "block-comment"
-	ComponentCreateInputIconBlockDoc          ComponentCreateInputIcon = "block-doc"
-	ComponentCreateInputIconBlockDollarSign   ComponentCreateInputIcon = "block-dollar-sign"
-	ComponentCreateInputIconBlockEmail        ComponentCreateInputIcon = "block-email"
-	ComponentCreateInputIconBlockImage        ComponentCreateInputIcon = "block-image"
-	ComponentCreateInputIconBlockKeyboard     ComponentCreateInputIcon = "block-keyboard"
-	ComponentCreateInputIconBlockLocked       ComponentCreateInputIcon = "block-locked"
-	ComponentCreateInputIconBlockMapPin       ComponentCreateInputIcon = "block-map-pin"
-	ComponentCreateInputIconBlockMobile       ComponentCreateInputIcon = "block-mobile"
-	ComponentCreateInputIconBlockMonitor      ComponentCreateInputIcon = "block-monitor"
-	ComponentCreateInputIconBlockPaycard      ComponentCreateInputIcon = "block-paycard"
-	ComponentCreateInputIconBlockResizeFc     ComponentCreateInputIcon = "block-resize-fc"
-	ComponentCreateInputIconBlockShare        ComponentCreateInputIcon = "block-share"
-	ComponentCreateInputIconBlockShield       ComponentCreateInputIcon = "block-shield"
-	ComponentCreateInputIconBlockShield2      ComponentCreateInputIcon = "block-shield-2"
-	ComponentCreateInputIconBlockSticker      ComponentCreateInputIcon = "block-sticker"
-	ComponentCreateInputIconBlockSuitcase     ComponentCreateInputIcon = "block-suitcase"
-	ComponentCreateInputIconBlockTable        ComponentCreateInputIcon = "block-table"
-	ComponentCreateInputIconBlockTable2       ComponentCreateInputIcon = "block-table-2"
-	ComponentCreateInputIconBlockTag          ComponentCreateInputIcon = "block-tag"
-	ComponentCreateInputIconBlockTextC        ComponentCreateInputIcon = "block-text-c"
-	ComponentCreateInputIconBlockTextImgC     ComponentCreateInputIcon = "block-text-img-c"
-	ComponentCreateInputIconBlockTextImgL     ComponentCreateInputIcon = "block-text-img-l"
-	ComponentCreateInputIconBlockTextImgR     ComponentCreateInputIcon = "block-text-img-r"
-	ComponentCreateInputIconBlockTextImgRL    ComponentCreateInputIcon = "block-text-img-r-l"
-	ComponentCreateInputIconBlockTextImgTL    ComponentCreateInputIcon = "block-text-img-t-l"
-	ComponentCreateInputIconBlockTextImgTR    ComponentCreateInputIcon = "block-text-img-t-r"
-	ComponentCreateInputIconBlockTextL        ComponentCreateInputIcon = "block-text-l"
-	ComponentCreateInputIconBlockTextR        ComponentCreateInputIcon = "block-text-r"
-	ComponentCreateInputIconBlockUnlocked     ComponentCreateInputIcon = "block-unlocked"
-	ComponentCreateInputIconBlockWallet       ComponentCreateInputIcon = "block-wallet"
+	ComponentBaseIconBlock             ComponentBaseIcon = "block-@"
+	ComponentBaseIconBlock12block      ComponentBaseIcon = "block-1-2block"
+	ComponentBaseIconBlockAdd          ComponentBaseIcon = "block-add"
+	ComponentBaseIconBlockArrowPointer ComponentBaseIcon = "block-arrow-pointer"
+	ComponentBaseIconBlockBlock        ComponentBaseIcon = "block-block"
+	ComponentBaseIconBlockBuildin      ComponentBaseIcon = "block-buildin"
+	ComponentBaseIconBlockCart         ComponentBaseIcon = "block-cart"
+	ComponentBaseIconBlockCenterM      ComponentBaseIcon = "block-center-m"
+	ComponentBaseIconBlockComment      ComponentBaseIcon = "block-comment"
+	ComponentBaseIconBlockDoc          ComponentBaseIcon = "block-doc"
+	ComponentBaseIconBlockDollarSign   ComponentBaseIcon = "block-dollar-sign"
+	ComponentBaseIconBlockEmail        ComponentBaseIcon = "block-email"
+	ComponentBaseIconBlockImage        ComponentBaseIcon = "block-image"
+	ComponentBaseIconBlockKeyboard     ComponentBaseIcon = "block-keyboard"
+	ComponentBaseIconBlockLocked       ComponentBaseIcon = "block-locked"
+	ComponentBaseIconBlockMapPin       ComponentBaseIcon = "block-map-pin"
+	ComponentBaseIconBlockMobile       ComponentBaseIcon = "block-mobile"
+	ComponentBaseIconBlockMonitor      ComponentBaseIcon = "block-monitor"
+	ComponentBaseIconBlockPaycard      ComponentBaseIcon = "block-paycard"
+	ComponentBaseIconBlockResizeFc     ComponentBaseIcon = "block-resize-fc"
+	ComponentBaseIconBlockShare        ComponentBaseIcon = "block-share"
+	ComponentBaseIconBlockShield       ComponentBaseIcon = "block-shield"
+	ComponentBaseIconBlockShield2      ComponentBaseIcon = "block-shield-2"
+	ComponentBaseIconBlockSticker      ComponentBaseIcon = "block-sticker"
+	ComponentBaseIconBlockSuitcase     ComponentBaseIcon = "block-suitcase"
+	ComponentBaseIconBlockTable        ComponentBaseIcon = "block-table"
+	ComponentBaseIconBlockTable2       ComponentBaseIcon = "block-table-2"
+	ComponentBaseIconBlockTag          ComponentBaseIcon = "block-tag"
+	ComponentBaseIconBlockTextC        ComponentBaseIcon = "block-text-c"
+	ComponentBaseIconBlockTextImgC     ComponentBaseIcon = "block-text-img-c"
+	ComponentBaseIconBlockTextImgL     ComponentBaseIcon = "block-text-img-l"
+	ComponentBaseIconBlockTextImgR     ComponentBaseIcon = "block-text-img-r"
+	ComponentBaseIconBlockTextImgRL    ComponentBaseIcon = "block-text-img-r-l"
+	ComponentBaseIconBlockTextImgTL    ComponentBaseIcon = "block-text-img-t-l"
+	ComponentBaseIconBlockTextImgTR    ComponentBaseIcon = "block-text-img-t-r"
+	ComponentBaseIconBlockTextL        ComponentBaseIcon = "block-text-l"
+	ComponentBaseIconBlockTextR        ComponentBaseIcon = "block-text-r"
+	ComponentBaseIconBlockUnlocked     ComponentBaseIcon = "block-unlocked"
+	ComponentBaseIconBlockWallet       ComponentBaseIcon = "block-wallet"
 )
 
 // AssetFolder defines model for AssetFolder.
@@ -127,13 +127,18 @@ type AssetFolder struct {
 	Uuid string `json:"uuid"`
 }
 
-// AssetFolderCreateInput defines model for AssetFolderCreateInput.
-type AssetFolderCreateInput struct {
+// AssetFolderBase defines model for AssetFolderBase.
+type AssetFolderBase struct {
 	// Name The name of the asset folder
 	Name string `json:"name"`
 
 	// ParentId The ID of the parent folder
 	ParentId *int64 `json:"parent_id,omitempty"`
+}
+
+// AssetFolderCreateInput defines model for AssetFolderCreateInput.
+type AssetFolderCreateInput struct {
+	AssetFolder AssetFolderBase `json:"asset_folder"`
 }
 
 // AssetFolderUpdateInput defines model for AssetFolderUpdateInput.
@@ -190,8 +195,8 @@ type Component struct {
 // ComponentIcon An optional icon for the component to identify this component type in the interface
 type ComponentIcon string
 
-// ComponentCreateInput defines model for ComponentCreateInput.
-type ComponentCreateInput struct {
+// ComponentBase defines model for ComponentBase.
+type ComponentBase struct {
 	// Color Css color used as background for the icon
 	Color *string `json:"color,omitempty"`
 
@@ -202,7 +207,7 @@ type ComponentCreateInput struct {
 	DisplayName *string `json:"display_name,omitempty"`
 
 	// Icon An optional icon for the component to identify this component type in the interface
-	Icon *ComponentCreateInputIcon `json:"icon,omitempty"`
+	Icon *ComponentBaseIcon `json:"icon,omitempty"`
 
 	// Image URL to the preview image, if uploaded
 	Image *string `json:"image,omitempty"`
@@ -223,8 +228,13 @@ type ComponentCreateInput struct {
 	Schema *orderedmap.OrderedMap[string, FieldInput] `json:"schema,omitempty"`
 }
 
-// ComponentCreateInputIcon An optional icon for the component to identify this component type in the interface
-type ComponentCreateInputIcon string
+// ComponentBaseIcon An optional icon for the component to identify this component type in the interface
+type ComponentBaseIcon string
+
+// ComponentCreateInput defines model for ComponentCreateInput.
+type ComponentCreateInput struct {
+	Component ComponentBase `json:"component"`
+}
 
 // ComponentGroup defines model for ComponentGroup.
 type ComponentGroup struct {
@@ -238,10 +248,15 @@ type ComponentGroup struct {
 	Uuid uuid.UUID `json:"uuid"`
 }
 
-// ComponentGroupCreateInput defines model for ComponentGroupCreateInput.
-type ComponentGroupCreateInput struct {
+// ComponentGroupBase defines model for ComponentGroupBase.
+type ComponentGroupBase struct {
 	// Name The name of the component group
 	Name string `json:"name"`
+}
+
+// ComponentGroupCreateInput defines model for ComponentGroupCreateInput.
+type ComponentGroupCreateInput struct {
+	ComponentGroup ComponentGroupBase `json:"component_group"`
 }
 
 // ComponentGroupUpdateInput defines model for ComponentGroupUpdateInput.
@@ -268,13 +283,18 @@ type Datasource struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
-// DatasourceCreateInput defines model for DatasourceCreateInput.
-type DatasourceCreateInput struct {
+// DatasourceBase defines model for DatasourceBase.
+type DatasourceBase struct {
 	// Name The name of the data source
 	Name string `json:"name"`
 
 	// Slug The slug of the data source
 	Slug string `json:"slug"`
+}
+
+// DatasourceCreateInput defines model for DatasourceCreateInput.
+type DatasourceCreateInput struct {
+	Datasource DatasourceBase `json:"datasource"`
 }
 
 // DatasourceEntry defines model for DatasourceEntry.
@@ -292,8 +312,8 @@ type DatasourceEntry struct {
 	Value *string `json:"value,omitempty"`
 }
 
-// DatasourceEntryCreateInput defines model for DatasourceEntryCreateInput.
-type DatasourceEntryCreateInput struct {
+// DatasourceEntryBase defines model for DatasourceEntryBase.
+type DatasourceEntryBase struct {
 	// DatasourceId The ID of the datasource containing the entry
 	DatasourceId *int64 `json:"datasource_id,omitempty"`
 
@@ -302,6 +322,11 @@ type DatasourceEntryCreateInput struct {
 
 	// Value The value of the datasource entry
 	Value *string `json:"value,omitempty"`
+}
+
+// DatasourceEntryCreateInput defines model for DatasourceEntryCreateInput.
+type DatasourceEntryCreateInput struct {
+	DatasourceEntry DatasourceEntryBase `json:"datasource_entry"`
 }
 
 // DatasourceEntryUpdateInput defines model for DatasourceEntryUpdateInput.
@@ -435,23 +460,14 @@ type Space struct {
 	// AssetsCount The count of assets in the space
 	AssetsCount int `json:"assets_count"`
 
-	// BillingAddress The billing address of the space
-	BillingAddress *map[string]interface{} `json:"billing_address,omitempty"`
-
 	// Collaborators An array of collaborators
 	Collaborators []interface{} `json:"collaborators"`
 
 	// CreatedAt The creation timestamp of the space
 	CreatedAt time.Time `json:"created_at"`
 
-	// DefaultRoot The default root of the space
-	DefaultRoot string `json:"default_root"`
-
 	// Domain The domain of the space
 	Domain string `json:"domain"`
-
-	// Duplicatable Indicates whether the space is duplicatable (null if not set)
-	Duplicatable *string `json:"duplicatable,omitempty"`
 
 	// Environments The environments of the space (null if not set)
 	Environments *string `json:"environments,omitempty"`
@@ -471,9 +487,6 @@ type Space struct {
 	// HasSlackWebhook Indicates whether the space has a Slack webhook
 	HasSlackWebhook bool `json:"has_slack_webhook"`
 
-	// Id The ID of the space
-	Id int64 `json:"id"`
-
 	// Limits The limits of the space
 	Limits *map[string]interface{} `json:"limits,omitempty"`
 
@@ -486,12 +499,6 @@ type Space struct {
 	// Owner The owner of the space
 	Owner map[string]interface{} `json:"owner"`
 
-	// OwnerId The ID of the owner of the space
-	OwnerId int `json:"owner_id"`
-
-	// ParentId The ID of the parent space (null if not set)
-	ParentId *int `json:"parent_id,omitempty"`
-
 	// Plan The plan of the space
 	Plan string `json:"plan"`
 
@@ -503,9 +510,6 @@ type Space struct {
 
 	// Role The role of the user in the space
 	Role string `json:"role"`
-
-	// Routes An array of routes
-	Routes []interface{} `json:"routes"`
 
 	// SearchblokId The Searchblok ID of the space (null if not set)
 	SearchblokId *string `json:"searchblok_id,omitempty"`
@@ -522,15 +526,12 @@ type Space struct {
 	// Trial Indicates whether the space is in trial mode
 	Trial bool `json:"trial"`
 
-	// UniqDomain The unique domain of the space (null if not set)
-	UniqDomain *string `json:"uniq_domain,omitempty"`
-
 	// UpdatedAt The update timestamp of the space
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
-// SpaceCreateInput defines model for SpaceCreateInput.
-type SpaceCreateInput struct {
+// SpaceBase defines model for SpaceBase.
+type SpaceBase struct {
 	// Domain The domain of the space
 	Domain *string `json:"domain,omitempty"`
 
@@ -547,6 +548,18 @@ type SpaceCreateInput struct {
 	StoryPublishedHook *string `json:"story_published_hook,omitempty"`
 }
 
+// SpaceCreateInput defines model for SpaceCreateInput.
+type SpaceCreateInput struct {
+	Space SpaceBase `json:"space"`
+}
+
+// SpaceDuplicateInput defines model for SpaceDuplicateInput.
+type SpaceDuplicateInput struct {
+	// DupId The numeric id of the original space
+	DupId *int      `json:"dup_id,omitempty"`
+	Space SpaceBase `json:"space"`
+}
+
 // SpaceUpdateInput defines model for SpaceUpdateInput.
 type SpaceUpdateInput struct {
 	// BillingAddress The billing address of the space
@@ -555,20 +568,11 @@ type SpaceUpdateInput struct {
 	// DefaultRoot The default root of the space
 	DefaultRoot *string `json:"default_root,omitempty"`
 
-	// Domain The domain of the space
-	Domain *string `json:"domain,omitempty"`
-
 	// Duplicatable Indicates whether the space is duplicatable (null if not set)
 	Duplicatable *string `json:"duplicatable,omitempty"`
 
-	// Environments The environments of the space (null if not set)
-	Environments *string `json:"environments,omitempty"`
-
 	// Id The ID of the space
 	Id *int64 `json:"id,omitempty"`
-
-	// Name The name of the space
-	Name string `json:"name"`
 
 	// Options The options of the space
 	Options *map[string]interface{} `json:"options,omitempty"`
@@ -581,12 +585,7 @@ type SpaceUpdateInput struct {
 
 	// Routes An array of routes
 	Routes *[]interface{} `json:"routes,omitempty"`
-
-	// SearchblokId The Searchblok ID of the space (null if not set)
-	SearchblokId *string `json:"searchblok_id,omitempty"`
-
-	// StoryPublishedHook The story published hook of the space (null if not set)
-	StoryPublishedHook *string `json:"story_published_hook,omitempty"`
+	Space  SpaceBase      `json:"space"`
 
 	// UniqDomain The unique domain of the space (null if not set)
 	UniqDomain *string `json:"uniq_domain,omitempty"`
@@ -682,8 +681,8 @@ type Story struct {
 	Uuid string `json:"uuid"`
 }
 
-// StoryCreateInput defines model for StoryCreateInput.
-type StoryCreateInput struct {
+// StoryBase defines model for StoryBase.
+type StoryBase struct {
 	// Content The content of the story
 	Content *map[string]interface{} `json:"content,omitempty"`
 
@@ -723,8 +722,26 @@ type StoryCreateInput struct {
 	} `json:"translated_slugs_attributes,omitempty"`
 }
 
+// StoryCreateInput defines model for StoryCreateInput.
+type StoryCreateInput struct {
+	// Publish If '1' it will publish the story, 'publish' must be omitted if publication is not desired
+	Publish   *int64    `json:"publish,omitempty"`
+	ReleaseId *int64    `json:"release_id,omitempty"`
+	Story     StoryBase `json:"story"`
+}
+
 // StoryUpdateInput defines model for StoryUpdateInput.
-type StoryUpdateInput = StoryCreateInput
+type StoryUpdateInput struct {
+	// ForceUpdate If '1' it will overwrite a locked story
+	ForceUpdate *int    `json:"force_update,omitempty"`
+	GroupId     *int    `json:"group_id,omitempty"`
+	Lang        *string `json:"lang,omitempty"`
+
+	// Publish If '1' it will publish the story, 'publish' must be omitted if publication is not desired
+	Publish   *int64    `json:"publish,omitempty"`
+	ReleaseId *int64    `json:"release_id,omitempty"`
+	Story     StoryBase `json:"story"`
+}
 
 // Version defines model for Version.
 type Version struct {
@@ -765,137 +782,55 @@ type GetSpacesSpaceIdWebhooksWebhookIdParams struct {
 	Token string `form:"token" json:"token"`
 }
 
-// CreateSpaceJSONBody defines parameters for CreateSpace.
-type CreateSpaceJSONBody struct {
-	Space *SpaceCreateInput `json:"space,omitempty"`
-}
-
-// DuplicateSpaceJSONBody defines parameters for DuplicateSpace.
-type DuplicateSpaceJSONBody struct {
-	// DupId The numeric id of the original space
-	DupId *int              `json:"dup_id,omitempty"`
-	Space *SpaceCreateInput `json:"space,omitempty"`
-}
-
-// UpdateSpaceJSONBody defines parameters for UpdateSpace.
-type UpdateSpaceJSONBody struct {
-	Space *SpaceUpdateInput `json:"space,omitempty"`
-}
-
-// CreateAssetFolderJSONBody defines parameters for CreateAssetFolder.
-type CreateAssetFolderJSONBody struct {
-	AssetFolder *AssetFolderCreateInput `json:"asset_folder,omitempty"`
-}
-
-// UpdateAssetFolderJSONBody defines parameters for UpdateAssetFolder.
-type UpdateAssetFolderJSONBody struct {
-	AssetFolder *AssetFolderUpdateInput `json:"asset_folder,omitempty"`
-}
-
-// CreateComponentGroupJSONBody defines parameters for CreateComponentGroup.
-type CreateComponentGroupJSONBody struct {
-	ComponentGroup *ComponentGroupCreateInput `json:"component_group,omitempty"`
-}
-
-// UpdateComponentGroupJSONBody defines parameters for UpdateComponentGroup.
-type UpdateComponentGroupJSONBody struct {
-	ComponentGroup *ComponentGroupUpdateInput `json:"component_group,omitempty"`
-}
-
-// CreateComponentJSONBody defines parameters for CreateComponent.
-type CreateComponentJSONBody struct {
-	Component *ComponentCreateInput `json:"component,omitempty"`
-}
-
-// UpdateComponentJSONBody defines parameters for UpdateComponent.
-type UpdateComponentJSONBody struct {
-	Component *ComponentUpdateInput `json:"component,omitempty"`
-}
-
-// CreateDatasourceEntryJSONBody defines parameters for CreateDatasourceEntry.
-type CreateDatasourceEntryJSONBody struct {
-	DatasourceEntry *DatasourceEntryCreateInput `json:"datasource_entry,omitempty"`
-}
-
-// UpdateDatasourceEntryJSONBody defines parameters for UpdateDatasourceEntry.
-type UpdateDatasourceEntryJSONBody struct {
-	DatasourceEntry *DatasourceEntryUpdateInput `json:"datasource_entry,omitempty"`
-}
-
-// CreateDatasourceJSONBody defines parameters for CreateDatasource.
-type CreateDatasourceJSONBody struct {
-	Datasource *DatasourceCreateInput `json:"datasource,omitempty"`
-}
-
 // UpdateDatasourceJSONBody defines parameters for UpdateDatasource.
 type UpdateDatasourceJSONBody struct {
 	Datasource *DatasourceUpdateInput `json:"datasource,omitempty"`
 }
 
-// CreateStoryJSONBody defines parameters for CreateStory.
-type CreateStoryJSONBody struct {
-	Publish   *int64            `json:"publish,omitempty"`
-	ReleaseId *int64            `json:"release_id,omitempty"`
-	Story     *StoryCreateInput `json:"story,omitempty"`
-}
-
-// UpdateStoryJSONBody defines parameters for UpdateStory.
-type UpdateStoryJSONBody struct {
-	// ForceUpdate If '1' it will overwrite a locked story
-	ForceUpdate *int    `json:"force_update,omitempty"`
-	GroupId     *int    `json:"group_id,omitempty"`
-	Lang        *string `json:"lang,omitempty"`
-
-	// Publish If '1' it will publish the story, 'publish' must be omitted if publication is not desired
-	Publish   *int              `json:"publish,omitempty"`
-	ReleaseId *int              `json:"release_id,omitempty"`
-	Story     *StoryUpdateInput `json:"story,omitempty"`
-}
-
 // CreateSpaceJSONRequestBody defines body for CreateSpace for application/json ContentType.
-type CreateSpaceJSONRequestBody CreateSpaceJSONBody
+type CreateSpaceJSONRequestBody = SpaceCreateInput
 
 // DuplicateSpaceJSONRequestBody defines body for DuplicateSpace for application/json ContentType.
-type DuplicateSpaceJSONRequestBody DuplicateSpaceJSONBody
+type DuplicateSpaceJSONRequestBody = SpaceDuplicateInput
 
 // UpdateSpaceJSONRequestBody defines body for UpdateSpace for application/json ContentType.
-type UpdateSpaceJSONRequestBody UpdateSpaceJSONBody
+type UpdateSpaceJSONRequestBody = SpaceUpdateInput
 
 // CreateAssetFolderJSONRequestBody defines body for CreateAssetFolder for application/json ContentType.
-type CreateAssetFolderJSONRequestBody CreateAssetFolderJSONBody
+type CreateAssetFolderJSONRequestBody = AssetFolderCreateInput
 
 // UpdateAssetFolderJSONRequestBody defines body for UpdateAssetFolder for application/json ContentType.
-type UpdateAssetFolderJSONRequestBody UpdateAssetFolderJSONBody
+type UpdateAssetFolderJSONRequestBody = AssetFolderUpdateInput
 
 // CreateComponentGroupJSONRequestBody defines body for CreateComponentGroup for application/json ContentType.
-type CreateComponentGroupJSONRequestBody CreateComponentGroupJSONBody
+type CreateComponentGroupJSONRequestBody = ComponentGroupCreateInput
 
 // UpdateComponentGroupJSONRequestBody defines body for UpdateComponentGroup for application/json ContentType.
-type UpdateComponentGroupJSONRequestBody UpdateComponentGroupJSONBody
+type UpdateComponentGroupJSONRequestBody = ComponentGroupUpdateInput
 
 // CreateComponentJSONRequestBody defines body for CreateComponent for application/json ContentType.
-type CreateComponentJSONRequestBody CreateComponentJSONBody
+type CreateComponentJSONRequestBody = ComponentCreateInput
 
 // UpdateComponentJSONRequestBody defines body for UpdateComponent for application/json ContentType.
-type UpdateComponentJSONRequestBody UpdateComponentJSONBody
+type UpdateComponentJSONRequestBody = ComponentUpdateInput
 
 // CreateDatasourceEntryJSONRequestBody defines body for CreateDatasourceEntry for application/json ContentType.
-type CreateDatasourceEntryJSONRequestBody CreateDatasourceEntryJSONBody
+type CreateDatasourceEntryJSONRequestBody = DatasourceEntryCreateInput
 
 // UpdateDatasourceEntryJSONRequestBody defines body for UpdateDatasourceEntry for application/json ContentType.
-type UpdateDatasourceEntryJSONRequestBody UpdateDatasourceEntryJSONBody
+type UpdateDatasourceEntryJSONRequestBody = DatasourceEntryUpdateInput
 
 // CreateDatasourceJSONRequestBody defines body for CreateDatasource for application/json ContentType.
-type CreateDatasourceJSONRequestBody CreateDatasourceJSONBody
+type CreateDatasourceJSONRequestBody = DatasourceCreateInput
 
 // UpdateDatasourceJSONRequestBody defines body for UpdateDatasource for application/json ContentType.
 type UpdateDatasourceJSONRequestBody UpdateDatasourceJSONBody
 
 // CreateStoryJSONRequestBody defines body for CreateStory for application/json ContentType.
-type CreateStoryJSONRequestBody CreateStoryJSONBody
+type CreateStoryJSONRequestBody = StoryCreateInput
 
 // UpdateStoryJSONRequestBody defines body for UpdateStory for application/json ContentType.
-type UpdateStoryJSONRequestBody UpdateStoryJSONBody
+type UpdateStoryJSONRequestBody = StoryUpdateInput
 
 // RequestEditorFn  is the function signature for the RequestEditor callback function
 type RequestEditorFn func(ctx context.Context, req *http.Request) error
@@ -4703,10 +4638,7 @@ func (r ListDatasourcesResponse) StatusCode() int {
 type CreateDatasourceResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON201      *struct {
-		// Datasource A datasource is a collection of datasource entries with a specific name and slug. Each datasource entry is a collection of key-value pairs (KVP), so called datasource entries. Those key-value pairs can be used for a single choice, multiple choice options and as well directly through our API to use them for multi-language labels, categories, or anything similar.
-		Datasource *Datasource `json:"datasource,omitempty"`
-	}
+	JSON201      *Datasource
 }
 
 // Status returns HTTPResponse.Status
@@ -6413,10 +6345,7 @@ func ParseCreateDatasourceResponse(rsp *http.Response) (*CreateDatasourceRespons
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
-		var dest struct {
-			// Datasource A datasource is a collection of datasource entries with a specific name and slug. Each datasource entry is a collection of key-value pairs (KVP), so called datasource entries. Those key-value pairs can be used for a single choice, multiple choice options and as well directly through our API to use them for multi-language labels, categories, or anything similar.
-			Datasource *Datasource `json:"datasource,omitempty"`
-		}
+		var dest Datasource
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
