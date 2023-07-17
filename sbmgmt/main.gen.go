@@ -183,7 +183,7 @@ type Component struct {
 	// Schema The definition of fields (schema) for this component
 	Schema *orderedmap.OrderedMap[string, FieldInput] `json:"schema,omitempty"`
 
-	// UpdatedAt The creation timestamp of the component
+	// UpdatedAt The update timestamp of the component
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
@@ -490,7 +490,7 @@ type Space struct {
 	OwnerId int `json:"owner_id"`
 
 	// ParentId The ID of the parent space (null if not set)
-	ParentId *string `json:"parent_id,omitempty"`
+	ParentId *int `json:"parent_id,omitempty"`
 
 	// Plan The plan of the space
 	Plan string `json:"plan"`
@@ -577,7 +577,7 @@ type SpaceUpdateInput struct {
 	OwnerId *int `json:"owner_id,omitempty"`
 
 	// ParentId The ID of the parent space (null if not set)
-	ParentId *string `json:"parent_id,omitempty"`
+	ParentId *int `json:"parent_id,omitempty"`
 
 	// Routes An array of routes
 	Routes *[]interface{} `json:"routes,omitempty"`
@@ -590,6 +590,151 @@ type SpaceUpdateInput struct {
 
 	// UniqDomain The unique domain of the space (null if not set)
 	UniqDomain *string `json:"uniq_domain,omitempty"`
+}
+
+// Story defines model for Story.
+type Story struct {
+	Alternates []map[string]interface{} `json:"alternates"`
+	CanNotView bool                     `json:"can_not_view"`
+
+	// Content The content of the story
+	Content *map[string]interface{} `json:"content,omitempty"`
+
+	// CreatedAt The creation timestamp of the story
+	CreatedAt time.Time `json:"created_at"`
+
+	// DefaultRoot Default content type/root component. (*Required if is_folder is true)
+	DefaultRoot *bool `json:"default_root,omitempty"`
+
+	// DeletedAt The deletion timestamp of the story
+	DeletedAt *time.Time `json:"deleted_at,omitempty"`
+
+	// DisableFeEditor Is side by side editor disabled for all entries in folder (true/false)
+	DisableFeEditor *bool `json:"disable_fe_editor,omitempty"`
+
+	// ExpireAt The expire timestamp of the story
+	ExpireAt *time.Time `json:"expire_at,omitempty"`
+
+	// FirstPublishedAt First publishing date (Format: YYYY-mm-dd HH:MM)
+	FirstPublishedAt *string `json:"first_published_at,omitempty"`
+	FullSlug         *string `json:"full_slug,omitempty"`
+
+	// Id The ID of the story
+	Id int64 `json:"id"`
+
+	// IsFolder Flag indicating whether the story is a folder
+	IsFolder    *bool `json:"is_folder,omitempty"`
+	IsScheduled *bool `json:"is_scheduled,omitempty"`
+
+	// IsStartpage Flag indicating whether the story is the start page
+	IsStartpage *bool `json:"is_startpage,omitempty"`
+	LastAuthor  struct {
+		FriendlyName *string `json:"friendly_name,omitempty"`
+		Id           *int    `json:"id,omitempty"`
+		Userid       *string `json:"userid,omitempty"`
+	} `json:"last_author"`
+	LocalizedPaths []map[string]interface{} `json:"localized_paths"`
+	MetaData       *map[string]interface{}  `json:"meta_data,omitempty"`
+
+	// Name The name of the story
+	Name   string                  `json:"name"`
+	Parent *map[string]interface{} `json:"parent,omitempty"`
+
+	// ParentId The ID of the parent story/folder
+	ParentId *int `json:"parent_id,omitempty"`
+
+	// ParentUuid The UUID of the story
+	ParentUuid *string `json:"parent_uuid,omitempty"`
+
+	// Path Given real path, used in the preview editor
+	Path   *string `json:"path,omitempty"`
+	Pinned bool    `json:"pinned"`
+
+	// Position The position of the story/folder within its parent
+	Position     int `json:"position"`
+	PreviewToken struct {
+		Timestamp *string `json:"timestamp,omitempty"`
+		Token     *string `json:"token,omitempty"`
+	} `json:"preview_token"`
+
+	// PublishAt The publish timestamp of the story
+	PublishAt *time.Time `json:"publish_at,omitempty"`
+
+	// Slug The slug of the story
+	Slug                      string                   `json:"slug"`
+	SortByDate                *string                  `json:"sort_by_date,omitempty"`
+	SpaceRoleIds              []int                    `json:"space_role_ids"`
+	TagList                   *[]string                `json:"tag_list,omitempty"`
+	TranslatedSlugs           []map[string]interface{} `json:"translated_slugs"`
+	TranslatedSlugsAttributes *[]struct {
+		Lang *string `json:"lang,omitempty"`
+		Name *string `json:"name,omitempty"`
+		Slug *string `json:"slug,omitempty"`
+	} `json:"translated_slugs_attributes,omitempty"`
+	TranslatedStories  []interface{} `json:"translated_stories"`
+	UnpublishedChanges *bool         `json:"unpublished_changes,omitempty"`
+
+	// UpdatedAt The update timestamp of the story
+	UpdatedAt time.Time `json:"updated_at"`
+	UserIds   []int     `json:"user_ids"`
+
+	// Uuid The UUID of the story
+	Uuid string `json:"uuid"`
+}
+
+// StoryCreateInput defines model for StoryCreateInput.
+type StoryCreateInput struct {
+	// Content The content of the story
+	Content *map[string]interface{} `json:"content,omitempty"`
+
+	// DefaultRoot Default content type/root component. (*Required if is_folder is true)
+	DefaultRoot *bool `json:"default_root,omitempty"`
+
+	// DisableFeEditor Is side by side editor disabled for all entries in folder (true/false)
+	DisableFeEditor *bool `json:"disable_fe_editor,omitempty"`
+
+	// FirstPublishedAt First publishing date (Format: YYYY-mm-dd HH:MM)
+	FirstPublishedAt *string `json:"first_published_at,omitempty"`
+
+	// IsFolder Flag indicating whether the story is a folder
+	IsFolder *bool `json:"is_folder,omitempty"`
+
+	// IsStartpage Flag indicating whether the story is the start page
+	IsStartpage *bool `json:"is_startpage,omitempty"`
+
+	// Name The name of the story
+	Name string `json:"name"`
+
+	// ParentId The ID of the parent story/folder
+	ParentId *int `json:"parent_id,omitempty"`
+
+	// Path Given real path, used in the preview editor
+	Path *string `json:"path,omitempty"`
+
+	// Position The position of the story/folder within its parent
+	Position *int `json:"position,omitempty"`
+
+	// Slug The slug of the story
+	Slug                      string `json:"slug"`
+	TranslatedSlugsAttributes *[]struct {
+		Lang *string `json:"lang,omitempty"`
+		Name *string `json:"name,omitempty"`
+		Slug *string `json:"slug,omitempty"`
+	} `json:"translated_slugs_attributes,omitempty"`
+}
+
+// StoryUpdateInput defines model for StoryUpdateInput.
+type StoryUpdateInput = StoryCreateInput
+
+// Version defines model for Version.
+type Version struct {
+	Author    *string    `json:"author,omitempty"`
+	AuthorId  *int       `json:"author_id,omitempty"`
+	CreatedAt *time.Time `json:"created_at,omitempty"`
+	Event     *string    `json:"event,omitempty"`
+	Id        *int       `json:"id,omitempty"`
+	IsDraft   *bool      `json:"is_draft,omitempty"`
+	ItemId    *int       `json:"item_id,omitempty"`
 }
 
 // Webhook defines model for Webhook.
@@ -687,6 +832,26 @@ type UpdateDatasourceJSONBody struct {
 	Datasource *DatasourceUpdateInput `json:"datasource,omitempty"`
 }
 
+// CreateStoryJSONBody defines parameters for CreateStory.
+type CreateStoryJSONBody struct {
+	Publish   *int64            `json:"publish,omitempty"`
+	ReleaseId *int64            `json:"release_id,omitempty"`
+	Story     *StoryCreateInput `json:"story,omitempty"`
+}
+
+// UpdateStoryJSONBody defines parameters for UpdateStory.
+type UpdateStoryJSONBody struct {
+	// ForceUpdate If '1' it will overwrite a locked story
+	ForceUpdate *int    `json:"force_update,omitempty"`
+	GroupId     *int    `json:"group_id,omitempty"`
+	Lang        *string `json:"lang,omitempty"`
+
+	// Publish If '1' it will publish the story, 'publish' must be omitted if publication is not desired
+	Publish   *int              `json:"publish,omitempty"`
+	ReleaseId *int              `json:"release_id,omitempty"`
+	Story     *StoryUpdateInput `json:"story,omitempty"`
+}
+
 // CreateSpaceJSONRequestBody defines body for CreateSpace for application/json ContentType.
 type CreateSpaceJSONRequestBody CreateSpaceJSONBody
 
@@ -725,6 +890,12 @@ type CreateDatasourceJSONRequestBody CreateDatasourceJSONBody
 
 // UpdateDatasourceJSONRequestBody defines body for UpdateDatasource for application/json ContentType.
 type UpdateDatasourceJSONRequestBody UpdateDatasourceJSONBody
+
+// CreateStoryJSONRequestBody defines body for CreateStory for application/json ContentType.
+type CreateStoryJSONRequestBody CreateStoryJSONBody
+
+// UpdateStoryJSONRequestBody defines body for UpdateStory for application/json ContentType.
+type UpdateStoryJSONRequestBody UpdateStoryJSONBody
 
 // RequestEditorFn  is the function signature for the RequestEditor callback function
 type RequestEditorFn func(ctx context.Context, req *http.Request) error
@@ -799,6 +970,18 @@ func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
 
 // The interface specification for the client above.
 type ClientInterface interface {
+	// CompareStory request
+	CompareStory(ctx context.Context, spaceId SpaceIdParam, id IdParam, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// PublishStory request
+	PublishStory(ctx context.Context, spaceId SpaceIdParam, id IdParam, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UnpublishStory request
+	UnpublishStory(ctx context.Context, spaceId SpaceIdParam, id IdParam, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// VersionsStory request
+	VersionsStory(ctx context.Context, spaceId SpaceIdParam, id IdParam, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetSpacesSpaceIdWebhooks request
 	GetSpacesSpaceIdWebhooks(ctx context.Context, spaceId SpaceIdParam, params *GetSpacesSpaceIdWebhooksParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -926,6 +1109,73 @@ type ClientInterface interface {
 	UpdateDatasourceWithBody(ctx context.Context, spaceId SpaceIdParam, id IdParam, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	UpdateDatasource(ctx context.Context, spaceId SpaceIdParam, id IdParam, body UpdateDatasourceJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListStories request
+	ListStories(ctx context.Context, spaceId SpaceIdParam, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateStory request with any body
+	CreateStoryWithBody(ctx context.Context, spaceId SpaceIdParam, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	CreateStory(ctx context.Context, spaceId SpaceIdParam, body CreateStoryJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// DeleteStory request
+	DeleteStory(ctx context.Context, spaceId SpaceIdParam, id IdParam, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetStory request
+	GetStory(ctx context.Context, spaceId SpaceIdParam, id IdParam, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UpdateStory request with any body
+	UpdateStoryWithBody(ctx context.Context, spaceId SpaceIdParam, id IdParam, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	UpdateStory(ctx context.Context, spaceId SpaceIdParam, id IdParam, body UpdateStoryJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+}
+
+func (c *Client) CompareStory(ctx context.Context, spaceId SpaceIdParam, id IdParam, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCompareStoryRequest(c.Server, spaceId, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) PublishStory(ctx context.Context, spaceId SpaceIdParam, id IdParam, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPublishStoryRequest(c.Server, spaceId, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UnpublishStory(ctx context.Context, spaceId SpaceIdParam, id IdParam, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUnpublishStoryRequest(c.Server, spaceId, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) VersionsStory(ctx context.Context, spaceId SpaceIdParam, id IdParam, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewVersionsStoryRequest(c.Server, spaceId, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
 }
 
 func (c *Client) GetSpacesSpaceIdWebhooks(ctx context.Context, spaceId SpaceIdParam, params *GetSpacesSpaceIdWebhooksParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -1490,6 +1740,254 @@ func (c *Client) UpdateDatasource(ctx context.Context, spaceId SpaceIdParam, id 
 		return nil, err
 	}
 	return c.Client.Do(req)
+}
+
+func (c *Client) ListStories(ctx context.Context, spaceId SpaceIdParam, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListStoriesRequest(c.Server, spaceId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateStoryWithBody(ctx context.Context, spaceId SpaceIdParam, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateStoryRequestWithBody(c.Server, spaceId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateStory(ctx context.Context, spaceId SpaceIdParam, body CreateStoryJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateStoryRequest(c.Server, spaceId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) DeleteStory(ctx context.Context, spaceId SpaceIdParam, id IdParam, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteStoryRequest(c.Server, spaceId, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetStory(ctx context.Context, spaceId SpaceIdParam, id IdParam, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetStoryRequest(c.Server, spaceId, id)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateStoryWithBody(ctx context.Context, spaceId SpaceIdParam, id IdParam, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateStoryRequestWithBody(c.Server, spaceId, id, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateStory(ctx context.Context, spaceId SpaceIdParam, id IdParam, body UpdateStoryJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateStoryRequest(c.Server, spaceId, id, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// NewCompareStoryRequest generates requests for CompareStory
+func NewCompareStoryRequest(server string, spaceId SpaceIdParam, id IdParam) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "space_id", runtime.ParamLocationPath, spaceId)
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/spaces/%s/stories/%s/compare", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewPublishStoryRequest generates requests for PublishStory
+func NewPublishStoryRequest(server string, spaceId SpaceIdParam, id IdParam) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "space_id", runtime.ParamLocationPath, spaceId)
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/spaces/%s/stories/%s/publish", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewUnpublishStoryRequest generates requests for UnpublishStory
+func NewUnpublishStoryRequest(server string, spaceId SpaceIdParam, id IdParam) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "space_id", runtime.ParamLocationPath, spaceId)
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/spaces/%s/stories/%s/unpublish", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewVersionsStoryRequest generates requests for VersionsStory
+func NewVersionsStoryRequest(server string, spaceId SpaceIdParam, id IdParam) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "space_id", runtime.ParamLocationPath, spaceId)
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/spaces/%s/stories/%s/versions", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
 }
 
 // NewGetSpacesSpaceIdWebhooksRequest generates requests for GetSpacesSpaceIdWebhooks
@@ -2951,6 +3449,223 @@ func NewUpdateDatasourceRequestWithBody(server string, spaceId SpaceIdParam, id 
 	return req, nil
 }
 
+// NewListStoriesRequest generates requests for ListStories
+func NewListStoriesRequest(server string, spaceId SpaceIdParam) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "space_id", runtime.ParamLocationPath, spaceId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v1/spaces/%s/stories/", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewCreateStoryRequest calls the generic CreateStory builder with application/json body
+func NewCreateStoryRequest(server string, spaceId SpaceIdParam, body CreateStoryJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateStoryRequestWithBody(server, spaceId, "application/json", bodyReader)
+}
+
+// NewCreateStoryRequestWithBody generates requests for CreateStory with any type of body
+func NewCreateStoryRequestWithBody(server string, spaceId SpaceIdParam, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "space_id", runtime.ParamLocationPath, spaceId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v1/spaces/%s/stories/", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewDeleteStoryRequest generates requests for DeleteStory
+func NewDeleteStoryRequest(server string, spaceId SpaceIdParam, id IdParam) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "space_id", runtime.ParamLocationPath, spaceId)
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v1/spaces/%s/stories/%s", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetStoryRequest generates requests for GetStory
+func NewGetStoryRequest(server string, spaceId SpaceIdParam, id IdParam) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "space_id", runtime.ParamLocationPath, spaceId)
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v1/spaces/%s/stories/%s", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewUpdateStoryRequest calls the generic UpdateStory builder with application/json body
+func NewUpdateStoryRequest(server string, spaceId SpaceIdParam, id IdParam, body UpdateStoryJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUpdateStoryRequestWithBody(server, spaceId, id, "application/json", bodyReader)
+}
+
+// NewUpdateStoryRequestWithBody generates requests for UpdateStory with any type of body
+func NewUpdateStoryRequestWithBody(server string, spaceId SpaceIdParam, id IdParam, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "space_id", runtime.ParamLocationPath, spaceId)
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "id", runtime.ParamLocationPath, id)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v1/spaces/%s/stories/%s", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("PUT", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
 func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []RequestEditorFn) error {
 	for _, r := range c.RequestEditors {
 		if err := r(ctx, req); err != nil {
@@ -2994,6 +3709,18 @@ func WithBaseURL(baseURL string) ClientOption {
 
 // ClientWithResponsesInterface is the interface specification for the client with responses above.
 type ClientWithResponsesInterface interface {
+	// CompareStory request
+	CompareStoryWithResponse(ctx context.Context, spaceId SpaceIdParam, id IdParam, reqEditors ...RequestEditorFn) (*CompareStoryResponse, error)
+
+	// PublishStory request
+	PublishStoryWithResponse(ctx context.Context, spaceId SpaceIdParam, id IdParam, reqEditors ...RequestEditorFn) (*PublishStoryResponse, error)
+
+	// UnpublishStory request
+	UnpublishStoryWithResponse(ctx context.Context, spaceId SpaceIdParam, id IdParam, reqEditors ...RequestEditorFn) (*UnpublishStoryResponse, error)
+
+	// VersionsStory request
+	VersionsStoryWithResponse(ctx context.Context, spaceId SpaceIdParam, id IdParam, reqEditors ...RequestEditorFn) (*VersionsStoryResponse, error)
+
 	// GetSpacesSpaceIdWebhooks request
 	GetSpacesSpaceIdWebhooksWithResponse(ctx context.Context, spaceId SpaceIdParam, params *GetSpacesSpaceIdWebhooksParams, reqEditors ...RequestEditorFn) (*GetSpacesSpaceIdWebhooksResponse, error)
 
@@ -3121,6 +3848,121 @@ type ClientWithResponsesInterface interface {
 	UpdateDatasourceWithBodyWithResponse(ctx context.Context, spaceId SpaceIdParam, id IdParam, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateDatasourceResponse, error)
 
 	UpdateDatasourceWithResponse(ctx context.Context, spaceId SpaceIdParam, id IdParam, body UpdateDatasourceJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateDatasourceResponse, error)
+
+	// ListStories request
+	ListStoriesWithResponse(ctx context.Context, spaceId SpaceIdParam, reqEditors ...RequestEditorFn) (*ListStoriesResponse, error)
+
+	// CreateStory request with any body
+	CreateStoryWithBodyWithResponse(ctx context.Context, spaceId SpaceIdParam, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateStoryResponse, error)
+
+	CreateStoryWithResponse(ctx context.Context, spaceId SpaceIdParam, body CreateStoryJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateStoryResponse, error)
+
+	// DeleteStory request
+	DeleteStoryWithResponse(ctx context.Context, spaceId SpaceIdParam, id IdParam, reqEditors ...RequestEditorFn) (*DeleteStoryResponse, error)
+
+	// GetStory request
+	GetStoryWithResponse(ctx context.Context, spaceId SpaceIdParam, id IdParam, reqEditors ...RequestEditorFn) (*GetStoryResponse, error)
+
+	// UpdateStory request with any body
+	UpdateStoryWithBodyWithResponse(ctx context.Context, spaceId SpaceIdParam, id IdParam, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateStoryResponse, error)
+
+	UpdateStoryWithResponse(ctx context.Context, spaceId SpaceIdParam, id IdParam, body UpdateStoryJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateStoryResponse, error)
+}
+
+type CompareStoryResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *[][]string
+}
+
+// Status returns HTTPResponse.Status
+func (r CompareStoryResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CompareStoryResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type PublishStoryResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *struct {
+		// Story This is an object representing your content entry. One Story object can be of a specific type, so called content types and is able to contain components. You define the fields and nestability of your content types to achieve your content structure. You can use this object to build up your entities when migrating or importing content. You can set alternate versions of a story with Management API using the group_id of the story.
+		Story *Story `json:"story,omitempty"`
+	}
+}
+
+// Status returns HTTPResponse.Status
+func (r PublishStoryResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r PublishStoryResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type UnpublishStoryResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *struct {
+		// Story This is an object representing your content entry. One Story object can be of a specific type, so called content types and is able to contain components. You define the fields and nestability of your content types to achieve your content structure. You can use this object to build up your entities when migrating or importing content. You can set alternate versions of a story with Management API using the group_id of the story.
+		Story *Story `json:"story,omitempty"`
+	}
+}
+
+// Status returns HTTPResponse.Status
+func (r UnpublishStoryResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UnpublishStoryResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type VersionsStoryResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *struct {
+		Versions *[]Version `json:"versions,omitempty"`
+	}
+}
+
+// Status returns HTTPResponse.Status
+func (r VersionsStoryResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r VersionsStoryResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
 }
 
 type GetSpacesSpaceIdWebhooksResponse struct {
@@ -3958,6 +4800,166 @@ func (r UpdateDatasourceResponse) StatusCode() int {
 	return 0
 }
 
+type ListStoriesResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *struct {
+		Stories *[]Story `json:"stories,omitempty"`
+	}
+}
+
+// Status returns HTTPResponse.Status
+func (r ListStoriesResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListStoriesResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type CreateStoryResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON201      *struct {
+		// Story This is an object representing your content entry. One Story object can be of a specific type, so called content types and is able to contain components. You define the fields and nestability of your content types to achieve your content structure. You can use this object to build up your entities when migrating or importing content. You can set alternate versions of a story with Management API using the group_id of the story.
+		Story *Story `json:"story,omitempty"`
+	}
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateStoryResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateStoryResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type DeleteStoryResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *struct {
+		// Story This is an object representing your content entry. One Story object can be of a specific type, so called content types and is able to contain components. You define the fields and nestability of your content types to achieve your content structure. You can use this object to build up your entities when migrating or importing content. You can set alternate versions of a story with Management API using the group_id of the story.
+		Story *Story `json:"story,omitempty"`
+	}
+}
+
+// Status returns HTTPResponse.Status
+func (r DeleteStoryResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DeleteStoryResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetStoryResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *struct {
+		// Story This is an object representing your content entry. One Story object can be of a specific type, so called content types and is able to contain components. You define the fields and nestability of your content types to achieve your content structure. You can use this object to build up your entities when migrating or importing content. You can set alternate versions of a story with Management API using the group_id of the story.
+		Story *Story `json:"story,omitempty"`
+	}
+}
+
+// Status returns HTTPResponse.Status
+func (r GetStoryResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetStoryResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type UpdateStoryResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *struct {
+		// Story This is an object representing your content entry. One Story object can be of a specific type, so called content types and is able to contain components. You define the fields and nestability of your content types to achieve your content structure. You can use this object to build up your entities when migrating or importing content. You can set alternate versions of a story with Management API using the group_id of the story.
+		Story *Story `json:"story,omitempty"`
+	}
+}
+
+// Status returns HTTPResponse.Status
+func (r UpdateStoryResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UpdateStoryResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// CompareStoryWithResponse request returning *CompareStoryResponse
+func (c *ClientWithResponses) CompareStoryWithResponse(ctx context.Context, spaceId SpaceIdParam, id IdParam, reqEditors ...RequestEditorFn) (*CompareStoryResponse, error) {
+	rsp, err := c.CompareStory(ctx, spaceId, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCompareStoryResponse(rsp)
+}
+
+// PublishStoryWithResponse request returning *PublishStoryResponse
+func (c *ClientWithResponses) PublishStoryWithResponse(ctx context.Context, spaceId SpaceIdParam, id IdParam, reqEditors ...RequestEditorFn) (*PublishStoryResponse, error) {
+	rsp, err := c.PublishStory(ctx, spaceId, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParsePublishStoryResponse(rsp)
+}
+
+// UnpublishStoryWithResponse request returning *UnpublishStoryResponse
+func (c *ClientWithResponses) UnpublishStoryWithResponse(ctx context.Context, spaceId SpaceIdParam, id IdParam, reqEditors ...RequestEditorFn) (*UnpublishStoryResponse, error) {
+	rsp, err := c.UnpublishStory(ctx, spaceId, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUnpublishStoryResponse(rsp)
+}
+
+// VersionsStoryWithResponse request returning *VersionsStoryResponse
+func (c *ClientWithResponses) VersionsStoryWithResponse(ctx context.Context, spaceId SpaceIdParam, id IdParam, reqEditors ...RequestEditorFn) (*VersionsStoryResponse, error) {
+	rsp, err := c.VersionsStory(ctx, spaceId, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseVersionsStoryResponse(rsp)
+}
+
 // GetSpacesSpaceIdWebhooksWithResponse request returning *GetSpacesSpaceIdWebhooksResponse
 func (c *ClientWithResponses) GetSpacesSpaceIdWebhooksWithResponse(ctx context.Context, spaceId SpaceIdParam, params *GetSpacesSpaceIdWebhooksParams, reqEditors ...RequestEditorFn) (*GetSpacesSpaceIdWebhooksResponse, error) {
 	rsp, err := c.GetSpacesSpaceIdWebhooks(ctx, spaceId, params, reqEditors...)
@@ -4366,6 +5368,179 @@ func (c *ClientWithResponses) UpdateDatasourceWithResponse(ctx context.Context, 
 		return nil, err
 	}
 	return ParseUpdateDatasourceResponse(rsp)
+}
+
+// ListStoriesWithResponse request returning *ListStoriesResponse
+func (c *ClientWithResponses) ListStoriesWithResponse(ctx context.Context, spaceId SpaceIdParam, reqEditors ...RequestEditorFn) (*ListStoriesResponse, error) {
+	rsp, err := c.ListStories(ctx, spaceId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListStoriesResponse(rsp)
+}
+
+// CreateStoryWithBodyWithResponse request with arbitrary body returning *CreateStoryResponse
+func (c *ClientWithResponses) CreateStoryWithBodyWithResponse(ctx context.Context, spaceId SpaceIdParam, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateStoryResponse, error) {
+	rsp, err := c.CreateStoryWithBody(ctx, spaceId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateStoryResponse(rsp)
+}
+
+func (c *ClientWithResponses) CreateStoryWithResponse(ctx context.Context, spaceId SpaceIdParam, body CreateStoryJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateStoryResponse, error) {
+	rsp, err := c.CreateStory(ctx, spaceId, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateStoryResponse(rsp)
+}
+
+// DeleteStoryWithResponse request returning *DeleteStoryResponse
+func (c *ClientWithResponses) DeleteStoryWithResponse(ctx context.Context, spaceId SpaceIdParam, id IdParam, reqEditors ...RequestEditorFn) (*DeleteStoryResponse, error) {
+	rsp, err := c.DeleteStory(ctx, spaceId, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDeleteStoryResponse(rsp)
+}
+
+// GetStoryWithResponse request returning *GetStoryResponse
+func (c *ClientWithResponses) GetStoryWithResponse(ctx context.Context, spaceId SpaceIdParam, id IdParam, reqEditors ...RequestEditorFn) (*GetStoryResponse, error) {
+	rsp, err := c.GetStory(ctx, spaceId, id, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetStoryResponse(rsp)
+}
+
+// UpdateStoryWithBodyWithResponse request with arbitrary body returning *UpdateStoryResponse
+func (c *ClientWithResponses) UpdateStoryWithBodyWithResponse(ctx context.Context, spaceId SpaceIdParam, id IdParam, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateStoryResponse, error) {
+	rsp, err := c.UpdateStoryWithBody(ctx, spaceId, id, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateStoryResponse(rsp)
+}
+
+func (c *ClientWithResponses) UpdateStoryWithResponse(ctx context.Context, spaceId SpaceIdParam, id IdParam, body UpdateStoryJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateStoryResponse, error) {
+	rsp, err := c.UpdateStory(ctx, spaceId, id, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateStoryResponse(rsp)
+}
+
+// ParseCompareStoryResponse parses an HTTP response from a CompareStoryWithResponse call
+func ParseCompareStoryResponse(rsp *http.Response) (*CompareStoryResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CompareStoryResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest [][]string
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParsePublishStoryResponse parses an HTTP response from a PublishStoryWithResponse call
+func ParsePublishStoryResponse(rsp *http.Response) (*PublishStoryResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &PublishStoryResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			// Story This is an object representing your content entry. One Story object can be of a specific type, so called content types and is able to contain components. You define the fields and nestability of your content types to achieve your content structure. You can use this object to build up your entities when migrating or importing content. You can set alternate versions of a story with Management API using the group_id of the story.
+			Story *Story `json:"story,omitempty"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseUnpublishStoryResponse parses an HTTP response from a UnpublishStoryWithResponse call
+func ParseUnpublishStoryResponse(rsp *http.Response) (*UnpublishStoryResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &UnpublishStoryResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			// Story This is an object representing your content entry. One Story object can be of a specific type, so called content types and is able to contain components. You define the fields and nestability of your content types to achieve your content structure. You can use this object to build up your entities when migrating or importing content. You can set alternate versions of a story with Management API using the group_id of the story.
+			Story *Story `json:"story,omitempty"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseVersionsStoryResponse parses an HTTP response from a VersionsStoryWithResponse call
+func ParseVersionsStoryResponse(rsp *http.Response) (*VersionsStoryResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &VersionsStoryResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			Versions *[]Version `json:"versions,omitempty"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
 }
 
 // ParseGetSpacesSpaceIdWebhooksResponse parses an HTTP response from a GetSpacesSpaceIdWebhooksWithResponse call
@@ -5328,6 +6503,150 @@ func ParseUpdateDatasourceResponse(rsp *http.Response) (*UpdateDatasourceRespons
 		var dest struct {
 			// Datasource A datasource is a collection of datasource entries with a specific name and slug. Each datasource entry is a collection of key-value pairs (KVP), so called datasource entries. Those key-value pairs can be used for a single choice, multiple choice options and as well directly through our API to use them for multi-language labels, categories, or anything similar.
 			Datasource *Datasource `json:"datasource,omitempty"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListStoriesResponse parses an HTTP response from a ListStoriesWithResponse call
+func ParseListStoriesResponse(rsp *http.Response) (*ListStoriesResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListStoriesResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			Stories *[]Story `json:"stories,omitempty"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseCreateStoryResponse parses an HTTP response from a CreateStoryWithResponse call
+func ParseCreateStoryResponse(rsp *http.Response) (*CreateStoryResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateStoryResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest struct {
+			// Story This is an object representing your content entry. One Story object can be of a specific type, so called content types and is able to contain components. You define the fields and nestability of your content types to achieve your content structure. You can use this object to build up your entities when migrating or importing content. You can set alternate versions of a story with Management API using the group_id of the story.
+			Story *Story `json:"story,omitempty"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseDeleteStoryResponse parses an HTTP response from a DeleteStoryWithResponse call
+func ParseDeleteStoryResponse(rsp *http.Response) (*DeleteStoryResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DeleteStoryResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			// Story This is an object representing your content entry. One Story object can be of a specific type, so called content types and is able to contain components. You define the fields and nestability of your content types to achieve your content structure. You can use this object to build up your entities when migrating or importing content. You can set alternate versions of a story with Management API using the group_id of the story.
+			Story *Story `json:"story,omitempty"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetStoryResponse parses an HTTP response from a GetStoryWithResponse call
+func ParseGetStoryResponse(rsp *http.Response) (*GetStoryResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetStoryResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			// Story This is an object representing your content entry. One Story object can be of a specific type, so called content types and is able to contain components. You define the fields and nestability of your content types to achieve your content structure. You can use this object to build up your entities when migrating or importing content. You can set alternate versions of a story with Management API using the group_id of the story.
+			Story *Story `json:"story,omitempty"`
+		}
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseUpdateStoryResponse parses an HTTP response from a UpdateStoryWithResponse call
+func ParseUpdateStoryResponse(rsp *http.Response) (*UpdateStoryResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &UpdateStoryResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest struct {
+			// Story This is an object representing your content entry. One Story object can be of a specific type, so called content types and is able to contain components. You define the fields and nestability of your content types to achieve your content structure. You can use this object to build up your entities when migrating or importing content. You can set alternate versions of a story with Management API using the group_id of the story.
+			Story *Story `json:"story,omitempty"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err

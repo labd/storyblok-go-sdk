@@ -36,7 +36,7 @@ SpaceUpdateInput:
           type: integer
           description: The ID of the owner of the space
         parent_id:
-          type: string
+          type: integer
           description: The ID of the parent space (null if not set)
         duplicatable:
           type: string

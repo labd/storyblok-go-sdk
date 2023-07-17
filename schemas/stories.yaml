@@ -1,0 +1,188 @@
+StoryCreateInput:
+  type: object
+  properties:
+    name:
+      type: string
+      description: The name of the story
+    slug:
+      type: string
+      description: The slug of the story
+    content:
+      type: object
+      description: The content of the story
+    is_folder:
+      type: boolean
+      description: Flag indicating whether the story is a folder
+    default_root:
+      type: boolean
+      description: Default content type/root component. (*Required if is_folder is true)
+    parent_id:
+      type: integer
+      description: The ID of the parent story/folder
+    disable_fe_editor:
+      type: boolean
+      description: Is side by side editor disabled for all entries in folder (true/false)
+    path:
+      type: string
+      description: Given real path, used in the preview editor
+    is_startpage:
+      type: boolean
+      description: Flag indicating whether the story is the start page
+    position:
+      type: integer
+      description: The position of the story/folder within its parent
+    first_published_at:
+      type: string
+      description: "First publishing date (Format: YYYY-mm-dd HH:MM)"
+    translated_slugs_attributes:
+      type: array
+      items:
+        type: object
+        properties:
+          lang:
+            type: string
+          slug:
+            type: string
+          name:
+            type: string
+  required:
+    - name
+    - slug
+
+StoryUpdateInput:
+  type: object
+  allOf:
+    - $ref: "#/StoryCreateInput"
+
+Story:
+  type: object
+  description: This is an object representing your content entry. One Story object can be of a specific type, so called content types and is able to contain components. You define the fields and nestability of your content types to achieve your content structure. You can use this object to build up your entities when migrating or importing content. You can set alternate versions of a story with Management API using the group_id of the story.
+  allOf:
+    - $ref: "#/StoryUpdateInput"
+    - type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: The ID of the story
+        uuid:
+          type: string
+          description: The UUID of the story
+        parent_uuid:
+          type: string
+          description: The UUID of the story
+        created_at:
+          type: string
+          format: date-time
+          description: The creation timestamp of the story
+        deleted_at:
+          type: string
+          format: date-time
+          description: The deletion timestamp of the story
+        updated_at:
+          type: string
+          format: date-time
+          description: The update timestamp of the story
+        publish_at:
+          type: string
+          format: date-time
+          description: The publish timestamp of the story
+        expire_at:
+          type: string
+          format: date-time
+          description: The expire timestamp of the story
+        parent:
+          type: object
+        unpublished_changes:
+          type: boolean
+        sort_by_date:
+          type: string
+        full_slug:
+          type: string
+        meta_data:
+          type: object
+        preview_token:
+          type: object
+          properties:
+            token:
+              type: string
+            timestamp:
+              type: string
+        pinned:
+          type: boolean
+        last_author:
+          type: object
+          properties:
+            id:
+              type: integer
+            userid:
+              type: string
+            friendly_name:
+              type: string
+        user_ids:
+          type: array
+          items:
+            type: integer
+        space_role_ids:
+          type: array
+          items:
+            type: integer
+        translated_slugs:
+          type: array
+          items:
+            type: object
+        localized_paths:
+          type: array
+          items:
+            type: object
+        translated_stories:
+          type: array
+        can_not_view:
+          type: boolean
+        is_scheduled:
+          type: boolean
+        tag_list:
+          type: array
+          items:
+            type: string
+        alternates:
+          type: array
+          items:
+            type: object
+
+      required:
+        - id
+        - uuid
+        - created_at
+        - updated_at
+        - full-slug
+        - pinned
+        - can_not_view
+        - last_author
+        - user_ids
+        - space_role_ids
+        - translated_slugs
+        - localized_paths
+        - position
+        - translated_stories
+        - preview_token
+        - alternates
+
+Version:
+  type: object
+  properties:
+    id:
+      type: integer
+    event:
+      type: string
+    created_at:
+      type: string
+      format: date-time
+    author_id:
+      type: integer
+    author:
+      type: string
+    item_id:
+      type: integer
+    is_draft:
+      type: boolean

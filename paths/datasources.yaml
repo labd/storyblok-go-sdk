@@ -60,7 +60,7 @@ getOne:
       content:
         application/json:
           schema:
-            type:
+            type: object
             properties:
               datasource:
                 $ref: "../schemas/datasources.yaml#/Datasource"
@@ -76,7 +76,15 @@ getMultiple:
       description: OK
       headers:
         schema:
-          $ref: "../schemas/pagination.yaml#/pagination"
+          allOf:
+            - $ref: "../schemas/pagination.yaml#/pagination"
+            - type: object
+              properties:
+                # docs say by_ids but that's incorrect
+                by_slug:
+                  type: string
+                search:
+                  type: string
       content:
         application/json:
           schema:

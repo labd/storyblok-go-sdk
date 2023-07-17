@@ -74,9 +74,8 @@ getMultiple:
   responses:
     "200":
       description: OK
-      headers:
-        schema:
-          $ref: "../schemas/pagination.yaml#/pagination"
+      # not paginated
+      # no filters
       content:
         application/json:
           schema:

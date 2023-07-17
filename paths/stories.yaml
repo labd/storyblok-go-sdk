@@ -1,0 +1,263 @@
+create:
+  summary: Create a story
+  description: Create a story
+  operationId: createStory
+  tags:
+    - story
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            story:
+              $ref: "../schemas/stories.yaml#/StoryCreateInput"
+            publish:
+              type: integer
+              format: int64
+            release_id:
+              type: integer
+              format: int64
+  responses:
+    "201":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              story:
+                $ref: "../schemas/stories.yaml#/Story"
+update:
+  summary: Update a story
+  description: Update a story
+  operationId: updateStory
+  tags:
+    - stories
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            story:
+              $ref: "../schemas/stories.yaml#/StoryUpdateInput"
+            publish:
+              type: integer
+              description: If '1' it will publish the story, 'publish' must be omitted if publication is not desired
+            force_update:
+              type: integer
+              description: If '1' it will overwrite a locked story
+            release_id:
+              type: integer
+            group_id:
+              type: integer
+            lang:
+              type: string
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              story:
+                $ref: "../schemas/stories.yaml#/Story"
+
+getOne:
+  summary: Get a story
+  description: Get a story
+  operationId: getStory
+  tags:
+    - stories
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              story:
+                $ref: "../schemas/stories.yaml#/Story"
+
+getMultiple:
+  summary: List story
+  description: Retrieve a list of story
+  operationId: listStories
+  tags:
+    - stories
+  responses:
+    "200":
+      description: OK
+      headers:
+        schema:
+          allOf:
+            - $ref: "../schemas/pagination.yaml#/pagination"
+            - type: object
+              properties:
+                contain_component:
+                  type: string
+                text_search:
+                  type: string
+                sort_by:
+                  type: string
+                pinned:
+                  type: string
+                excluding_ids:
+                  type: string
+                by_ids:
+                  type: string
+                by_uuids:
+                  type: string
+                with_tag:
+                  type: string
+                folder_only:
+                  type: string
+                story_only:
+                  type: string
+                with_parent:
+                  type: string
+                with_slug:
+                  type: string
+                starts_with:
+                  type: string
+                in_trash:
+                  type: string
+                search:
+                  type: string
+                filter_query:
+                  type: string
+                in_release:
+                  type: string
+                is_published:
+                  type: string
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              stories:
+                type: array
+                items:
+                  $ref: "../schemas/stories.yaml#/Story"
+
+delete:
+  summary: Delete a story
+  description: Delete a story
+  operationId: deleteStory
+  tags:
+    - stories
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              story:
+                $ref: "../schemas/stories.yaml#/Story"
+
+publish:
+  summary: Publish a story
+  description: Publish a story
+  operationId: publishStory
+  tags:
+    - stories
+  responses:
+    "200":
+      description: OK
+      headers:
+        schema:
+          type: object
+          properties:
+            release_id:
+              type: string
+            lang:
+              type: string
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              story:
+                $ref: "../schemas/stories.yaml#/Story"
+unpublish:
+  summary: Unpublish a story
+  description: Unpublish a story
+  operationId: unpublishStory
+  tags:
+    - stories
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              story:
+                $ref: "../schemas/stories.yaml#/Story"
+versions:
+  summary: Get versions of a story
+  description: Get versions of a story
+  operationId: versionsStory
+  tags:
+    - stories
+  responses:
+    "200":
+      description: OK
+      headers:
+        schema:
+          type: object
+          properties:
+            page:
+              type: string
+            id:
+              type: string
+            event:
+              type: string
+            created_at:
+              type: string
+            author_id:
+              type: string
+            author:
+              type: string
+            item_id:
+              type: string
+            is_draft:
+              type: string
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              versions:
+                type: array
+                items:
+                  $ref: "../schemas/stories.yaml#/Version"
+compare:
+  summary: Compare with a version of a story
+  description: Compare with a version of a story
+  operationId: compareStory
+  tags:
+    - stories
+  responses:
+    "200":
+      description: OK
+      headers:
+        schema:
+          type: object
+          properties:
+            version:
+              type: string
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              type: array
+              items:
+                type: string
