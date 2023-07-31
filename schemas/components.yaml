@@ -10,9 +10,12 @@ ComponentBase:
     image:
       type: string
       description: URL to the preview image, if uploaded
-    preview:
+    preview_field:
       type: string
       description: Define the field that should be used for preview in the interface
+    preview_tmpl:
+      type: string
+      description: Define the template that should be used for preview in the interface
     icon:
       type: string
       description: An optional icon for the component to identify this component type in the interface
@@ -224,9 +227,6 @@ FieldInput:
       type: boolean
       description: "Show the description as a tooltip"
       default: false
-    preview_field:
-      type: boolean
-      description: "Is used as instance preview field below component name in bloks types"
     regex:
       type: string
       description: "Client Regex validation for the field"

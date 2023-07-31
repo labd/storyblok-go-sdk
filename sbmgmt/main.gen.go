@@ -179,8 +179,11 @@ type Component struct {
 	// PresetId The ID of the preset associated with the component (null if not set)
 	PresetId *string `json:"preset_id,omitempty"`
 
-	// Preview Define the field that should be used for preview in the interface
-	Preview *string `json:"preview,omitempty"`
+	// PreviewField Define the field that should be used for preview in the interface
+	PreviewField *string `json:"preview_field,omitempty"`
+
+	// PreviewTmpl Define the template that should be used for preview in the interface
+	PreviewTmpl *string `json:"preview_tmpl,omitempty"`
 
 	// RealName The real name of the component
 	RealName *string `json:"real_name,omitempty"`
@@ -221,8 +224,11 @@ type ComponentBase struct {
 	// Name Technical name used for component property in entries
 	Name string `json:"name"`
 
-	// Preview Define the field that should be used for preview in the interface
-	Preview *string `json:"preview,omitempty"`
+	// PreviewField Define the field that should be used for preview in the interface
+	PreviewField *string `json:"preview_field,omitempty"`
+
+	// PreviewTmpl Define the template that should be used for preview in the interface
+	PreviewTmpl *string `json:"preview_tmpl,omitempty"`
 
 	// Schema The definition of fields (schema) for this component
 	Schema *orderedmap.OrderedMap[string, FieldInput] `json:"schema,omitempty"`
@@ -405,9 +411,6 @@ type FieldInput struct {
 
 	// Pos The position of the field
 	Pos int64 `json:"pos"`
-
-	// PreviewField Is used as instance preview field below component name in bloks types
-	PreviewField *bool `json:"preview_field,omitempty"`
 
 	// Regex Client Regex validation for the field
 	Regex *string `json:"regex,omitempty"`
