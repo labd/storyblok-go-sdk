@@ -346,14 +346,20 @@ type FieldInput struct {
 	// AddHttps Prepends https: to stop usage of relative protocol
 	AddHttps *bool `json:"add_https,omitempty"`
 
+	// AllowTargetBlank Allow target blank for links in richtext
+	AllowTargetBlank *bool `json:"allow_target_blank,omitempty"`
+
 	// AssetFolderId Default asset folder numeric id to store uploaded image of that field
 	AssetFolderId *int64 `json:"asset_folder_id,omitempty"`
 
-	// CanSync Advanced usage to sync with field in preview; Default: false
+	// CanSync Advanced usage to sync with field in preview
 	CanSync *bool `json:"can_sync,omitempty"`
 
 	// ComponentWhitelist Array of component/content type names: ["post","page","product"]
 	ComponentWhitelist *[]string `json:"component_whitelist,omitempty"`
+
+	// CustomizeToolbar Customize toolbar in richtext or markdown
+	CustomizeToolbar *bool `json:"customize_toolbar,omitempty"`
 
 	// DatasourceSlug Define selectable datasources string; Effects editor only if source=internal
 	DatasourceSlug *string `json:"datasource_slug,omitempty"`
@@ -435,6 +441,9 @@ type FieldInput struct {
 
 	// Source Possible values: undefined: Self; internal_stories: Stories; internal: Datasource; external: API Endpoint in Datasource Entries Array Format
 	Source *string `json:"source,omitempty"`
+
+	// Toolbar Array of toolbar options
+	Toolbar *[]string `json:"toolbar,omitempty"`
 
 	// Tooltip Show the description as a tooltip
 	Tooltip *bool `json:"tooltip,omitempty"`

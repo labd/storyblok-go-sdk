@@ -1370,19 +1370,27 @@ components:
           type: boolean
           description: 'Prepends https: to stop usage of relative protocol'
           default: false
+        allow_target_blank:
+          type: boolean
+          description: Allow target blank for links in richtext
+          default: false
         asset_folder_id:
           type: integer
           format: int64
           description: Default asset folder numeric id to store uploaded image of that field
         can_sync:
           type: boolean
-          description: 'Advanced usage to sync with field in preview; Default: false'
+          description: Advanced usage to sync with field in preview
           default: false
         component_whitelist:
           type: array
           items:
             type: string
           description: 'Array of component/content type names: ["post","page","product"]'
+        customize_toolbar:
+          type: boolean
+          description: Customize toolbar in richtext or markdown
+          default: false
         datasource_slug:
           type: string
           description: Define selectable datasources string; Effects editor only if source=internal
@@ -1450,6 +1458,11 @@ components:
           description: Array of datasource entries [{name:"", value:""}]; Effects editor only if source=undefined
           items:
             $ref: '#/components/schemas/FieldOption'
+        toolbar:
+          type: array
+          items:
+            type: string
+          description: Array of toolbar options
         tooltip:
           type: boolean
           description: Show the description as a tooltip
