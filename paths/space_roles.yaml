@@ -1,0 +1,94 @@
+create:
+  summary: Create a Space Role
+  description: Create a Space Role
+  operationId: createSpaceRole
+  tags:
+    - space_roles
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: '../schemas/space_roles.yaml#/SpaceRoleCreateInput'
+  responses:
+    '201':
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              space_role:
+                $ref: '../schemas/space_roles.yaml#/SpaceRole'
+
+getMultiple:
+  summary: Retrieve multiple Space Roles
+  description: Returns an array of space role objects.
+  operationId: getMultipleSpaceRoles
+  tags:
+    - space_roles
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                space_role:
+                  $ref: '../schemas/space_roles.yaml#/SpaceRole'
+
+getOne:
+  summary: Retrieve one Space Role
+  description: Retrieve one Space Role
+  operationId: getSpaceRole
+  tags:
+    - space_roles
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              space_role:
+                $ref: '../schemas/space_roles.yaml#/SpaceRole'
+update:
+  summary: Update a Space Role
+  description: Update a Space Role
+  operationId: updateSpaceRole
+  tags:
+    - space_roles
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../schemas/space_roles.yaml#/SpaceRoleUpdateInput"
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              space_role:
+                $ref: '../schemas/space_roles.yaml#/SpaceRole'
+delete:
+  summary: Delete a Space Role
+  description: Delete a Space Role
+  operationId: deleteSpaceRole
+  tags:
+    - space_roles
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              space_role:
+                $ref: '../schemas/space_roles.yaml#/SpaceRole'
