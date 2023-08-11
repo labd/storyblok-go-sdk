@@ -79,7 +79,7 @@ func main() {
 - [x] Datasources
 - [x] Datasource Entries
 - [x] Spaces
-- [ ] Space Roles
+- [x] Space Roles
 - [ ] Tasks
 - [ ] Approvals
 - [ ] Activities
