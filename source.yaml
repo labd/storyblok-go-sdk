@@ -7,7 +7,7 @@ info:
   version: 0.0.1
 
 security:
-  - BearerAuth: []
+  - BearerAuth: [ ]
 
 paths:
   # Spaces
@@ -237,6 +237,25 @@ paths:
     get:
       $ref: "paths/stories.yaml#/versions"
 
+  /v1/spaces/{space_id}/space_roles:
+    parameters:
+      - $ref: '#/components/parameters/spaceIdParam'
+    post:
+      $ref: "paths/space_roles.yaml#/create"
+    get:
+      $ref: "paths/space_roles.yaml#/getMultiple"
+
+  /v1/spaces/{space_id}/space_roles/{space_role_id}:
+    parameters:
+      - $ref: '#/components/parameters/spaceIdParam'
+      - $ref: '#/components/parameters/spaceRoleIdParam'
+    get:
+      $ref: "paths/space_roles.yaml#/getOne"
+    put:
+      $ref: "paths/space_roles.yaml#/update"
+    delete:
+      $ref: "paths/space_roles.yaml#/delete"
+
 components:
   securitySchemes:
     BearerAuth:
@@ -261,6 +280,15 @@ components:
         format: int64
       required: true
       description: The ID of the component group to retrieve
+
+    spaceRoleIdParam:
+      in: path
+      name: space_role_id
+      required: true
+      schema:
+        type: integer
+        format: int64
+      description: The ID of the space role
 
   # Webhooks
 
@@ -315,23 +343,14 @@ components:
     Space:
       $ref: "schemas/spaces.yaml#/Space"
 
-    # SpaceRole:
-    #   type: object
-    #   properties:
-    #     id:
-    #       type: integer
-    #       format: int64
-    #       description: The ID of the space role
-    #     name:
-    #       type: string
-    #       description: The name of the space role
-    #     description:
-    #       type: string
-    #       description: The description of the space role
-    #   required:
-    #     - id
-    #     - name
-    #     - description
+    # Space Roles
+    SpaceRoleCreateInput:
+      $ref: "schemas/space_roles.yaml#/SpaceRoleCreateInput"
+    SpaceRoleUpdateInput:
+      $ref: "schemas/space_roles.yaml#/SpaceRoleUpdateInput"
+    SpaceRole:
+      $ref: "schemas/space_roles.yaml#/SpaceRole"
+
 
     # Task:
     #   type: object

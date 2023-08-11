@@ -341,11 +341,6 @@ type DatasourceEntryUpdateInput = DatasourceEntryCreateInput
 // DatasourceUpdateInput defines model for DatasourceUpdateInput.
 type DatasourceUpdateInput = DatasourceCreateInput
 
-// Error defines model for Error.
-type Error struct {
-	Error string `json:"error"`
-}
-
 // FieldInput defines model for FieldInput.
 type FieldInput struct {
 	// AddHttps Prepends https: to stop usage of relative protocol
@@ -837,9 +832,6 @@ type SpaceIdParam = int64
 
 // SpaceRoleIdParam defines model for spaceRoleIdParam.
 type SpaceRoleIdParam = int64
-
-// N422 defines model for 422.
-type N422 = Error
 
 // GetSpacesSpaceIdWebhooksParams defines parameters for GetSpacesSpaceIdWebhooks.
 type GetSpacesSpaceIdWebhooksParams struct {

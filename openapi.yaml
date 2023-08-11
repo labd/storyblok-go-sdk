@@ -6,7 +6,7 @@ info:
     https://www.storyblok.com/docs/api/management/v1 by mostly ChatGPT ;-)
   version: 0.0.1
 security:
-  - BearerAuth: [ ]
+  - BearerAuth: []
 paths:
   /v1/spaces/:
     post:
@@ -125,105 +125,6 @@ paths:
                 properties:
                   space:
                     $ref: '#/components/schemas/Space'
-  /v1/spaces/{space_id}/space_roles:
-    parameters:
-      - $ref: '#/components/parameters/spaceIdParam'
-    post:
-      summary: Create a Space Role
-      description: Create a Space Role
-      operationId: createSpaceRole
-      tags:
-        - space_roles
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/SpaceRoleCreateInput'
-      responses:
-        '201':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  space_role:
-                    $ref: '#/components/schemas/SpaceRole'
-    get:
-      summary: Retrieve multiple Space Roles
-      description: Returns an array of space role objects.
-      operationId: getMultipleSpaceRoles
-      tags:
-        - space_roles
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    space_role:
-                      $ref: '#/components/schemas/SpaceRole'
-  /v1/spaces/{space_id}/space_roles/{space_role_id}:
-    parameters:
-      - $ref: '#/components/parameters/spaceIdParam'
-      - $ref: '#/components/parameters/spaceRoleIdParam'
-    get:
-      summary: Retrieve one Space Role
-      description: Retrieve one Space Role
-      operationId: getSpaceRole
-      tags:
-        - space_roles
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  space_role:
-                    $ref: '#/components/schemas/SpaceRole'
-    put:
-      summary: Update a Space Role
-      description: Update a Space Role
-      operationId: updateSpaceRole
-      tags:
-        - space_roles
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/SpaceRoleUpdateInput"
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  space_role:
-                    $ref: '#/components/schemas/SpaceRole'
-    delete:
-      summary: Delete a Space Role
-      description: Delete a Space Role
-      operationId: deleteSpaceRole
-      tags:
-        - space_roles
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  space_role:
-                    $ref: '#/components/schemas/SpaceRole'
   /v1/spaces/{space_id}/backups/:
     parameters:
       - $ref: '#/components/parameters/spaceIdParam'
@@ -1060,6 +961,105 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/Version'
+  /v1/spaces/{space_id}/space_roles:
+    parameters:
+      - $ref: '#/components/parameters/spaceIdParam'
+    post:
+      summary: Create a Space Role
+      description: Create a Space Role
+      operationId: createSpaceRole
+      tags:
+        - space_roles
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SpaceRoleCreateInput'
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  space_role:
+                    $ref: '#/components/schemas/SpaceRole'
+    get:
+      summary: Retrieve multiple Space Roles
+      description: Returns an array of space role objects.
+      operationId: getMultipleSpaceRoles
+      tags:
+        - space_roles
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    space_role:
+                      $ref: '#/components/schemas/SpaceRole'
+  /v1/spaces/{space_id}/space_roles/{space_role_id}:
+    parameters:
+      - $ref: '#/components/parameters/spaceIdParam'
+      - $ref: '#/components/parameters/spaceRoleIdParam'
+    get:
+      summary: Retrieve one Space Role
+      description: Retrieve one Space Role
+      operationId: getSpaceRole
+      tags:
+        - space_roles
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  space_role:
+                    $ref: '#/components/schemas/SpaceRole'
+    put:
+      summary: Update a Space Role
+      description: Update a Space Role
+      operationId: updateSpaceRole
+      tags:
+        - space_roles
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SpaceRoleUpdateInput'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  space_role:
+                    $ref: '#/components/schemas/SpaceRole'
+    delete:
+      summary: Delete a Space Role
+      description: Delete a Space Role
+      operationId: deleteSpaceRole
+      tags:
+        - space_roles
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  space_role:
+                    $ref: '#/components/schemas/SpaceRole'
 components:
   securitySchemes:
     BearerAuth:
@@ -1074,14 +1074,6 @@ components:
         type: integer
         format: int64
       description: The ID of the space
-    spaceRoleIdParam:
-      in: path
-      name: space_role_id
-      required: true
-      schema:
-        type: integer
-        format: int64
-      description: The ID of the space role
     idParam:
       in: path
       name: id
@@ -1090,13 +1082,15 @@ components:
         format: int64
       required: true
       description: The ID of the component group to retrieve
+    spaceRoleIdParam:
+      in: path
+      name: space_role_id
+      required: true
+      schema:
+        type: integer
+        format: int64
+      description: The ID of the space role
   schemas:
-    Error:
-      type: object
-      required: [ error ]
-      properties:
-        error:
-          type: string
     AssetFolderCreateInput:
       type: object
       properties:
@@ -1298,15 +1292,15 @@ components:
             options:
               type: object
               description: The options of the space
-              additionalProperties: { }
+              additionalProperties: {}
             routes:
               type: array
-              items: { }
+              items: {}
               description: An array of routes
             billing_address:
               type: object
               description: The billing address of the space
-              additionalProperties: { }
+              additionalProperties: {}
     Space:
       type: object
       allOf:
@@ -1322,7 +1316,7 @@ components:
             limits:
               type: object
               description: The limits of the space
-              additionalProperties: { }
+              additionalProperties: {}
             created_at:
               type: string
               format: date-time
@@ -1360,7 +1354,7 @@ components:
               description: Indicates whether the space has a Slack webhook
             api_logs_per_month:
               type: array
-              items: { }
+              items: {}
               description: An array of API logs per month
             first_token:
               type: string
@@ -1371,19 +1365,19 @@ components:
             options:
               type: object
               description: The options of the space
-              additionalProperties: { }
+              additionalProperties: {}
             collaborators:
               type: array
-              items: { }
+              items: {}
               description: An array of collaborators
             settings:
               type: array
-              items: { }
+              items: {}
               description: An array of settings
             owner:
               type: object
               description: The owner of the space
-              additionalProperties: { }
+              additionalProperties: {}
           required:
             - name
             - domain
@@ -1420,53 +1414,6 @@ components:
       properties:
         space_role:
           $ref: '#/components/schemas/SpaceRoleBase'
-    SpaceRoleBase:
-      type: object
-      required: [ role ]
-      properties:
-        role:
-          type: string
-        ext_id:
-          type: string
-        subtitle:
-          type: string
-        allowed_languages:
-          type: array
-          items:
-            type: string
-        resolved_allowed_paths:
-          type: array
-          items:
-            type: string
-        allowed_paths:
-          type: array
-          items:
-            type: string
-        permissions:
-          type: array
-          items:
-            type: string
-        field_permissions:
-          type: array
-          items:
-            type: string
-        readonly_field_permissions:
-          type: array
-          items:
-            type: string
-        datasource_ids:
-          type: array
-          items:
-            type: integer
-        component_ids:
-          type: array
-          items:
-            type: integer
-        branch_ids:
-          type: array
-          items:
-            type: integer
-
     SpaceRole:
       allOf:
         - $ref: '#/components/schemas/SpaceRoleBase'
@@ -1475,7 +1422,8 @@ components:
             id:
               type: integer
               description: Numeric Unique ID
-          required: [ id ]
+          required:
+            - id
     Webhook:
       type: object
       properties:
@@ -2024,6 +1972,53 @@ components:
           type: integer
         is_draft:
           type: boolean
+    SpaceRoleBase:
+      type: object
+      required:
+        - role
+      properties:
+        role:
+          type: string
+        ext_id:
+          type: string
+        subtitle:
+          type: string
+        allowed_languages:
+          type: array
+          items:
+            type: string
+        resolved_allowed_paths:
+          type: array
+          items:
+            type: string
+        allowed_paths:
+          type: array
+          items:
+            type: string
+        permissions:
+          type: array
+          items:
+            type: string
+        field_permissions:
+          type: array
+          items:
+            type: string
+        readonly_field_permissions:
+          type: array
+          items:
+            type: string
+        datasource_ids:
+          type: array
+          items:
+            type: integer
+        component_ids:
+          type: array
+          items:
+            type: integer
+        branch_ids:
+          type: array
+          items:
+            type: integer
   headers:
     pagination:
       type: object

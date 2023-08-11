@@ -1,0 +1,68 @@
+SpaceRoleCreateInput:
+  type: object
+  properties:
+    space_role:
+      $ref: '#/SpaceRoleBase'
+
+SpaceRoleUpdateInput:
+  type: object
+  properties:
+    space_role:
+      $ref: '#/SpaceRoleBase'
+
+SpaceRoleBase:
+  type: object
+  required: [ role ]
+  properties:
+    role:
+      type: string
+    ext_id:
+      type: string
+    subtitle:
+      type: string
+    allowed_languages:
+      type: array
+      items:
+        type: string
+    resolved_allowed_paths:
+      type: array
+      items:
+        type: string
+    allowed_paths:
+      type: array
+      items:
+        type: string
+    permissions:
+      type: array
+      items:
+        type: string
+    field_permissions:
+      type: array
+      items:
+        type: string
+    readonly_field_permissions:
+      type: array
+      items:
+        type: string
+    datasource_ids:
+      type: array
+      items:
+        type: integer
+    component_ids:
+      type: array
+      items:
+        type: integer
+    branch_ids:
+      type: array
+      items:
+        type: integer
+
+SpaceRole:
+  allOf:
+    - $ref: '#/SpaceRoleBase'
+    - type: object
+      properties:
+        id:
+          type: integer
+          description: Numeric Unique ID
+      required: [ id ]
