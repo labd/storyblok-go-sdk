@@ -1548,6 +1548,9 @@ components:
         folder_slug:
           type: string
           description: 'Filter on selectable stories path; Effects editor only if source=internal_stories; In case you have a multi-language folder structure you can add the ''{0}'' placeholder and the path will be adapted dynamically. Examples: "{0}/categories/", {0}/{1}/categories/'
+        force_link_scope:
+          type: boolean
+          description: Force link scope to be internal or external
         image_crop:
           type: boolean
           description: 'Activate force crop for images: (true/false)'
@@ -1565,6 +1568,9 @@ components:
           items:
             type: string
           description: Array of field keys to include in this section
+        link_scope:
+          type: string
+          description: 'Filter on selectable stories path; In case you have a multi-language folder structure you can add the ''{0}'' placeholder and the path will be adapted dynamically. Examples: "{0}/categories/", {0}/{1}/categories/'
         max_length:
           type: integer
           format: int64
