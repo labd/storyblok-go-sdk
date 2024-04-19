@@ -1652,6 +1652,7 @@ components:
         preview_tmpl:
           type: string
           description: Define the template that should be used for preview in the interface
+          nullable: true
         icon:
           type: string
           description: An optional icon for the component to identify this component type in the interface
