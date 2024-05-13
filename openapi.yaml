@@ -652,57 +652,105 @@ paths:
                 properties:
                   datasource_entry:
                     $ref: '#/components/schemas/DatasourceEntry'
-  /spaces/{space_id}/webhooks:
-    get:
-      summary: List Webhooks
-      description: Retrieve a list of webhooks in a space.
-      parameters:
-        - $ref: '#/components/parameters/spaceIdParam'
-        - name: token
-          in: query
-          description: The API access token
-          required: true
-          schema:
-            type: string
+  /v1/spaces/{space_id}/webhook_endpoints/:
+    parameters:
+      - $ref: '#/components/parameters/spaceIdParam'
+    post:
+      summary: Create a webhook endpoint
+      description: Create a webhook endpoint
+      operationId: createWebhook
+      tags:
+        - webhooks
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                webhook_endpoint:
+                  $ref: '#/components/schemas/WebhookCreateInput'
+              required:
+                - webhook_endpoint
       responses:
-        '200':
-          description: Successful response
+        '201':
+          description: OK
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  webhooks:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/Webhook'
-                  total:
-                    type: integer
-  /spaces/{space_id}/webhooks/{webhook_id}:
+                  webhook_endpoint:
+                    $ref: '#/components/schemas/Webhook'
+                required:
+                  - webhook_endpoint
+  /v1/spaces/{space_id}/webhook_endpoints/{id}:
+    parameters:
+      - $ref: '#/components/parameters/spaceIdParam'
+      - $ref: '#/components/parameters/idParam'
     get:
-      summary: Get Webhook
-      description: Retrieve a specific webhook by ID.
-      parameters:
-        - $ref: '#/components/parameters/spaceIdParam'
-        - name: webhook_id
-          in: path
-          description: The ID of the webhook
-          required: true
-          schema:
-            type: string
-        - name: token
-          in: query
-          description: The API access token
-          required: true
-          schema:
-            type: string
+      summary: Get a webhook
+      description: Get a webhook
+      operationId: getWebhook
+      tags:
+        - webhooks
       responses:
         '200':
-          description: Successful response
+          description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Webhook'
+                type: object
+                properties:
+                  webhook_endpoint:
+                    $ref: '#/components/schemas/Webhook'
+                required:
+                  - webhook_endpoint
+    put:
+      summary: Update webhook
+      description: Update webhook
+      operationId: updateWebhook
+      tags:
+        - Webhooks
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                webhook_endpoint:
+                  $ref: '#/components/schemas/WebhookUpdateInput'
+              required:
+                - webhook_endpoint
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  webhook_endpoint:
+                    $ref: '#/components/schemas/Webhook'
+                required:
+                  - webhook_endpoint
+    delete:
+      summary: Delete a webhook
+      description: Delete a webhook
+      operationId: deleteWebhook
+      tags:
+        - webhooks
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  webhook_endpoint:
+                    $ref: '#/components/schemas/Webhook'
+                required:
+                  - webhook_endpoint
   /v1/spaces/{space_id}/stories/:
     parameters:
       - $ref: '#/components/parameters/spaceIdParam'
@@ -1424,25 +1472,6 @@ components:
               description: Numeric Unique ID
           required:
             - id
-    Webhook:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        url:
-          type: string
-        events:
-          type: array
-          items:
-            type: string
-        created_at:
-          type: string
-          format: date-time
-        updated_at:
-          type: string
-          format: date-time
     SpaceBase:
       type: object
       properties:
@@ -1652,7 +1681,6 @@ components:
         preview_tmpl:
           type: string
           description: Define the template that should be used for preview in the interface
-          nullable: true
         icon:
           type: string
           description: An optional icon for the component to identify this component type in the interface
@@ -1772,6 +1800,95 @@ components:
       required:
         - name
         - slug
+    WebhookCreateInput:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the data source
+        endpoint:
+          type: string
+          description: The endpoint of the webhook
+        secret:
+          type: string
+          description: The secret of the webhook
+        actions:
+          type: array
+          items:
+            type: string
+          description: The actions of the webhook
+        activated:
+          type: boolean
+          description: The activation status of the webhook
+      required:
+        - name
+        - endpoint
+        - secret
+        - actions
+        - activated
+    Webhook:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: The id of the webhook
+        name:
+          type: string
+          description: The name of the data source
+        endpoint:
+          type: string
+          description: The endpoint of the webhook
+        secret:
+          type: string
+          description: The secret of the webhook
+        actions:
+          type: array
+          items:
+            type: string
+          description: The actions of the webhook
+        activated:
+          type: boolean
+          description: The activation status of the webhook
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - endpoint
+        - secret
+        - actions
+        - activated
+    WebhookUpdateInput:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the data source
+        endpoint:
+          type: string
+          description: The endpoint of the webhook
+        secret:
+          type: string
+          description: The secret of the webhook
+        actions:
+          type: array
+          items:
+            type: string
+          description: The actions of the webhook
+        activated:
+          type: boolean
+          description: The activation status of the webhook
+      required:
+        - name
+        - endpoint
+        - secret
+        - actions
+        - activated
     StoryBase:
       type: object
       properties:

@@ -1,0 +1,99 @@
+getOne:
+  summary: Get a webhook
+  description: Get a webhook
+  operationId: getWebhook
+  tags:
+    - webhooks
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              webhook_endpoint:
+                $ref: '../schemas/webhooks.yaml#/Webhook'
+            required:
+              - webhook_endpoint
+
+
+create:
+  summary: Create a webhook endpoint
+  description: Create a webhook endpoint
+  operationId: createWebhook
+  tags:
+    - webhooks
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            webhook_endpoint:
+              $ref: '../schemas/webhooks.yaml#/WebhookCreateInput'
+          required:
+            - webhook_endpoint
+
+  responses:
+    '201':
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              webhook_endpoint:
+                $ref: '../schemas/webhooks.yaml#/Webhook'
+            required:
+              - webhook_endpoint
+
+update:
+  summary: Update webhook
+  description: Update webhook
+  operationId: updateWebhook
+  tags:
+    - Webhooks
+  requestBody:
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            webhook_endpoint:
+              $ref: '../schemas/webhooks.yaml#/WebhookUpdateInput'
+          required:
+            - webhook_endpoint
+
+  responses:
+    '200':
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              webhook_endpoint:
+                $ref: '../schemas/webhooks.yaml#/Webhook'
+            required:
+              - webhook_endpoint
+
+
+delete:
+  summary: Delete a webhook
+  description: Delete a webhook
+  operationId: deleteWebhook
+  tags:
+    - webhooks
+  responses:
+    "201":
+      description: OK
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              webhook_endpoint:
+                $ref: '../schemas/webhooks.yaml#/Webhook'
+            required:
+              - webhook_endpoint

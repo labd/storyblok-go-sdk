@@ -135,59 +135,25 @@ paths:
     delete:
       $ref: "paths/datasource_entries.yaml#/delete"
 
-  # Webhooks
-  /spaces/{space_id}/webhooks:
-    get:
-      summary: List Webhooks
-      description: Retrieve a list of webhooks in a space.
-      parameters:
-        - $ref: "#/components/parameters/spaceIdParam"
-        - name: token
-          in: query
-          description: The API access token
-          required: true
-          schema:
-            type: string
-      responses:
-        "200":
-          description: Successful response
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  webhooks:
-                    type: array
-                    items:
-                      $ref: "#/components/schemas/Webhook"
-                  total:
-                    type: integer
+  /v1/spaces/{space_id}/webhook_endpoints/:
+    parameters:
+      - $ref: "#/components/parameters/spaceIdParam"
 
-  /spaces/{space_id}/webhooks/{webhook_id}:
+    post:
+      $ref: "paths/webhooks.yaml#/create"
+
+  /v1/spaces/{space_id}/webhook_endpoints/{id}:
+    parameters:
+      - $ref: "#/components/parameters/spaceIdParam"
+      - $ref: "#/components/parameters/idParam"
+
     get:
-      summary: Get Webhook
-      description: Retrieve a specific webhook by ID.
-      parameters:
-        - $ref: "#/components/parameters/spaceIdParam"
-        - name: webhook_id
-          in: path
-          description: The ID of the webhook
-          required: true
-          schema:
-            type: string
-        - name: token
-          in: query
-          description: The API access token
-          required: true
-          schema:
-            type: string
-      responses:
-        "200":
-          description: Successful response
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Webhook"
+      $ref: "paths/webhooks.yaml#/getOne"
+    put:
+      $ref: "paths/webhooks.yaml#/update"
+    delete:
+      $ref: "paths/webhooks.yaml#/delete"
+
 
   # Stories
   /v1/spaces/{space_id}/stories/:
@@ -385,25 +351,7 @@ components:
     #     - updated_at
     #     - space_id
 
-    Webhook:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        url:
-          type: string
-        events:
-          type: array
-          items:
-            type: string
-        created_at:
-          type: string
-          format: date-time
-        updated_at:
-          type: string
-          format: date-time
+
 
     # Asset:
     #   type: object
