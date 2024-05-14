@@ -1817,6 +1817,9 @@ components:
           items:
             type: string
           description: The actions of the webhook
+        description:
+          type: string
+          description: The description of the webhook
         activated:
           type: boolean
           description: The activation status of the webhook
@@ -1847,6 +1850,9 @@ components:
           items:
             type: string
           description: The actions of the webhook
+        description:
+          type: string
+          description: The description of the webhook
         activated:
           type: boolean
           description: The activation status of the webhook
@@ -1880,6 +1886,9 @@ components:
           items:
             type: string
           description: The actions of the webhook
+        description:
+          type: string
+          description: The description of the webhook
         activated:
           type: boolean
           description: The activation status of the webhook

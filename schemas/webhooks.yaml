@@ -19,6 +19,9 @@ Webhook:
       items:
         type: string
       description: The actions of the webhook
+    description:
+      type: string
+      description: The description of the webhook
     activated:
       type: boolean
       description: The activation status of the webhook
@@ -53,6 +56,9 @@ WebhookCreateInput:
       items:
         type: string
       description: The actions of the webhook
+    description:
+      type: string
+      description: The description of the webhook
     activated:
       type: boolean
       description: The activation status of the webhook
@@ -80,6 +86,9 @@ WebhookUpdateInput:
       items:
         type: string
       description: The actions of the webhook
+    description:
+      type: string
+      description: The description of the webhook
     activated:
       type: boolean
       description: The activation status of the webhook

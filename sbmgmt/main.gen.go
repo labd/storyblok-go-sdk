@@ -829,6 +829,9 @@ type Webhook struct {
 	Activated bool       `json:"activated"`
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 
+	// Description The description of the webhook
+	Description *string `json:"description,omitempty"`
+
 	// Endpoint The endpoint of the webhook
 	Endpoint string `json:"endpoint"`
 
@@ -851,6 +854,9 @@ type WebhookCreateInput struct {
 	// Activated The activation status of the webhook
 	Activated bool `json:"activated"`
 
+	// Description The description of the webhook
+	Description *string `json:"description,omitempty"`
+
 	// Endpoint The endpoint of the webhook
 	Endpoint string `json:"endpoint"`
 
@@ -868,6 +874,9 @@ type WebhookUpdateInput struct {
 
 	// Activated The activation status of the webhook
 	Activated bool `json:"activated"`
+
+	// Description The description of the webhook
+	Description *string `json:"description,omitempty"`
 
 	// Endpoint The endpoint of the webhook
 	Endpoint string `json:"endpoint"`
