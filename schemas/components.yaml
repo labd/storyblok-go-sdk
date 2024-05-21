@@ -228,11 +228,19 @@ FieldInput:
     maximum:
       type: integer
       format: int64
-      description: "Maximum amount of options or bloks in this field"
+      description: "Maximum amount of bloks in this field"
     minimum:
       type: integer
       format: int64
-      description: "Minimum amount of options or bloks in this field"
+      description: "Minimum amount of bloks in this field"
+    max_options:
+      type: integer
+      format: int64
+      description: "Maximum amount of options in this field"
+    min_options:
+      type: integer
+      format: int64
+      description: "Minimum amount of options in this field"
     no_translate:
       type: boolean
       description: "Should be excluded in translation export"

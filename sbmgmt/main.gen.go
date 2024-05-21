@@ -412,10 +412,16 @@ type FieldInput struct {
 	// MaxLength Set the max length of the input string
 	MaxLength *int64 `json:"max_length,omitempty"`
 
-	// Maximum Maximum amount of options or bloks in this field
+	// MaxOptions Maximum amount of options in this field
+	MaxOptions *int64 `json:"max_options,omitempty"`
+
+	// Maximum Maximum amount of bloks in this field
 	Maximum *int64 `json:"maximum,omitempty"`
 
-	// Minimum Minimum amount of options or bloks in this field
+	// MinOptions Minimum amount of options in this field
+	MinOptions *int64 `json:"min_options,omitempty"`
+
+	// Minimum Minimum amount of bloks in this field
 	Minimum *int64 `json:"minimum,omitempty"`
 
 	// NoTranslate Should be excluded in translation export
