@@ -195,6 +195,11 @@ FieldInput:
       items:
         type: string
       description: 'Array of file type names: ["images", "videos", "audios", "texts"]'
+    filter_content_type:
+      type: array
+      items:
+        type: string
+        description: 'An array of content types that can be selected in a option or options field where source is internal_stories: e.g. ["post", "faq_item"]'
     folder_slug:
       type: string
       description: 'Filter on selectable stories path; Effects editor only if source=internal_stories; In case you have a multi-language folder structure you can add the ''{0}'' placeholder and the path will be adapted dynamically. Examples: "{0}/categories/", {0}/{1}/categories/'
