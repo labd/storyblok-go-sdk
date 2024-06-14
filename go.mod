@@ -3,8 +3,7 @@ module github.com/labd/storyblok-go-sdk
 go 1.20
 
 require (
-	github.com/davecgh/go-spew v1.1.1
-	github.com/deepmap/oapi-codegen v1.16.2
+	github.com/deepmap/oapi-codegen v1.16.3
 	github.com/gofrs/uuid v4.4.0+incompatible
 	github.com/oapi-codegen/runtime v1.1.1
 	github.com/wk8/go-ordered-map/v2 v2.1.8
