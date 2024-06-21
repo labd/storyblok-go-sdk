@@ -168,46 +168,7 @@ FieldInput:
       type: array
       description: "Array containing the object with information about conditions set on the field"
       items:
-        type: object
-        properties:
-          modifications:
-            type: array
-            description: "List of modifications to be applied to the field. Only 1 modification can be applied at a time (hide OR required)"
-            items:
-              type: object
-              properties:
-                display:
-                  type: string
-                  enum: [hide]
-                required:
-                  type: boolean
-          rule_match:
-            description: "Define if all or any of the conditions should be met to apply the modifications"
-            type: string
-            enum: [any, all]
-          rule_conditions:
-            description: "Conditional rules to be applied to the field"
-            type: array
-            items:
-              type: object
-              properties:
-                validated_object:
-                  type: object
-                  properties:
-                    type:
-                      type: string
-                      enum: [field]
-                    field_key:
-                      type: string
-                    field_attr:
-                      type: string
-                      enum: [value]
-                validation:
-                  type: string
-                  enum: [empty, not_empty, equals, not_equals]
-                value:
-                  type: string
-                  nullable: true
+        $ref: "#/ConditionalSettings"
     customize_toolbar:
       type: boolean
       description: "Customize toolbar in richtext or markdown"
@@ -363,3 +324,45 @@ FieldOption:
   required:
     - name
     - value
+
+ConditionalSettings:  
+  type: object
+  properties:
+    modifications:
+      type: array
+      description: "List of modifications to be applied to the field. Only 1 modification can be applied at a time (hide OR required)"
+      items:
+        type: object
+        properties:
+          display:
+            type: string
+            enum: [hide]
+          required:
+            type: boolean
+    rule_match:
+      description: "Define if all or any of the conditions should be met to apply the modifications"
+      type: string
+      enum: [any, all]
+    rule_conditions:
+      description: "Conditional rules to be applied to the field"
+      type: array
+      items:
+        type: object
+        properties:
+          validated_object:
+            type: object
+            properties:
+              type:
+                type: string
+                enum: [field]
+              field_key:
+                type: string
+              field_attr:
+                type: string
+                enum: [value]
+          validation:
+            type: string
+            enum: [empty, not_empty, equals, not_equals]
+          value:
+            type: string
+            nullable: true
