@@ -109,6 +109,35 @@ const (
 	ComponentBaseIconBlockWallet       ComponentBaseIcon = "block-wallet"
 )
 
+// Defines values for FieldInputConditionalSettingsModificationsDisplay.
+const (
+	Hide FieldInputConditionalSettingsModificationsDisplay = "hide"
+)
+
+// Defines values for FieldInputConditionalSettingsRuleConditionsValidatedObjectFieldAttr.
+const (
+	Value FieldInputConditionalSettingsRuleConditionsValidatedObjectFieldAttr = "value"
+)
+
+// Defines values for FieldInputConditionalSettingsRuleConditionsValidatedObjectType.
+const (
+	Field FieldInputConditionalSettingsRuleConditionsValidatedObjectType = "field"
+)
+
+// Defines values for FieldInputConditionalSettingsRuleConditionsValidation.
+const (
+	Empty     FieldInputConditionalSettingsRuleConditionsValidation = "empty"
+	Equals    FieldInputConditionalSettingsRuleConditionsValidation = "equals"
+	NotEmpty  FieldInputConditionalSettingsRuleConditionsValidation = "not_empty"
+	NotEquals FieldInputConditionalSettingsRuleConditionsValidation = "not_equals"
+)
+
+// Defines values for FieldInputConditionalSettingsRuleMatch.
+const (
+	All FieldInputConditionalSettingsRuleMatch = "all"
+	Any FieldInputConditionalSettingsRuleMatch = "any"
+)
+
 // AssetFolder defines model for AssetFolder.
 type AssetFolder struct {
 	// Id The ID of the asset folder
@@ -358,6 +387,29 @@ type FieldInput struct {
 	// ComponentWhitelist Array of component/content type names: ["post","page","product"]
 	ComponentWhitelist *[]string `json:"component_whitelist,omitempty"`
 
+	// ConditionalSettings Array containing the object with information about conditions set on the field
+	ConditionalSettings *[]struct {
+		// Modifications List of modifications to be applied to the field. Only 1 modification can be applied at a time (hide OR required)
+		Modifications *[]struct {
+			Display  *FieldInputConditionalSettingsModificationsDisplay `json:"display,omitempty"`
+			Required *bool                                              `json:"required,omitempty"`
+		} `json:"modifications,omitempty"`
+
+		// RuleConditions Conditional rules to be applied to the field
+		RuleConditions *[]struct {
+			ValidatedObject *struct {
+				FieldAttr *FieldInputConditionalSettingsRuleConditionsValidatedObjectFieldAttr `json:"field_attr,omitempty"`
+				FieldKey  *string                                                              `json:"field_key,omitempty"`
+				Type      *FieldInputConditionalSettingsRuleConditionsValidatedObjectType      `json:"type,omitempty"`
+			} `json:"validated_object,omitempty"`
+			Validation *FieldInputConditionalSettingsRuleConditionsValidation `json:"validation,omitempty"`
+			Value      *string                                                `json:"value"`
+		} `json:"rule_conditions,omitempty"`
+
+		// RuleMatch Define if all or any of the conditions should be met to apply the modifications
+		RuleMatch *FieldInputConditionalSettingsRuleMatch `json:"rule_match,omitempty"`
+	} `json:"conditional_settings,omitempty"`
+
 	// CustomizeToolbar Customize toolbar in richtext or markdown
 	CustomizeToolbar *bool `json:"customize_toolbar,omitempty"`
 
@@ -470,6 +522,21 @@ type FieldInput struct {
 	// UseUuid Default: true; available in option and source=internal_stories
 	UseUuid *bool `json:"use_uuid,omitempty"`
 }
+
+// FieldInputConditionalSettingsModificationsDisplay defines model for FieldInput.ConditionalSettings.Modifications.Display.
+type FieldInputConditionalSettingsModificationsDisplay string
+
+// FieldInputConditionalSettingsRuleConditionsValidatedObjectFieldAttr defines model for FieldInput.ConditionalSettings.RuleConditions.ValidatedObject.FieldAttr.
+type FieldInputConditionalSettingsRuleConditionsValidatedObjectFieldAttr string
+
+// FieldInputConditionalSettingsRuleConditionsValidatedObjectType defines model for FieldInput.ConditionalSettings.RuleConditions.ValidatedObject.Type.
+type FieldInputConditionalSettingsRuleConditionsValidatedObjectType string
+
+// FieldInputConditionalSettingsRuleConditionsValidation defines model for FieldInput.ConditionalSettings.RuleConditions.Validation.
+type FieldInputConditionalSettingsRuleConditionsValidation string
+
+// FieldInputConditionalSettingsRuleMatch Define if all or any of the conditions should be met to apply the modifications
+type FieldInputConditionalSettingsRuleMatch string
 
 // FieldOption defines model for FieldOption.
 type FieldOption struct {
