@@ -332,13 +332,7 @@ ConditionalSettings:
       type: array
       description: "List of modifications to be applied to the field. Only 1 modification can be applied at a time (hide OR required)"
       items:
-        type: object
-        properties:
-          display:
-            type: string
-            enum: [hide]
-          required:
-            type: boolean
+        $ref: "#/Modification"
     rule_match:
       description: "Define if all or any of the conditions should be met to apply the modifications"
       type: string
@@ -347,22 +341,58 @@ ConditionalSettings:
       description: "Conditional rules to be applied to the field"
       type: array
       items:
-        type: object
-        properties:
-          validated_object:
-            type: object
-            properties:
-              type:
-                type: string
-                enum: [field]
-              field_key:
-                type: string
-              field_attr:
-                type: string
-                enum: [value]
-          validation:
-            type: string
-            enum: [empty, not_empty, equals, not_equals]
-          value:
-            type: string
-            nullable: true
+        $ref: "#/RuleCondition"
+        
+
+Modification:
+  type: object
+  properties:
+    display:
+      type: string
+      enum: [hide]
+    required:
+      type: boolean
+
+Properties:
+  type: object
+  properties:
+    component:
+      $ref: "#/Component"
+    fields:
+      type: array
+      items:
+        $ref: "#/Field"
+    total:
+      type: integer
+      format: int64
+      description: The total number of components
+    cursor:
+      type: string
+      description: The cursor to continue from
+    has_more:
+      type: boolean
+      description: Whether there are more components to fetch
+      
+RuleCondition:
+  type: object
+  properties:
+    validated_object:
+      $ref: "#/ValidatedObject"
+    validation:
+      type: string
+      enum: [empty, not_empty, equals, not_equals]
+    value:
+      type: string
+      nullable: true
+
+ValidatedObject:
+  type: object
+  properties:
+    type:
+      type: string
+      enum: [field]
+    field_key:
+      type: string
+    field_attr:
+      type: string
+      enum: [value]

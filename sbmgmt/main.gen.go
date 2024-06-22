@@ -109,33 +109,33 @@ const (
 	ComponentBaseIconBlockWallet       ComponentBaseIcon = "block-wallet"
 )
 
-// Defines values for ConditionalSettingsModificationsDisplay.
-const (
-	Hide ConditionalSettingsModificationsDisplay = "hide"
-)
-
-// Defines values for ConditionalSettingsRuleConditionsValidatedObjectFieldAttr.
-const (
-	Value ConditionalSettingsRuleConditionsValidatedObjectFieldAttr = "value"
-)
-
-// Defines values for ConditionalSettingsRuleConditionsValidatedObjectType.
-const (
-	Field ConditionalSettingsRuleConditionsValidatedObjectType = "field"
-)
-
-// Defines values for ConditionalSettingsRuleConditionsValidation.
-const (
-	Empty     ConditionalSettingsRuleConditionsValidation = "empty"
-	Equals    ConditionalSettingsRuleConditionsValidation = "equals"
-	NotEmpty  ConditionalSettingsRuleConditionsValidation = "not_empty"
-	NotEquals ConditionalSettingsRuleConditionsValidation = "not_equals"
-)
-
 // Defines values for ConditionalSettingsRuleMatch.
 const (
 	All ConditionalSettingsRuleMatch = "all"
 	Any ConditionalSettingsRuleMatch = "any"
+)
+
+// Defines values for ModificationDisplay.
+const (
+	Hide ModificationDisplay = "hide"
+)
+
+// Defines values for RuleConditionValidation.
+const (
+	Empty     RuleConditionValidation = "empty"
+	Equals    RuleConditionValidation = "equals"
+	NotEmpty  RuleConditionValidation = "not_empty"
+	NotEquals RuleConditionValidation = "not_equals"
+)
+
+// Defines values for ValidatedObjectFieldAttr.
+const (
+	Value ValidatedObjectFieldAttr = "value"
+)
+
+// Defines values for ValidatedObjectType.
+const (
+	Field ValidatedObjectType = "field"
 )
 
 // AssetFolder defines model for AssetFolder.
@@ -303,37 +303,14 @@ type ComponentUpdateInput = ComponentCreateInput
 // ConditionalSettings defines model for ConditionalSettings.
 type ConditionalSettings struct {
 	// Modifications List of modifications to be applied to the field. Only 1 modification can be applied at a time (hide OR required)
-	Modifications *[]struct {
-		Display  *ConditionalSettingsModificationsDisplay `json:"display,omitempty"`
-		Required *bool                                    `json:"required,omitempty"`
-	} `json:"modifications,omitempty"`
+	Modifications *[]Modification `json:"modifications,omitempty"`
 
 	// RuleConditions Conditional rules to be applied to the field
-	RuleConditions *[]struct {
-		ValidatedObject *struct {
-			FieldAttr *ConditionalSettingsRuleConditionsValidatedObjectFieldAttr `json:"field_attr,omitempty"`
-			FieldKey  *string                                                    `json:"field_key,omitempty"`
-			Type      *ConditionalSettingsRuleConditionsValidatedObjectType      `json:"type,omitempty"`
-		} `json:"validated_object,omitempty"`
-		Validation *ConditionalSettingsRuleConditionsValidation `json:"validation,omitempty"`
-		Value      *string                                      `json:"value"`
-	} `json:"rule_conditions,omitempty"`
+	RuleConditions *[]RuleCondition `json:"rule_conditions,omitempty"`
 
 	// RuleMatch Define if all or any of the conditions should be met to apply the modifications
 	RuleMatch *ConditionalSettingsRuleMatch `json:"rule_match,omitempty"`
 }
-
-// ConditionalSettingsModificationsDisplay defines model for ConditionalSettings.Modifications.Display.
-type ConditionalSettingsModificationsDisplay string
-
-// ConditionalSettingsRuleConditionsValidatedObjectFieldAttr defines model for ConditionalSettings.RuleConditions.ValidatedObject.FieldAttr.
-type ConditionalSettingsRuleConditionsValidatedObjectFieldAttr string
-
-// ConditionalSettingsRuleConditionsValidatedObjectType defines model for ConditionalSettings.RuleConditions.ValidatedObject.Type.
-type ConditionalSettingsRuleConditionsValidatedObjectType string
-
-// ConditionalSettingsRuleConditionsValidation defines model for ConditionalSettings.RuleConditions.Validation.
-type ConditionalSettingsRuleConditionsValidation string
 
 // ConditionalSettingsRuleMatch Define if all or any of the conditions should be met to apply the modifications
 type ConditionalSettingsRuleMatch string
@@ -546,6 +523,25 @@ type FieldOption struct {
 	Name  string `json:"name"`
 	Value string `json:"value"`
 }
+
+// Modification defines model for Modification.
+type Modification struct {
+	Display  *ModificationDisplay `json:"display,omitempty"`
+	Required *bool                `json:"required,omitempty"`
+}
+
+// ModificationDisplay defines model for Modification.Display.
+type ModificationDisplay string
+
+// RuleCondition defines model for RuleCondition.
+type RuleCondition struct {
+	ValidatedObject *ValidatedObject         `json:"validated_object,omitempty"`
+	Validation      *RuleConditionValidation `json:"validation,omitempty"`
+	Value           *string                  `json:"value"`
+}
+
+// RuleConditionValidation defines model for RuleCondition.Validation.
+type RuleConditionValidation string
 
 // Space defines model for Space.
 type Space struct {
@@ -885,6 +881,19 @@ type StoryUpdateInput struct {
 	ReleaseId *int64    `json:"release_id,omitempty"`
 	Story     StoryBase `json:"story"`
 }
+
+// ValidatedObject defines model for ValidatedObject.
+type ValidatedObject struct {
+	FieldAttr *ValidatedObjectFieldAttr `json:"field_attr,omitempty"`
+	FieldKey  *string                   `json:"field_key,omitempty"`
+	Type      *ValidatedObjectType      `json:"type,omitempty"`
+}
+
+// ValidatedObjectFieldAttr defines model for ValidatedObject.FieldAttr.
+type ValidatedObjectFieldAttr string
+
+// ValidatedObjectType defines model for ValidatedObject.Type.
+type ValidatedObjectType string
 
 // Version defines model for Version.
 type Version struct {
