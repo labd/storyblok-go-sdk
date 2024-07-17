@@ -109,6 +109,35 @@ const (
 	ComponentBaseIconBlockWallet       ComponentBaseIcon = "block-wallet"
 )
 
+// Defines values for ConditionalSettingsRuleMatch.
+const (
+	All ConditionalSettingsRuleMatch = "all"
+	Any ConditionalSettingsRuleMatch = "any"
+)
+
+// Defines values for ModificationDisplay.
+const (
+	Hide ModificationDisplay = "hide"
+)
+
+// Defines values for RuleConditionValidation.
+const (
+	Empty     RuleConditionValidation = "empty"
+	Equals    RuleConditionValidation = "equals"
+	NotEmpty  RuleConditionValidation = "not_empty"
+	NotEquals RuleConditionValidation = "not_equals"
+)
+
+// Defines values for ValidatedObjectFieldAttr.
+const (
+	Value ValidatedObjectFieldAttr = "value"
+)
+
+// Defines values for ValidatedObjectType.
+const (
+	Field ValidatedObjectType = "field"
+)
+
 // AssetFolder defines model for AssetFolder.
 type AssetFolder struct {
 	// Id The ID of the asset folder
@@ -271,6 +300,21 @@ type ComponentGroupUpdateInput = ComponentGroupCreateInput
 // ComponentUpdateInput defines model for ComponentUpdateInput.
 type ComponentUpdateInput = ComponentCreateInput
 
+// ConditionalSettings defines model for ConditionalSettings.
+type ConditionalSettings struct {
+	// Modifications List of modifications to be applied to the field. Only 1 modification can be applied at a time (hide OR required)
+	Modifications *[]Modification `json:"modifications,omitempty"`
+
+	// RuleConditions Conditional rules to be applied to the field
+	RuleConditions *[]RuleCondition `json:"rule_conditions,omitempty"`
+
+	// RuleMatch Define if all or any of the conditions should be met to apply the modifications
+	RuleMatch *ConditionalSettingsRuleMatch `json:"rule_match,omitempty"`
+}
+
+// ConditionalSettingsRuleMatch Define if all or any of the conditions should be met to apply the modifications
+type ConditionalSettingsRuleMatch string
+
 // Datasource defines model for Datasource.
 type Datasource struct {
 	// CreatedAt The creation timestamp of the datasource
@@ -357,6 +401,9 @@ type FieldInput struct {
 
 	// ComponentWhitelist Array of component/content type names: ["post","page","product"]
 	ComponentWhitelist *[]string `json:"component_whitelist,omitempty"`
+
+	// ConditionalSettings Array containing the object with information about conditions set on the field
+	ConditionalSettings *[]ConditionalSettings `json:"conditional_settings,omitempty"`
 
 	// CustomizeToolbar Customize toolbar in richtext or markdown
 	CustomizeToolbar *bool `json:"customize_toolbar,omitempty"`
@@ -476,6 +523,25 @@ type FieldOption struct {
 	Name  string `json:"name"`
 	Value string `json:"value"`
 }
+
+// Modification defines model for Modification.
+type Modification struct {
+	Display  *ModificationDisplay `json:"display,omitempty"`
+	Required *bool                `json:"required,omitempty"`
+}
+
+// ModificationDisplay defines model for Modification.Display.
+type ModificationDisplay string
+
+// RuleCondition defines model for RuleCondition.
+type RuleCondition struct {
+	ValidatedObject *ValidatedObject         `json:"validated_object,omitempty"`
+	Validation      *RuleConditionValidation `json:"validation,omitempty"`
+	Value           *string                  `json:"value"`
+}
+
+// RuleConditionValidation defines model for RuleCondition.Validation.
+type RuleConditionValidation string
 
 // Space defines model for Space.
 type Space struct {
@@ -815,6 +881,19 @@ type StoryUpdateInput struct {
 	ReleaseId *int64    `json:"release_id,omitempty"`
 	Story     StoryBase `json:"story"`
 }
+
+// ValidatedObject defines model for ValidatedObject.
+type ValidatedObject struct {
+	FieldAttr *ValidatedObjectFieldAttr `json:"field_attr,omitempty"`
+	FieldKey  *string                   `json:"field_key,omitempty"`
+	Type      *ValidatedObjectType      `json:"type,omitempty"`
+}
+
+// ValidatedObjectFieldAttr defines model for ValidatedObject.FieldAttr.
+type ValidatedObjectFieldAttr string
+
+// ValidatedObjectType defines model for ValidatedObject.Type.
+type ValidatedObjectType string
 
 // Version defines model for Version.
 type Version struct {

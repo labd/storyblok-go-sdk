@@ -1502,6 +1502,62 @@ components:
           description: The numeric id of the original space
       required:
         - space
+    Modification:
+      type: object
+      properties:
+        display:
+          type: string
+          enum:
+            - hide
+        required:
+          type: boolean
+    ValidatedObject:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - field
+        field_key:
+          type: string
+        field_attr:
+          type: string
+          enum:
+            - value
+    RuleCondition:
+      type: object
+      properties:
+        validated_object:
+          $ref: '#/components/schemas/ValidatedObject'
+        validation:
+          type: string
+          enum:
+            - empty
+            - not_empty
+            - equals
+            - not_equals
+        value:
+          type: string
+          nullable: true
+    ConditionalSettings:
+      type: object
+      properties:
+        modifications:
+          type: array
+          description: List of modifications to be applied to the field. Only 1 modification can be applied at a time (hide OR required)
+          items:
+            $ref: '#/components/schemas/Modification'
+        rule_match:
+          description: Define if all or any of the conditions should be met to apply the modifications
+          type: string
+          enum:
+            - any
+            - all
+        rule_conditions:
+          description: Conditional rules to be applied to the field
+          type: array
+          items:
+            $ref: '#/components/schemas/RuleCondition'
     FieldOption:
       type: object
       properties:
@@ -1543,6 +1599,11 @@ components:
           items:
             type: string
           description: 'Array of component/content type names: ["post","page","product"]'
+        conditional_settings:
+          type: array
+          description: Array containing the object with information about conditions set on the field
+          items:
+            $ref: '#/components/schemas/ConditionalSettings'
         customize_toolbar:
           type: boolean
           description: Customize toolbar in richtext or markdown
