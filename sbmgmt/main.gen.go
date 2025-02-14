@@ -433,7 +433,7 @@ type FieldInput struct {
 	DatasourceSlug *string `json:"datasource_slug,omitempty"`
 
 	// Decimals Number of decimal places for number fields.
-	Decimals *int `json:"decimals,omitempty"`
+	Decimals *int64 `json:"decimals,omitempty"`
 
 	// DefaultValue Default value for the field.
 	DefaultValue *string `json:"default_value,omitempty"`
@@ -514,7 +514,7 @@ type FieldInput struct {
 	MaxOptions *int64 `json:"max_options,omitempty"`
 
 	// MaxValue Maximum value for number fields.
-	MaxValue *int `json:"max_value,omitempty"`
+	MaxValue *int64 `json:"max_value,omitempty"`
 
 	// Maximum Maximum number of components for bloks type fields.
 	Maximum *int64 `json:"maximum,omitempty"`
@@ -523,7 +523,7 @@ type FieldInput struct {
 	MinOptions *int64 `json:"min_options,omitempty"`
 
 	// MinValue Minimum value for number fields.
-	MinValue *int `json:"min_value,omitempty"`
+	MinValue *int64 `json:"min_value,omitempty"`
 
 	// Minimum Minimum number of components for bloks type fields.
 	Minimum *int64 `json:"minimum,omitempty"`
@@ -568,7 +568,7 @@ type FieldInput struct {
 	Source *string `json:"source,omitempty"`
 
 	// Steps Step interval for number fields.
-	Steps *int `json:"steps,omitempty"`
+	Steps *int64 `json:"steps,omitempty"`
 
 	// StyleOptions Custom CSS data for richtext fields.
 	StyleOptions *[]map[string]interface{} `json:"style_options,omitempty"`

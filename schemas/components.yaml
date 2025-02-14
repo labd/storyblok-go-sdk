@@ -328,15 +328,19 @@ FieldInput:
       description: Enables empty paragraphs in markdown fields.
     min_value:
       type: integer
+      format: int64
       description: Minimum value for number fields.
     max_value:
       type: integer
+      format: int64
       description: Maximum value for number fields.
     decimals:
       type: integer
+      format: int64
       description: Number of decimal places for number fields.
     steps:
       type: integer
+      format: int64
       description: Step interval for number fields.
     inline_label:
       type: boolean
