@@ -1573,167 +1573,248 @@ components:
       properties:
         type:
           type: string
-          description: The type of the field
+          description: The type of your field.
         pos:
           type: integer
           format: int64
-          description: The position of the field
+          description: Position of the field in the component.
         add_https:
           type: boolean
-          description: 'Prepends https: to stop usage of relative protocol'
+          description: Prepends 'https:' to avoid relative protocol issues (image/file fields).
           default: false
         allow_target_blank:
           type: boolean
-          description: Allow target blank for links in richtext
+          description: Allows links in richtext to open in a new tab.
           default: false
         asset_folder_id:
           type: integer
           format: int64
-          description: Default asset folder numeric id to store uploaded image of that field
+          description: Defines the asset folder for uploaded images (asset fields).
         can_sync:
           type: boolean
-          description: Advanced usage to sync with field in preview
+          description: Allows syncing with the field in preview (advanced usage).
           default: false
         component_whitelist:
           type: array
           items:
             type: string
-          description: 'Array of component/content type names: ["post","page","product"]'
+          description: Array of component names that can be used in bloks, multilink, or richtext.
         conditional_settings:
           type: array
-          description: Array containing the object with information about conditions set on the field
+          description: Array containing conditional settings for the field.
           items:
             $ref: '#/components/schemas/ConditionalSettings'
         customize_toolbar:
           type: boolean
-          description: Customize toolbar in richtext or markdown
+          description: True if richtext or markdown toolbar can be customized.
           default: false
         datasource_slug:
           type: string
-          description: Define selectable datasources string; Effects editor only if source=internal
+          description: Defines the selectable datasource for options (internal sources).
         default_value:
           type: string
-          description: Default value for the field; Can be an escaped JSON object
+          description: Default value for the field.
         description:
           type: string
-          description: Description shown in the editor interface
+          description: The description shown in the editor interface.
         display_name:
           type: string
-          description: Name of the field for the editor interface
+          description: Name used in the editor interface.
         disable_time:
           type: boolean
-          description: 'Disables time selection from date picker; Default: false'
+          description: Disables time selection for datetime fields.
           default: false
         external_datasource:
           type: string
-          description: Define external datasource JSON Url; Effects editor only if source=external
+          description: Defines external datasource URL for options.
         field_type:
           type: string
-          description: Name of the custom field type plugin
+          description: Name of the custom field type plugin (custom fields).
         filetypes:
           type: array
           items:
             type: string
-          description: 'Array of file type names: ["images", "videos", "audios", "texts"]'
+          description: Array of file types for multiasset fields (e.g., images, videos).
         filter_content_type:
           type: array
           items:
             type: string
-            description: 'An array of content types that can be selected in a option or options field where source is internal_stories: e.g. ["post", "faq_item"]'
+          description: Array of content types that can be selected in an option field.
         folder_slug:
           type: string
-          description: 'Filter on selectable stories path; Effects editor only if source=internal_stories; In case you have a multi-language folder structure you can add the ''{0}'' placeholder and the path will be adapted dynamically. Examples: "{0}/categories/", {0}/{1}/categories/'
+          description: Defines a folder filter for internal stories in options.
         force_link_scope:
           type: boolean
-          description: Force link scope to be internal or external
+          description: Forces folder restrictions in multilink fields.
+          default: false
         image_crop:
           type: boolean
-          description: 'Activate force crop for images: (true/false)'
+          description: Activates forced image cropping (image fields).
         image_height:
           type: string
-          description: Define height in px or height ratio if keep_image_size is enabled
+          description: Defines image height in pixels or ratio (image fields).
         image_width:
           type: string
-          description: Define width in px or width ratio if keep_image_size is enabled
+          description: Defines image width in pixels or ratio (image fields).
         keep_image_size:
           type: boolean
-          description: 'Keep original size: (true/false)'
+          description: Keeps the original image size (image fields).
         keys:
           type: array
           items:
             type: string
-          description: Array of field keys to include in this section
+          description: Array of field keys for group field types.
         link_scope:
           type: string
-          description: 'Filter on selectable stories path; In case you have a multi-language folder structure you can add the ''{0}'' placeholder and the path will be adapted dynamically. Examples: "{0}/categories/", {0}/{1}/categories/'
+          description: Defines folder filtering for multilink fields.
+          default: false
         max_length:
           type: integer
           format: int64
-          description: Set the max length of the input string
+          description: Maximum length for text, textarea, or markdown fields.
         maximum:
           type: integer
           format: int64
-          description: Maximum amount of bloks in this field
+          description: Maximum number of components for bloks type fields.
         minimum:
           type: integer
           format: int64
-          description: Minimum amount of bloks in this field
+          description: Minimum number of components for bloks type fields.
         max_options:
           type: integer
           format: int64
-          description: Maximum amount of options in this field
+          description: Maximum options that can be selected in an options field.
         min_options:
           type: integer
           format: int64
-          description: Minimum amount of options in this field
+          description: Minimum options that should be selected in an options field.
         no_translate:
           type: boolean
-          description: Should be excluded in translation export
+          description: Excludes the field from translation export (for text and number types).
         options:
           type: array
-          description: Array of datasource entries [{name:"", value:""}]; Effects editor only if source=undefined
+          description: Array of data source entries for option fields.
           items:
             $ref: '#/components/schemas/FieldOption'
         toolbar:
           type: array
           items:
             type: string
-          description: Array of toolbar options
+          description: Array of enabled items when customizing the toolbar for richtext/markdown.
         tooltip:
           type: boolean
-          description: Show the description as a tooltip
+          description: True if description is shown as a tooltip.
           default: false
         regex:
           type: string
-          description: Client Regex validation for the field
+          description: Regex validation for text fields.
         required:
           type: boolean
-          description: 'Is field required; Default: false'
+          description: Is this field required?
           default: false
         restrict_components:
           type: boolean
-          description: 'Activate restriction nestable component option; Default: false'
+          description: Enables restriction for nestable components in bloks (for bloks and richtext).
           default: false
         restrict_content_types:
           type: boolean
-          description: Activate restriction content type option
+          description: Activates restriction for content types in multilink fields.
         rich_markdown:
           type: boolean
-          description: Enable rich markdown view by default (true/false)
+          description: Enables rich markdown view for markdown fields.
         rtl:
           type: boolean
-          description: Enable global RTL for this field
+          description: Enables RTL for markdown, text, or textarea fields.
         source:
           type: string
-          description: 'Possible values: undefined: Self; internal_stories: Stories; internal: Datasource; external: API Endpoint in Datasource Entries Array Format'
+          description: Defines where options are sourced from (e.g., internal stories, external APIs).
         translatable:
           type: boolean
-          description: 'Can field be translated; Default: false'
+          description: True if translation is enabled over the field.
           default: false
         use_uuid:
           type: boolean
-          description: 'Default: true; available in option and source=internal_stories'
+          description: Specifies if UUID should be used in options.
           default: true
+        restrict_type:
+          type: string
+          description: Restricts the type of components used in bloks fields (e.g., tags, groups).
+        component_tag_whitelist:
+          type: array
+          items:
+            type: integer
+          description: Array of tag IDs for restricting components in bloks fields.
+        component_group_whitelist:
+          type: array
+          items:
+            type: string
+          description: Array of group UUIDs for restricting components in bloks fields.
+        style_options:
+          type: array
+          items:
+            type: object
+          description: Custom CSS data for richtext fields.
+        allow_custom_attributes:
+          type: boolean
+          description: Enables custom attributes in links for richtext or multilink fields.
+        allow_multiline:
+          type: boolean
+          description: Enables empty paragraphs in markdown fields.
+        min_value:
+          type: integer
+          description: Minimum value for number fields.
+        max_value:
+          type: integer
+          description: Maximum value for number fields.
+        decimals:
+          type: integer
+          description: Number of decimal places for number fields.
+        steps:
+          type: integer
+          description: Step interval for number fields.
+        inline_label:
+          type: boolean
+          description: Makes the label of a boolean field inline.
+        exclude_empty_option:
+          type: boolean
+          description: Hides empty options in option fields.
+        entry_appearance:
+          type: string
+          description: Appearance of an option (link or card) in an option field.
+          default: link
+        allow_advanced_search:
+          type: boolean
+          description: Allows advanced search in option fields.
+        is_reference_type:
+          type: boolean
+          description: True if the options field is of type reference.
+        allow_external_url:
+          type: boolean
+          description: Allows external URLs in asset or multiasset fields.
+        email_link_type:
+          type: boolean
+          description: Allows emails in multilink fields.
+          default: false
+        asset_link_type:
+          type: boolean
+          description: Allows assets in multilink fields.
+          default: false
+        show_anchor:
+          type: boolean
+          description: Enables anchor field for internal links in multilink fields.
+          default: false
+        required_fields:
+          type: string
+          description: Comma-separated list of required fields for custom fields.
+        exclude_from_merge:
+          type: boolean
+          description: Excludes a blok from merge actions (Dimensions App).
+        exclude_from_overwrite:
+          type: boolean
+          description: Excludes a blok from overwrite actions (Dimensions App).
+        force_merge:
+          type: boolean
+          description: Forces overwriting a blok during a merge action (Dimensions App).
       required:
         - type
         - pos
