@@ -1,6 +1,6 @@
 apis:
   storyblok@latest:
     root: "source.yaml"
-    output: openapi.yaml
+    output: openapi.generated.yaml
 extends:
   - recommended
