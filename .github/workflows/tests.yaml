@@ -33,16 +33,9 @@ jobs:
         with:
           verbose: true
 
-  changes-file:
-    runs-on: ubuntu-latest
-    if: github.actor != 'dependabot[bot]'
-    steps:
-      - uses: actions/checkout@v4
-      - uses: mach-composer/check-changie-changes-action@main
-
   changie:
     runs-on: ubuntu-latest
-    needs: [test, changes-file]
+    needs: [test]
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     permissions:
       contents: write
