@@ -1,3 +1,0 @@
-kind: Changed
-body: changed max_options and min_options to be a string, as expected by the API
-time: 2025-10-31T11:20:11.268307237+01:00
