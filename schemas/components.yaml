@@ -246,12 +246,8 @@ FieldInput:
       format: int64
       description: Minimum number of components for bloks type fields.
     max_options:
-      type: string
-      format: int64
       description: Maximum options that can be selected in an options field.
     min_options:
-      type: string
-      format: int64
       description: Minimum options that should be selected in an options field.
     no_translate:
       type: boolean

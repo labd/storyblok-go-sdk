@@ -1,0 +1,3 @@
+kind: Changed
+body: Made max_options allow any, for backwards compatibility
+time: 2025-11-07T14:03:26.390356057+01:00

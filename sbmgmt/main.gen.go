@@ -511,7 +511,7 @@ type FieldInput struct {
 	MaxLength *int64 `json:"max_length,omitempty"`
 
 	// MaxOptions Maximum options that can be selected in an options field.
-	MaxOptions *string `json:"max_options,omitempty"`
+	MaxOptions *interface{} `json:"max_options,omitempty"`
 
 	// MaxValue Maximum value for number fields.
 	MaxValue *int64 `json:"max_value,omitempty"`
@@ -520,7 +520,7 @@ type FieldInput struct {
 	Maximum *int64 `json:"maximum,omitempty"`
 
 	// MinOptions Minimum options that should be selected in an options field.
-	MinOptions *string `json:"min_options,omitempty"`
+	MinOptions *interface{} `json:"min_options,omitempty"`
 
 	// MinValue Minimum value for number fields.
 	MinValue *int64 `json:"min_value,omitempty"`
