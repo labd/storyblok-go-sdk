@@ -1,6 +1,6 @@
 module github.com/labd/storyblok-go-sdk
 
-go 1.25
+go 1.27
 
 require (
 	github.com/gofrs/uuid v4.4.0+incompatible
