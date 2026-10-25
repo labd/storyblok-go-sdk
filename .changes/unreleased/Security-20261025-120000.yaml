@@ -1,3 +1,3 @@
 kind: Security
-body: 'Update github.com/getkin/kin-openapi to v0.149.0, github.com/oapi-codegen/oapi-codegen/v2 to v2.7.1 and github.com/buger/jsonparser to v1.1.2 to resolve security advisories'
+body: 'Update github.com/getkin/kin-openapi to v0.149.0, github.com/oapi-codegen/oapi-codegen/v2 to v2.7.1 and github.com/buger/jsonparser to v1.1.2 to resolve security advisories. This requires Go 1.25 or newer (was 1.22.5).'
 time: 2026-10-25T12:00:00.000000+00:00
