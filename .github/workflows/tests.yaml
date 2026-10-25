@@ -9,7 +9,7 @@ jobs:
 
     strategy:
       matrix:
-        go-version: [ "1.22", "1.23", "1.24" ]
+        go-version: [ "1.25", "1.26", "1.27" ]
 
     steps:
       - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1

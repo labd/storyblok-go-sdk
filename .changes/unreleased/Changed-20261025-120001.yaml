@@ -1,0 +1,3 @@
+kind: Changed
+body: 'Require Go 1.25 or newer (was 1.22.5), needed by the patched dependencies'
+time: 2026-10-25T12:00:01.000000+00:00
